@@ -1,0 +1,327 @@
+/**
+ * Pre Market Agents — invite map (Leaflet)
+ * Parcels from Franklin County public GIS (cached GeoJSON).
+ * Owner labels: invite-only, decluttered. No MLS/Zillow photo scrape — link out only.
+ */
+(function (global) {
+  "use strict";
+
+  var DEFAULTS = {
+    center: [40.06678, -82.83724],
+    zoom: 16,
+    subjectParcelId: "222-004841",
+    subjectAddress: "7013 Hanbys Loop, New Albany, OH 43054",
+    dataUrl: "/data/hanbys-parcels-invite.geojson",
+    showOwners: true,
+    analytics: null
+  };
+
+  function zillowSearchUrl(address) {
+    // Link-out only — no scrape, no hotlink
+    return "https://www.zillow.com/homes/" + encodeURIComponent(address.replace(/,/g, " ")) + "_rb/";
+  }
+
+  function countyParcelUrl(parcelId) {
+    var compact = String(parcelId || "").replace(/-/g, "");
+    if (compact.length < 10) compact = compact.padEnd(11, "0");
+    // Franklin Auditor permalink pattern (stable redirect)
+    return "https://audr-apps.franklincountyohio.gov/redir/Link/Parcel/" + compact;
+  }
+
+  function titleCaseAddr(s) {
+    if (!s) return "";
+    return String(s)
+      .toLowerCase()
+      .replace(/\b\w/g, function (c) {
+        return c.toUpperCase();
+      })
+      .replace(/\bLp\b/g, "Loop")
+      .replace(/\bSt\b/g, "St")
+      .replace(/\bDr\b/g, "Dr");
+  }
+
+  function ownerLabel(name) {
+    if (!name) return "";
+    // OWNERNME1 often "LAST FIRST"
+    var parts = String(name).trim().split(/\s+/);
+    if (parts.length >= 2) return parts.slice(1).join(" ") + " " + parts[0];
+    return name;
+  }
+
+  function fmtMoney(n) {
+    if (n == null || n === "" || isNaN(Number(n))) return null;
+    return "$" + Number(n).toLocaleString("en-US");
+  }
+
+  function InviteMap(el, opts) {
+    this.el = typeof el === "string" ? document.querySelector(el) : el;
+    this.opts = Object.assign({}, DEFAULTS, opts || {});
+    this.map = null;
+    this.parcelLayer = null;
+    this.labelLayer = null;
+    this.selected = null;
+  }
+
+  InviteMap.prototype.init = function () {
+    var self = this;
+    if (!this.el || !global.L) {
+      console.warn("PMAInviteMap: Leaflet or container missing");
+      return Promise.reject(new Error("leaflet"));
+    }
+
+    this.map = L.map(this.el, {
+      zoomControl: true,
+      attributionControl: true
+    }).setView(this.opts.center, this.opts.zoom);
+
+    // Esri World Imagery (no key) + place labels overlay
+    var satellite = L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      { attribution: "Tiles © Esri · Parcels Franklin County OH", maxZoom: 19 }
+    ).addTo(this.map);
+    var labels = L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+      { attribution: "Labels © Esri", maxZoom: 19, opacity: 0.85 }
+    ).addTo(this.map);
+    var streets = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "© OpenStreetMap",
+      maxZoom: 19
+    });
+    L.control
+      .layers(
+        { Satellite: satellite, Streets: streets },
+        { Labels: labels },
+        { position: "topright", collapsed: true }
+      )
+      .addTo(this.map);
+
+    this.labelLayer = L.layerGroup().addTo(this.map);
+    this.panel = this._mountPanel();
+
+    this.map.on("moveend", function () {
+      self._track("map_view", {
+        zoom: self.map.getZoom(),
+        center: self.map.getCenter()
+      });
+      self._refreshLabels();
+    });
+    this.map.on("zoomend", function () {
+      self._refreshLabels();
+    });
+
+    return fetch(this.opts.dataUrl)
+      .then(function (r) {
+        return r.json();
+      })
+      .then(function (geo) {
+        self._addParcels(geo);
+        self._track("map_ready", { features: (geo.features || []).length });
+      })
+      .catch(function (err) {
+        console.warn("parcel load failed", err);
+        self._track("map_error", { message: String(err && err.message) });
+      });
+  };
+
+  InviteMap.prototype._track = function (type, props) {
+    if (this.opts.analytics && typeof this.opts.analytics.track === "function") {
+      this.opts.analytics.track(type, props || {});
+    }
+  };
+
+  InviteMap.prototype._mountPanel = function () {
+    var wrap = this.el.parentElement || this.el;
+    var panel = document.createElement("div");
+    panel.className = "pma-map-panel";
+    panel.innerHTML =
+      '<div class="pma-map-panel-head">Parcel intelligence</div>' +
+      '<div class="pma-map-panel-body" id="pma-map-panel-body">' +
+      "<p class=\"muted\">Select a parcel for county facts and third-party links. Photos open on Zillow (new tab)—we don’t host MLS images.</p>" +
+      "</div>";
+    wrap.appendChild(panel);
+    return panel;
+  };
+
+  InviteMap.prototype._addParcels = function (geo) {
+    var self = this;
+    var subjectId = this.opts.subjectParcelId;
+
+    this.parcelLayer = L.geoJSON(geo, {
+      style: function (feature) {
+        var id = feature.properties && feature.properties.PARCELID;
+        if (id === subjectId) {
+          return {
+            color: "#c4a574",
+            weight: 2.5,
+            fillColor: "#c4a574",
+            fillOpacity: 0.28
+          };
+        }
+        return {
+          color: "rgba(255,255,255,0.55)",
+          weight: 1,
+          fillColor: "#1a1a1d",
+          fillOpacity: 0.12
+        };
+      },
+      onEachFeature: function (feature, layer) {
+        layer.on("mouseover", function () {
+          if (feature.properties && feature.properties.PARCELID !== subjectId) {
+            layer.setStyle({ weight: 2, fillOpacity: 0.22 });
+          }
+          self._track("parcel_hover", { parcelId: feature.properties && feature.properties.PARCELID });
+        });
+        layer.on("mouseout", function () {
+          self.parcelLayer.resetStyle(layer);
+        });
+        layer.on("click", function () {
+          self.selectFeature(feature, layer);
+        });
+      }
+    }).addTo(this.map);
+
+    // Fit soft bounds around data
+    try {
+      var b = this.parcelLayer.getBounds();
+      if (b.isValid()) this.map.fitBounds(b.pad(0.08));
+    } catch (e) {}
+
+    this._refreshLabels();
+  };
+
+  InviteMap.prototype.selectFeature = function (feature, layer) {
+    this.selected = feature;
+    var p = feature.properties || {};
+    this._track("parcel_select", {
+      parcelId: p.PARCELID,
+      address: p.SITEADDRESS
+    });
+
+    var addr = titleCaseAddr(p.SITEADDRESS || "");
+    var fullAddr = addr ? addr + ", New Albany, OH" : this.opts.subjectAddress;
+    var owner = this.opts.showOwners ? ownerLabel(p.OWNERNME1) : null;
+    var zUrl = zillowSearchUrl(fullAddr);
+    var cUrl = countyParcelUrl(p.PARCELID);
+    var sale = fmtMoney(p.SALEPRICE);
+    var ag = p.RESFLRAREA_AG != null ? Number(p.RESFLRAREA_AG).toLocaleString("en-US") + " sqft AG" : null;
+    var year = p.RESYRBLT || null;
+    var acres = p.ACRES != null ? Number(p.ACRES).toFixed(2) + " ac" : p.STATEDAREA != null ? Number(p.STATEDAREA).toFixed(2) + " ac" : null;
+
+    var body = this.panel.querySelector("#pma-map-panel-body");
+    var html = "";
+    html += "<h4>" + (addr || "Parcel " + (p.PARCELID || "")) + "</h4>";
+    if (p.PARCELID === this.opts.subjectParcelId) {
+      html += '<p class="tag">Subject listing · 7013 Hanbys Loop</p>';
+    }
+    if (owner) html += "<p><span class=\"k\">Owner (county)</span> " + escapeHtml(owner) + "</p>";
+    html += "<p><span class=\"k\">Parcel</span> " + escapeHtml(p.PARCELID || "—") + "</p>";
+    if (year) html += "<p><span class=\"k\">Year built</span> " + escapeHtml(String(year)) + "</p>";
+    if (ag) html += "<p><span class=\"k\">Living area</span> " + escapeHtml(ag) + " <em class=\"note\">county above-grade</em></p>";
+    if (acres) html += "<p><span class=\"k\">Lot</span> " + escapeHtml(acres) + "</p>";
+    if (p.SCHLDSCRP) html += "<p><span class=\"k\">Schools</span> " + escapeHtml(p.SCHLDSCRP) + "</p>";
+    if (p.CVTTXDSCRP) html += "<p><span class=\"k\">Tax district</span> " + escapeHtml(p.CVTTXDSCRP) + "</p>";
+    if (sale) html += "<p><span class=\"k\">Last sale (county)</span> " + escapeHtml(sale) + (p.SALEDATE ? " · " + escapeHtml(String(p.SALEDATE).slice(0, 10)) : "") + "</p>";
+    html += '<div class="pma-map-links">';
+    html +=
+      '<a class="btn-link" data-external="zillow" href="' +
+      zUrl +
+      '" target="_blank" rel="noopener">Open on Zillow ↗</a>';
+    html +=
+      '<a class="btn-link ghost" data-external="county" href="' +
+      cUrl +
+      '" target="_blank" rel="noopener">County property card ↗</a>';
+    html += "</div>";
+    html +=
+      '<p class="note">Opens third-party sites. Pre Market Agents does not scrape or re-host MLS/Zillow photos. County data as-is.</p>';
+    body.innerHTML = html;
+
+    var self = this;
+    body.querySelectorAll("a[data-external]").forEach(function (a) {
+      a.addEventListener("click", function () {
+        if (self.opts.analytics) {
+          self.opts.analytics.track("open_external_link", {
+            provider: a.getAttribute("data-external"),
+            parcelId: p.PARCELID,
+            href: a.href
+          });
+        }
+      });
+    });
+  };
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  /**
+   * Simple declutter: at low zoom hide owners; at mid zoom show subset with
+   * screen-space collision; subject always preferred.
+   */
+  InviteMap.prototype._refreshLabels = function () {
+    if (!this.labelLayer || !this.parcelLayer || !this.opts.showOwners) {
+      if (this.labelLayer) this.labelLayer.clearLayers();
+      return;
+    }
+    var zoom = this.map.getZoom();
+    this.labelLayer.clearLayers();
+    if (zoom < 15) return;
+
+    var bounds = this.map.getBounds();
+    var placed = []; // {x,y,w,h}
+    var candidates = [];
+    var subjectId = this.opts.subjectParcelId;
+
+    this.parcelLayer.eachLayer(function (layer) {
+      var f = layer.feature;
+      if (!f || !f.properties) return;
+      var c = layer.getBounds && layer.getBounds().isValid() ? layer.getBounds().getCenter() : null;
+      if (!c || !bounds.contains(c)) return;
+      var name = ownerLabel(f.properties.OWNERNME1);
+      if (!name) return;
+      candidates.push({
+        latlng: c,
+        name: name,
+        priority: f.properties.PARCELID === subjectId ? 0 : 1,
+        parcelId: f.properties.PARCELID
+      });
+    });
+
+    candidates.sort(function (a, b) {
+      return a.priority - b.priority;
+    });
+
+    var maxLabels = zoom >= 17 ? 40 : zoom >= 16 ? 22 : 12;
+    var map = this.map;
+    var count = 0;
+
+    candidates.forEach(function (c) {
+      if (count >= maxLabels) return;
+      var pt = map.latLngToContainerPoint(c.latlng);
+      var w = Math.min(140, 8 + c.name.length * 6.2);
+      var h = 16;
+      var box = { x: pt.x - w / 2, y: pt.y - h / 2, w: w, h: h };
+      var hit = placed.some(function (p) {
+        return !(box.x + box.w < p.x || p.x + p.w < box.x || box.y + box.h < p.y || p.y + p.h < box.y);
+      });
+      if (hit && c.priority !== 0) return;
+      placed.push(box);
+      count++;
+
+      var icon = L.divIcon({
+        className: "pma-owner-label" + (c.priority === 0 ? " subject" : ""),
+        html: "<span>" + escapeHtml(c.name) + "</span>",
+        iconSize: [w, h],
+        iconAnchor: [w / 2, h / 2]
+      });
+      L.marker(c.latlng, { icon: icon, interactive: false, keyboard: false }).addTo(this.labelLayer);
+    }, this);
+  };
+
+  InviteMap.zillowSearchUrl = zillowSearchUrl;
+  InviteMap.countyParcelUrl = countyParcelUrl;
+  global.PMAInviteMap = InviteMap;
+})(typeof window !== "undefined" ? window : globalThis);

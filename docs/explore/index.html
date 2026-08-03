@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Explore neighborhoods | Pre Market Agents</title>
+  <meta name="description" content="Public educational map tier: New Albany / Ebrington orientation without owner names or private listing inventory." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://premarketagents.com/explore/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="/css/site.css" />
+  <style>
+    .explore-hero { padding: 48px 24px 24px; max-width: 1100px; margin: 0 auto; }
+    .explore-hero h1 {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-weight: 500; font-size: clamp(32px, 5vw, 48px); margin-bottom: 12px;
+    }
+    .explore-hero p { color: #a8a39a; max-width: 640px; font-size: 16px; line-height: 1.65; }
+    .map-shell {
+      max-width: 1100px; margin: 0 auto 48px; padding: 0 24px;
+      display: grid; grid-template-columns: 1fr 300px; gap: 16px;
+    }
+    @media (max-width: 860px) { .map-shell { grid-template-columns: 1fr; } }
+    #explore-map {
+      height: min(70vh, 560px); min-height: 360px;
+      border: 1px solid var(--line); background: #111;
+    }
+    .side-note {
+      border: 1px solid var(--line); background: var(--bg-elev); padding: 18px;
+      font-size: 13px; color: #a8a39a; line-height: 1.55;
+    }
+    .side-note h3 { color: var(--ink); font-size: 14px; margin-bottom: 10px; }
+    .side-note ul { margin: 10px 0 0 16px; }
+    .side-note li { margin-bottom: 6px; }
+    .leaflet-container { background: #0c0c0d; font-family: Inter, sans-serif; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/">
+      <span class="brand-pre">Pre Market</span>
+      <span class="brand-agents">Agents</span>
+    </a>
+    <nav class="nav">
+      <a href="/learn/">Learn</a>
+      <a href="/realtors/">Realtors</a>
+    </nav>
+  </header>
+
+  <div class="explore-hero">
+    <p class="eyebrow">Public explore · educational tier</p>
+    <h1>Neighborhood orientation—not a vault</h1>
+    <p>
+      A limited public map for context: parcel outlines and school district labels in a sample New Albany area.
+      <strong style="color:var(--ink)">No owner names</strong>, no private listing inventory, and no agent activity tracking on this page.
+      Full parcel intelligence and invite galleries stay on realtor-shared links.
+    </p>
+  </div>
+
+  <div class="map-shell">
+    <div id="explore-map" role="region" aria-label="Educational neighborhood map"></div>
+    <aside class="side-note">
+      <h3>What’s public here</h3>
+      <ul>
+        <li>Parcel outlines (sample area)</li>
+        <li>School district name when selected</li>
+        <li>Tax district / year built when available</li>
+      </ul>
+      <h3 style="margin-top:18px;">Held for invites</h3>
+      <ul>
+        <li>Owner-name labels</li>
+        <li>Private listing photos &amp; pricing</li>
+        <li>Agent analytics dashboards</li>
+        <li>Deep Zillow/comp packs per pin</li>
+      </ul>
+      <p style="margin-top:16px;">
+        <a class="btn btn-primary" href="/learn/what-is-a-pre-market-listing/">How private previews work</a>
+      </p>
+      <p style="margin-top:12px;font-size:12px;">
+        County GIS data provided as-is by Franklin County. Not a substitute for a survey or title work.
+      </p>
+    </aside>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-brand"><span class="pm">Pre Market</span><span class="ag">Agents</span></div>
+    <nav class="footer-links">
+      <a href="/">Home</a>
+      <a href="/learn/">Learn</a>
+      <a href="/privacy/">Privacy</a>
+    </nav>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    (function () {
+      var map = L.map("explore-map", { scrollWheelZoom: true }).setView([40.06678, -82.83724], 15);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap · Parcels Franklin County OH",
+        maxZoom: 18
+      }).addTo(map);
+
+      var panel = document.querySelector(".side-note");
+      fetch("/data/hanbys-parcels-public.geojson")
+        .then(function (r) { return r.json(); })
+        .then(function (geo) {
+          L.geoJSON(geo, {
+            style: {
+              color: "rgba(196,165,116,0.55)",
+              weight: 1,
+              fillColor: "#1a1a1d",
+              fillOpacity: 0.15
+            },
+            onEachFeature: function (feature, layer) {
+              layer.on("click", function () {
+                var p = feature.properties || {};
+                // Explicitly no owner fields in public geojson
+                var html = "<h3>Parcel context</h3><ul>";
+                if (p.SITEADDRESS) html += "<li>Situs: " + p.SITEADDRESS + "</li>";
+                if (p.PARCELID) html += "<li>Parcel ID: " + p.PARCELID + "</li>";
+                if (p.SCHLDSCRP) html += "<li>Schools: " + p.SCHLDSCRP + "</li>";
+                if (p.CVTTXDSCRP) html += "<li>Tax area: " + p.CVTTXDSCRP + "</li>";
+                if (p.RESYRBLT) html += "<li>Year built (county): " + p.RESYRBLT + "</li>";
+                html += "</ul><p style=\"margin-top:12px;font-size:12px\">Owner names and private listings are not shown on the public tier.</p>";
+                // temporary detail under list
+                var detail = document.getElementById("pub-detail");
+                if (!detail) {
+                  detail = document.createElement("div");
+                  detail.id = "pub-detail";
+                  detail.style.marginTop = "14px";
+                  panel.appendChild(detail);
+                }
+                detail.innerHTML = html;
+              });
+            }
+          }).addTo(map);
+        })
+        .catch(function () {
+          L.marker([40.06678, -82.83724]).addTo(map)
+            .bindPopup("Sample New Albany area · parcel layer temporarily unavailable");
+        });
+    })();
+  </script>
+</body>
+</html>

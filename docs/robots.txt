@@ -3,6 +3,7 @@ Allow: /
 Allow: /learn/
 Allow: /realtors/
 Allow: /privacy/
+Allow: /explore/
 Disallow: /r/
 Disallow: /agent/
 Disallow: /invite/

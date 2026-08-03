@@ -134,8 +134,17 @@ On-site blog supports keywords; **external mentions** raise domain authority. Bo
 - SEO sitemap/robots updates
 - This decision doc
 
-## 6. Explicitly not fully built yet (by design)
-- Hard server-side Ohio eLicense verification
-- Live public map (teaser only until compliance tier is coded)
-- Full invite analytics backend
-- Automated content pipeline production run
+## 5b. Shipped 2026-08-03 (backlog sprint)
+- **Invite analytics MVP:** `site/js/invite-analytics.js` — page/photo/scroll/CTA/map events, disclosure bar, localStorage store, optional remote `endpoint`
+- **Agent dashboard:** `/r/alan-hinson/dashboard/` (demo key `alan-hanbys-2026`) — sessions, top photos, CTAs; multi-device backend still optional
+- **Invite map:** Leaflet + Esri satellite + Franklin parcel GeoJSON, decluttered owner labels, Zillow + county link-outs (no MLS photo scrape)
+- **Public explore:** `/explore/` — same sample area, **no owner names**, no tracking product
+- **Realtor gate v2:** stronger OH format checks, localStorage session, `VERIFY_ENDPOINT` stub for hard eLicense match
+- **Content pipeline:** `site/content/queue.md` + `scripts/draft-learn-article.sh` (DeepSeek/Gemini → drafts only)
+
+## 6. Still not fully built (honest gaps)
+- **Hard server-side Ohio eLicense verification** — client ready; needs Worker/API + ToS-safe data source
+- **Multi-device analytics store** — client beacon ready; needs hosted endpoint + auth
+- **Live comps feed** — Franklin sales layer stale (max sale ~2025-07-16); freshness guard required before shipping comps
+- **Automated content production run** — pipeline scaffolded; human edit still required before publish
+- Optional: realtor lead-gen opt-in after gate

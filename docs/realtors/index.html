@@ -72,9 +72,11 @@
             Verification is designed to keep homeowners out—not to build a contact list. Later, optional lead tools can be opt-in.
           </p>
           <p class="form-note">
-            Ohio: look up a license at
-            <a href="https://elicense.ohio.gov/OH_HomePage" target="_blank" rel="noopener">elicense.ohio.gov</a>
-            if you need your number.
+            Ohio: look up a license at the official
+            <a href="https://elicense.lpi.ohio.gov/s/licenseshome" target="_blank" rel="noopener">LPI License Lookup</a>
+            (format often looks like <code style="color:var(--gold-soft)">SAL.12345</code> or <code style="color:var(--gold-soft)">BRK.…</code>).
+            Daily public file notice:
+            <a href="https://com.ohio.gov/divisions-and-programs/real-estate-and-professional-licensing/real-estate/resources/notice-license-lookup" target="_blank" rel="noopener">REPL notice</a>.
           </p>
         </form>
       </div>
@@ -97,6 +99,7 @@
             <li>Invite-only full galleries, map depth, and owner-aware context</li>
             <li>Activity intel: who engaged, photos, time, map interest (disclosed to viewers)</li>
             <li>Homeowners never browse a public off-market catalog here</li>
+            <li>Pilot agent dashboard: <a href="/r/alan-hinson/dashboard/">Alan Hinson invite analytics</a></li>
           </ul>
         </article>
         <article class="panel">
@@ -105,6 +108,7 @@
             <li>Request early access for your next pre-market presentation</li>
             <li>Use educational guides to warm clients before an invite</li>
             <li>Keep full map + tracking reserved for invited clients</li>
+            <li>Public <a href="/explore/">explore map</a> stays educational (no owner names)</li>
           </ul>
           <p style="margin-top:18px;">
             <a class="btn btn-primary" href="mailto:hello@premarketagents.com?subject=Realtor%20early%20access">Request early access</a>
@@ -127,17 +131,56 @@
   <script>
     (function () {
       var KEY = "pma_realtor_gate_v1";
+      var VERIFY_ENDPOINT = ""; // future: Cloudflare Worker / API → Ohio eLicense match
       var gateView = document.getElementById("gate-view");
       var agentView = document.getElementById("agent-view");
       var form = document.getElementById("realtor-gate");
       var err = document.getElementById("err");
+      var submitBtn = form.querySelector('button[type="submit"]');
+
+      /** Ohio RE license numbers are typically numeric (often 6–8+ digits). Reject obvious junk. */
+      function validateLicense(state, license) {
+        if (!license || license.length < 4 || license.length > 32) {
+          return "Enter a valid state real estate license number.";
+        }
+        if (/^(test|demo|1234|0000|admin|asdf)/i.test(license)) {
+          return "That doesn’t look like a real license number.";
+        }
+        if (state === "OH") {
+          // Public OH formats often PREFIX.digits (SAL, BRK, REC, …) or numeric-only.
+          // Source: LPI lookup + daily REPL XLSX (see deliverables/ohio-elicense-verify-research.md)
+          var oh = license.toUpperCase();
+          var okPrefix = /^(SAL|SALM|BRK|BRKA|BRKM|BRKP|REC|RECE|SOLE)\.?\d{4,12}$/i.test(oh);
+          var okDigits = /^\d{5,12}$/.test(license.replace(/\D/g, "")) && license.replace(/\D/g, "").length >= 5;
+          if (!okPrefix && !okDigits) {
+            return "Ohio licenses usually look like SAL.12345 or a multi-digit number. Check the LPI license lookup.";
+          }
+          if (!/^[0-9A-Za-z.\-]+$/.test(license)) {
+            return "Remove special characters from the license number.";
+          }
+        }
+        return null;
+      }
 
       function showAgent(data) {
         gateView.hidden = true;
         agentView.hidden = false;
         var meta = document.getElementById("session-meta");
         if (meta && data) {
-          meta.textContent = "Verified session (this browser): " + data.fullName + " · " + data.state + " license on file. Not a public consumer session.";
+          var tier =
+            data.method === "server_elicense_v1"
+              ? "Server-matched to public license records"
+              : "Attestation + format checks (hard eLicense match when server is connected)";
+          meta.textContent =
+            "Professional session (this browser): " +
+            data.fullName +
+            " · " +
+            data.state +
+            " · " +
+            data.license +
+            " · " +
+            tier +
+            ".";
         }
       }
 
@@ -165,8 +208,9 @@
           err.classList.add("show");
           return;
         }
-        if (!license || license.length < 4) {
-          err.textContent = "Enter a valid state real estate license number.";
+        var licErr = validateLicense(state, license);
+        if (licErr) {
+          err.textContent = licErr;
           err.classList.add("show");
           return;
         }
@@ -176,18 +220,69 @@
           return;
         }
 
-        // Soft gate: professional attestation + license identifiers only.
-        // Production: server-side match against state license databases (e.g. Ohio eLicense).
         var payload = {
           fullName: fullName,
           state: state,
           license: license,
           licenseType: licenseType,
           verifiedAt: new Date().toISOString(),
-          method: "soft_attestation_v1"
+          method: "soft_attestation_v2"
         };
-        sessionStorage.setItem(KEY, JSON.stringify(payload));
-        showAgent(payload);
+
+        function finish(p) {
+          sessionStorage.setItem(KEY, JSON.stringify(p));
+          try {
+            localStorage.setItem(KEY, JSON.stringify(p)); // survive tab close within browser
+          } catch (e2) {}
+          showAgent(p);
+        }
+
+        // Hard verify path (when endpoint configured): POST name+state+license → active match
+        if (VERIFY_ENDPOINT) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Verifying license…";
+          fetch(VERIFY_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              fullName: fullName,
+              state: state,
+              license: license,
+              licenseType: licenseType
+            })
+          })
+            .then(function (r) {
+              return r.json().then(function (j) {
+                return { ok: r.ok, j: j };
+              });
+            })
+            .then(function (res) {
+              if (res.ok && res.j && res.j.active) {
+                payload.method = "server_elicense_v1";
+                payload.boardStatus = res.j.status || "active";
+                payload.matchedName = res.j.matchedName || fullName;
+                finish(payload);
+              } else {
+                err.textContent =
+                  (res.j && res.j.message) ||
+                  "We could not confirm an active license. Check the number at elicense.ohio.gov and try again.";
+                err.classList.add("show");
+              }
+            })
+            .catch(function () {
+              // Fail soft to attestation if server down (never block Ohio agents on outage)
+              payload.method = "soft_attestation_v2_server_unreachable";
+              finish(payload);
+            })
+            .finally(function () {
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Continue to realtor materials";
+            });
+          return;
+        }
+
+        // Semi-hard (shipped): format + attestation + local persistence; server eLicense next.
+        finish(payload);
       });
     })();
   </script>

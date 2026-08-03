@@ -15,6 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <style>
     :root {
       --bg: #0c0c0d;
@@ -629,6 +630,79 @@
       transition: transform 0.25s ease;
     }
     .photo-grid button:hover img { transform: scale(1.04); }
+
+    /* —— Invite map —— */
+    .map-section { margin-top: 8px; }
+    .map-section h2 { margin-bottom: 12px; }
+    .map-layout {
+      display: grid;
+      grid-template-columns: 1fr minmax(240px, 300px);
+      gap: 0;
+      border: 1px solid var(--line);
+      background: var(--bg-elev);
+      min-height: 420px;
+    }
+    @media (max-width: 800px) {
+      .map-layout { grid-template-columns: 1fr; }
+    }
+    #invite-map {
+      height: 460px;
+      min-height: 360px;
+      background: #111;
+    }
+    .leaflet-container { font-family: Inter, sans-serif; background: #0c0c0d; }
+    .pma-map-panel {
+      border-left: 1px solid var(--line);
+      padding: 16px;
+      font-size: 13px;
+      color: #b8b3a8;
+      max-height: 460px;
+      overflow-y: auto;
+    }
+    @media (max-width: 800px) {
+      .pma-map-panel { border-left: none; border-top: 1px solid var(--line); max-height: none; }
+    }
+    .pma-map-panel-head {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 10px;
+    }
+    .pma-map-panel h4 {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 20px; color: var(--ink); font-weight: 600; margin-bottom: 8px;
+    }
+    .pma-map-panel .k { color: var(--muted); display: inline-block; min-width: 7.5em; }
+    .pma-map-panel .tag {
+      display: inline-block; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--gold); border: 1px solid rgba(196,165,116,0.35); padding: 3px 8px; margin-bottom: 10px;
+    }
+    .pma-map-panel .note { font-size: 11px; color: var(--muted); margin-top: 8px; line-height: 1.45; }
+    .pma-map-panel .muted { color: var(--muted); }
+    .pma-map-links { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+    .pma-map-links .btn-link {
+      display: block; text-align: center; padding: 10px;
+      background: var(--gold); color: #0c0c0d !important; font-weight: 700;
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .pma-map-links .btn-link.ghost {
+      background: transparent; color: var(--ink) !important;
+      border: 1px solid var(--line-strong);
+    }
+    .pma-owner-label {
+      background: transparent !important; border: none !important;
+    }
+    .pma-owner-label span {
+      display: inline-block; padding: 2px 6px;
+      background: rgba(12,12,13,0.82); color: #e8e2d6;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.02em;
+      border: 1px solid rgba(255,255,255,0.12); white-space: nowrap;
+      max-width: 140px; overflow: hidden; text-overflow: ellipsis;
+    }
+    .pma-owner-label.subject span {
+      border-color: rgba(196,165,116,0.55); color: var(--gold-soft);
+    }
+    .map-footnote {
+      font-size: 12px; color: var(--muted); margin-top: 10px; line-height: 1.5;
+    }
   </style>
 </head>
 <body>
@@ -746,6 +820,22 @@
             <img id="fpImg" src="/images/floorplans/first-floor.jpg" alt="Floor plan" />
           </div>
         </section>
+
+        <section class="map-section" id="neighborhood-map">
+          <h2>Neighborhood map</h2>
+          <p class="map-footnote" style="margin-top:0;margin-bottom:12px;">
+            Invite-only parcel view with decluttered owner labels. Select a lot for county facts and
+            <strong style="color:var(--ink);font-weight:600;">Open on Zillow</strong> (new tab—we don’t host MLS photos).
+          </p>
+          <div class="map-layout" id="map-layout">
+            <div id="invite-map" role="region" aria-label="Invite neighborhood map"></div>
+          </div>
+          <p class="map-footnote">
+            Franklin County GIS as-is · Subject parcel highlighted in gold ·
+            Living area from county is above-grade only unless noted ·
+            Listing GLA 5,200 sqft / 5 bd may include lower level (MLS).
+          </p>
+        </section>
       </div>
 
       <aside class="side-card">
@@ -803,6 +893,9 @@
     <div class="photo-grid" id="photoGrid"></div>
   </div>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="/js/invite-analytics.js"></script>
+  <script src="/js/invite-map.js"></script>
   <script>
     (function () {
       const PHOTOS = [];
@@ -810,6 +903,14 @@
         const n = String(i).padStart(2, "0");
         PHOTOS.push({ src: "/images/gallery/" + n + ".jpg", alt: "7013 Hanbys Loop — photo " + i });
       }
+
+      const analytics = new PMAInviteAnalytics({
+        agentSlug: "alan-hinson",
+        listingCode: "3czjbv9",
+        endpoint: "" // set later for multi-device remote store
+      });
+      analytics.mountDisclosure({ agentName: "Alan D. Hinson" });
+      analytics.bindListing();
 
       let idx = 0;
       const mainImg = document.getElementById("mainImg");
@@ -846,12 +947,14 @@
         lbImg.src = p.src;
         lbCounter.textContent = (idx + 1) + " / " + PHOTOS.length;
         renderThumbs();
+        analytics.photoShow(idx, PHOTOS.length);
       }
 
       function openLb() {
         lb.classList.add("open");
         lb.setAttribute("aria-hidden", "false");
         document.body.style.overflow = "hidden";
+        analytics.track("lightbox_open", { index: idx });
       }
       function closeLb() {
         lb.classList.remove("open");
@@ -874,6 +977,7 @@
         gridAll.classList.add("open");
         gridAll.setAttribute("aria-hidden", "false");
         document.body.style.overflow = "hidden";
+        analytics.track("photo_grid_open", { total: PHOTOS.length });
       }
       function closeGrid() {
         gridAll.classList.remove("open");
@@ -917,6 +1021,16 @@
       });
 
       show(0);
+
+      // Invite map
+      const map = new PMAInviteMap("#invite-map", {
+        analytics: analytics,
+        showOwners: true,
+        dataUrl: "/data/hanbys-parcels-invite.geojson"
+      });
+      map.init().then(function () {
+        if (map.map) setTimeout(function () { map.map.invalidateSize(); }, 200);
+      });
     })();
   </script>
 </body>

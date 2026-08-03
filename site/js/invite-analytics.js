@@ -247,7 +247,7 @@
       '<div class="pma-disc-inner">' +
       "<p><strong>Activity notice.</strong> " +
       agentName +
-      " can see how you use this private preview (time on page, photos viewed, map areas, and links you open). " +
+      " can see how you use this pre-market opportunity (time on page, photos viewed, map areas, and links you open). " +
       "This helps them follow up thoughtfully. We do not sell this activity.</p>" +
       '<div class="pma-disc-actions">' +
       '<button type="button" class="pma-disc-btn" id="pma-disc-ok">Got it</button>' +

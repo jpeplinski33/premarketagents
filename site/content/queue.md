@@ -20,7 +20,7 @@ Draft pipeline: `scripts/draft-learn-article.sh` → human/Claude edit → publi
 | how-neighborhood-research-helps-sellers | How neighborhood research helps sellers | Selling | P0 | live | neighborhood comps, seller research |
 | pre-market-vs-mls | Pre-market vs MLS: what buyers should know | Basics | P1 | live | pre-MLS, coming soon listing |
 | how-invite-links-work | How private invite links work (and why) | Trust | P1 | idea | invite-only listing, realtor share link |
-| new-albany-buyer-checklist | New Albany buyer checklist for private previews | Local | P2 | idea | New Albany OH homes, Ebrington |
+| new-albany-buyer-checklist | New Albany buyer checklist for pre-market opportunities | Local | P2 | idea | New Albany OH homes, Ebrington |
 | reading-a-parcel-card | How to read a county parcel / tax card | Education | P2 | idea | Franklin County parcel, property card |
 | agent-analytics-explained | Why listing agents see invite activity (and how it’s disclosed) | Trust | P1 | idea | listing activity, privacy disclosure |
 

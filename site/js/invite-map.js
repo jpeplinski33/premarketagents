@@ -134,9 +134,9 @@
     var panel = document.createElement("div");
     panel.className = "pma-map-panel";
     panel.innerHTML =
-      '<div class="pma-map-panel-head">Parcel intelligence</div>' +
+      '<div class="pma-map-panel-head">Property details</div>' +
       '<div class="pma-map-panel-body" id="pma-map-panel-body">' +
-      "<p class=\"muted\">Select a parcel for county facts and third-party links. Photos open on Zillow (new tab)—we don’t host MLS images.</p>" +
+      '<p class="muted">Select a parcel to see public county facts for this neighborhood.</p>' +
       "</div>";
     wrap.appendChild(panel);
     return panel;
@@ -203,36 +203,60 @@
     var zUrl = zillowSearchUrl(fullAddr);
     var cUrl = countyParcelUrl(p.PARCELID);
     var sale = fmtMoney(p.SALEPRICE);
-    var ag = p.RESFLRAREA_AG != null ? Number(p.RESFLRAREA_AG).toLocaleString("en-US") + " sqft AG" : null;
+    var ag = p.RESFLRAREA_AG != null && p.RESFLRAREA_AG !== "" ? Number(p.RESFLRAREA_AG).toLocaleString("en-US") + " sqft" : null;
     var year = p.RESYRBLT || null;
-    var acres = p.ACRES != null ? Number(p.ACRES).toFixed(2) + " ac" : p.STATEDAREA != null ? Number(p.STATEDAREA).toFixed(2) + " ac" : null;
+    var acres =
+      p.ACRES != null && p.ACRES !== ""
+        ? Number(p.ACRES).toFixed(2) + " acres"
+        : p.STATEDAREA != null && p.STATEDAREA !== ""
+        ? Number(p.STATEDAREA).toFixed(2) + " acres"
+        : null;
+    var saleDate = null;
+    if (p.SALEDATE != null && p.SALEDATE !== "") {
+      var sd = p.SALEDATE;
+      if (typeof sd === "number" || /^\d{10,13}$/.test(String(sd))) {
+        var ms = Number(sd);
+        if (ms < 1e12) ms *= 1000;
+        var d = new Date(ms);
+        if (!isNaN(d.getTime())) {
+          saleDate = d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+        }
+      } else {
+        saleDate = String(sd).slice(0, 10);
+      }
+    }
 
     var body = this.panel.querySelector("#pma-map-panel-body");
     var html = "";
     html += "<h4>" + (addr || "Parcel " + (p.PARCELID || "")) + "</h4>";
     if (p.PARCELID === this.opts.subjectParcelId) {
-      html += '<p class="tag">Subject listing · 7013 Hanbys Loop</p>';
+      html += '<p class="tag">This listing · 7013 Hanbys Loop</p>';
     }
-    if (owner) html += "<p><span class=\"k\">Owner (county)</span> " + escapeHtml(owner) + "</p>";
-    html += "<p><span class=\"k\">Parcel</span> " + escapeHtml(p.PARCELID || "—") + "</p>";
+    if (owner) html += "<p><span class=\"k\">Owner</span> " + escapeHtml(owner) + "</p>";
+    html += "<p><span class=\"k\">Parcel ID</span> " + escapeHtml(p.PARCELID || "—") + "</p>";
+    if (p.CLASSDSCRP) html += "<p><span class=\"k\">Use</span> " + escapeHtml(p.CLASSDSCRP) + "</p>";
     if (year) html += "<p><span class=\"k\">Year built</span> " + escapeHtml(String(year)) + "</p>";
-    if (ag) html += "<p><span class=\"k\">Living area</span> " + escapeHtml(ag) + " <em class=\"note\">county above-grade</em></p>";
-    if (acres) html += "<p><span class=\"k\">Lot</span> " + escapeHtml(acres) + "</p>";
-    if (p.SCHLDSCRP) html += "<p><span class=\"k\">Schools</span> " + escapeHtml(p.SCHLDSCRP) + "</p>";
+    if (ag) html += "<p><span class=\"k\">Living area</span> " + escapeHtml(ag) + " <span class=\"note\">(above-grade, county)</span></p>";
+    if (acres) html += "<p><span class=\"k\">Lot size</span> " + escapeHtml(acres) + "</p>";
+    if (p.SCHLDSCRP) html += "<p><span class=\"k\">School district</span> " + escapeHtml(p.SCHLDSCRP) + "</p>";
     if (p.CVTTXDSCRP) html += "<p><span class=\"k\">Tax district</span> " + escapeHtml(p.CVTTXDSCRP) + "</p>";
-    if (sale) html += "<p><span class=\"k\">Last sale (county)</span> " + escapeHtml(sale) + (p.SALEDATE ? " · " + escapeHtml(String(p.SALEDATE).slice(0, 10)) : "") + "</p>";
+    if (sale || saleDate) {
+      html +=
+        "<p><span class=\"k\">Last recorded sale</span> " +
+        escapeHtml(sale || "—") +
+        (saleDate ? " · " + escapeHtml(saleDate) : "") +
+        "</p>";
+    }
     html += '<div class="pma-map-links">';
-    html +=
-      '<a class="btn-link" data-external="zillow" href="' +
-      zUrl +
-      '" target="_blank" rel="noopener">Open on Zillow ↗</a>';
     html +=
       '<a class="btn-link ghost" data-external="county" href="' +
       cUrl +
-      '" target="_blank" rel="noopener">County property card ↗</a>';
-    html += "</div>";
+      '" target="_blank" rel="noopener">More on county site ↗</a>';
     html +=
-      '<p class="note">Opens third-party sites. Pre Market Agents does not scrape or re-host MLS/Zillow photos. County data as-is.</p>';
+      '<a class="btn-link ghost" data-external="zillow" href="' +
+      zUrl +
+      '" target="_blank" rel="noopener">Compare on Zillow ↗</a>';
+    html += "</div>";
     body.innerHTML = html;
 
     var self = this;

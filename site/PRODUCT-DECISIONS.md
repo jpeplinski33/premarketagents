@@ -1,0 +1,141 @@
+# Pre Market Agents — product decisions (2026-08-03)
+
+## 1. Realtor verification (no contact harvest)
+
+### Collect at gate
+| Field | Why |
+|--------|-----|
+| Legal name | Match to license record |
+| State | Which board/database |
+| License number | Primary proof |
+| License type | Salesperson vs broker |
+| Attestation checkbox | Legal “I am licensed” statement |
+
+### Do **not** collect at gate
+Email, phone, brokerage, MLS ID (optional later), marketing opt-ins.
+
+### Best verification method (recommended stack)
+
+**Primary (best balance):** **State real estate license number + name + state**, verified against the **public state license lookup** (Ohio: eLicense / Division of Real Estate & Professional Licensing).
+
+Why not “MLS number” alone?
+- MLS member IDs are **MLS-specific**, often not a single national public API.
+- “REALTOR®” / NRDS is NAR-related and not a free open verification API for every visitor.
+- State **license** is the legal authority to practice; MLS is a membership on top.
+
+**Implementation tiers:**
+1. **Now (shipped soft gate):** Attestation + fields stored in `sessionStorage`. Keeps consumers out of agent marketing pages. Honest labeling: “may verify.”
+2. **Next (hard gate):** Server checks Ohio (then other states) public license status = active + name fuzzy-match. No email required.
+3. **Later (optional lead gen):** After gate, *optional* “Get updates” with email — never required to enter.
+
+**Do not:** scrape NAR or resell license data; claim “NAR verified” without rights.
+
+### Future lead gen
+Gate proves *professional*. Separate opt-in can capture contact for recruiting. Keep those steps separate so the gate never feels like a lead form.
+
+---
+
+## 2. Public landing vs realtor copy
+
+| Audience | Message |
+|----------|---------|
+| Homeowners / buyers | Clarity, calm exclusivity, education, invite path |
+| Realtors (behind gate) | “Look exceptional,” invite branding, analytics, control |
+
+Removed from public hero: *“makes the listing agent look exceptional.”* That line lives on `/realtors/` after gate.
+
+---
+
+## 3. Map tiers & compliance posture
+
+### Risks if full JobShutter map is public
+| Risk | Why it matters |
+|------|----------------|
+| Owner-name carpet bombing | Privacy optics + possible limits on bulk republication of PII even when “public record” |
+| County GIS ToS | Franklin Auditor data is as-is; commercial reuse at scale should be careful |
+| Activity → realtor leads without consent | Feels like surveillance; needs disclosure + often consent banners |
+| Dilutes exclusivity | If public map is “the good stuff,” invites lose power |
+
+### Recommended tier split
+
+| Tier | Who | What they get | Tracking |
+|------|-----|----------------|----------|
+| **Public Explore** | Anyone | School districts, high-level neighborhood education, **no owner names**, no private inventory, limited zoom tools | Aggregate anonymous only (if any) |
+| **Realtor workshop** | License-gated | Demo of full product, sample analytics UI, playbooks | Session tied to license attestation |
+| **Invite preview** | Client with `/r/agent/code` | Full listing + deep map + disclosed agent analytics | Full invite-scoped intel |
+
+**Hold back for invites (the “real cards”):**
+- Owner-name labels / neighbor directory
+- Full parcel intelligence + Zillow deep-link packs per pin
+- “Homes this client lingered on” agent dashboard
+- Full photo galleries of private listings
+
+**Safe public hooks that still entice:**
+- Educational map mock / “coming soon” explore
+- School-district explainers
+- Blog content
+- Clear CTA: “Get a private invite from your realtor”
+
+### Can public map feed realtor leads?
+Only if:
+1. User is told activity may be used to connect them with professionals **or**
+2. Tracking is aggregate (heatmaps of popular *areas*, not identified people) **or**
+3. User creates a voluntary session (still no full vault)
+
+Do **not** put full agent analytics on anonymous public map users.
+
+---
+
+## 4. SEO plan (“SEO the shit out of this”)
+
+### Technical (done / ongoing)
+- Unique titles + meta descriptions per page
+- Canonical URLs
+- JSON-LD Organization / WebSite / Article
+- `sitemap.xml` with all public URLs
+- `robots.txt`: allow public; **disallow `/r/`** invite paths
+- Invite pages: `noindex`
+
+### Content pillars (homeowner)
+1. Pre-market / coming soon explainers  
+2. Buyer checklists for private showings  
+3. Seller neighborhood / pricing education  
+4. Local (Franklin / New Albany / Columbus) guides later  
+5. “How private invites work” trust content  
+
+### Authority / backlinks (your “articles on trusted sites” idea)
+Yes — that’s **off-site SEO / digital PR**, not a magic on-site switch:
+
+| Tactic | Purpose |
+|--------|---------|
+| Guest posts on local business journals, Realtor association blogs (where allowed) | Backlinks + brand |
+| Original data reports (“Franklin County sales education” — not scraped MLS photos) | Link magnets |
+| Partnerships with agents who cite your guides | Referral + links |
+| Consistent NAP only if you do local business SEO | Local pack (optional) |
+
+On-site blog supports keywords; **external mentions** raise domain authority. Both matter.
+
+### Automation for articles
+| Layer | Approach |
+|-------|----------|
+| Editorial calendar | Topics + keywords queue in repo (`content/queue.md`) |
+| Draft generation | Gemini/DeepSeek draft → human or Claude edit for accuracy |
+| Fact lock | No invented stats; cite public sources |
+| Publish | Static pages under `/learn/slug/` or future CMS |
+| Cadence | 2–4 solid posts/month beats 30 thin AI spam pages (Google quality systems punish junk) |
+
+---
+
+## 5. Shipped this pass
+- Homeowner-first homepage (agent vanity line removed)
+- `/realtors/` license gate (name + state + license #, no email/phone)
+- `/learn/` + 3 educational articles + schema
+- `/privacy/` summary
+- SEO sitemap/robots updates
+- This decision doc
+
+## 6. Explicitly not fully built yet (by design)
+- Hard server-side Ohio eLicense verification
+- Live public map (teaser only until compliance tier is coded)
+- Full invite analytics backend
+- Automated content pipeline production run

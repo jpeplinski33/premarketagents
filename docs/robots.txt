@@ -1,8 +1,10 @@
-# Pre Market Agents — public marketing site only
 User-agent: *
 Allow: /
+Allow: /learn/
+Allow: /realtors/
+Allow: /privacy/
 Disallow: /r/
-Disallow: /l/
+Disallow: /agent/
 Disallow: /invite/
 
 Sitemap: https://premarketagents.com/sitemap.xml

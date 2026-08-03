@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Realtor Entrance | Pre Market Agents</title>
+  <meta name="description" content="Licensed real estate professionals: verify with your state license number to access Pre Market Agents realtor materials. No email or phone required at the gate." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://premarketagents.com/realtors/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/site.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/">
+      <span class="brand-pre">Pre Market</span>
+      <span class="brand-agents">Agents</span>
+    </a>
+    <nav class="nav">
+      <a href="/">Homeowners</a>
+      <a href="/learn/">Learn</a>
+    </nav>
+  </header>
+
+  <main class="section" style="padding-top:40px;">
+    <div id="gate-view">
+      <div class="section-head" style="margin:0 auto 28px; text-align:center;">
+        <p class="eyebrow">Professionals only</p>
+        <h1>Realtor verification gate</h1>
+        <p>
+          This area is for licensed real estate professionals. We ask for <strong style="color:var(--ink)">name + state license number</strong> only—
+          not your phone, email, or brokerage—so marketing here can speak to agents without opening the door to general consumer traffic.
+        </p>
+      </div>
+
+      <div class="gate-box">
+        <form id="realtor-gate" novalidate>
+          <label for="fullName">Legal name on license</label>
+          <input id="fullName" name="fullName" autocomplete="name" required placeholder="First Last" />
+
+          <label for="state">Licensing state</label>
+          <select id="state" name="state" required>
+            <option value="">Select state</option>
+            <option value="OH" selected>Ohio</option>
+            <option value="OTHER">Other U.S. state</option>
+          </select>
+
+          <label for="license">State real estate license number</label>
+          <input id="license" name="license" required placeholder="e.g. Ohio license number" inputmode="text" autocomplete="off" />
+
+          <label for="licenseType">Credential type</label>
+          <select id="licenseType" name="licenseType" required>
+            <option value="salesperson">Salesperson / Broker associate</option>
+            <option value="broker">Broker</option>
+            <option value="other">Other licensed RE professional</option>
+          </select>
+
+          <div class="check">
+            <input type="checkbox" id="attest" required />
+            <label for="attest" style="text-transform:none;letter-spacing:0;font-weight:400;margin:0;">
+              I certify I am currently licensed to practice real estate in the state selected, that the information is accurate,
+              and that I am not entering this area as a consumer. I understand Pre Market Agents may verify licenses against public state records.
+            </label>
+          </div>
+
+          <p class="form-error" id="err"></p>
+          <button type="submit" class="btn btn-primary" style="width:100%;margin-top:18px;">Continue to realtor materials</button>
+          <p class="form-note">
+            We do <strong style="color:var(--ink)">not</strong> collect email, phone, or brokerage at this gate.
+            Verification is designed to keep homeowners out—not to build a contact list. Later, optional lead tools can be opt-in.
+          </p>
+          <p class="form-note">
+            Ohio: look up a license at
+            <a href="https://elicense.ohio.gov/OH_HomePage" target="_blank" rel="noopener">elicense.ohio.gov</a>
+            if you need your number.
+          </p>
+        </form>
+      </div>
+    </div>
+
+    <div id="agent-view" hidden>
+      <div class="section-head">
+        <p class="eyebrow">Realtor materials</p>
+        <h1>Present exclusivity. Control the invite.</h1>
+        <p>
+          A refined private-preview experience that makes the listing agent look exceptional—
+          with invite links branded to your name and analytics that help you follow up intelligently.
+        </p>
+      </div>
+      <div class="grid-2">
+        <article class="panel">
+          <h3>Why agents use Pre Market</h3>
+          <ul>
+            <li>Private links: <code style="color:var(--gold-soft)">/r/your-name/listing-code</code></li>
+            <li>Invite-only full galleries, map depth, and owner-aware context</li>
+            <li>Activity intel: who engaged, photos, time, map interest (disclosed to viewers)</li>
+            <li>Homeowners never browse a public off-market catalog here</li>
+          </ul>
+        </article>
+        <article class="panel">
+          <h3>Next steps</h3>
+          <ul>
+            <li>Request early access for your next pre-market presentation</li>
+            <li>Use educational guides to warm clients before an invite</li>
+            <li>Keep full map + tracking reserved for invited clients</li>
+          </ul>
+          <p style="margin-top:18px;">
+            <a class="btn btn-primary" href="mailto:hello@premarketagents.com?subject=Realtor%20early%20access">Request early access</a>
+          </p>
+          <p class="form-note" id="session-meta"></p>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-brand"><span class="pm">Pre Market</span><span class="ag">Agents</span></div>
+    <nav class="footer-links">
+      <a href="/">Home</a>
+      <a href="/learn/">Learn</a>
+      <a href="/privacy/">Privacy</a>
+    </nav>
+  </footer>
+
+  <script>
+    (function () {
+      var KEY = "pma_realtor_gate_v1";
+      var gateView = document.getElementById("gate-view");
+      var agentView = document.getElementById("agent-view");
+      var form = document.getElementById("realtor-gate");
+      var err = document.getElementById("err");
+
+      function showAgent(data) {
+        gateView.hidden = true;
+        agentView.hidden = false;
+        var meta = document.getElementById("session-meta");
+        if (meta && data) {
+          meta.textContent = "Verified session (this browser): " + data.fullName + " · " + data.state + " license on file. Not a public consumer session.";
+        }
+      }
+
+      try {
+        var existing = JSON.parse(sessionStorage.getItem(KEY) || "null");
+        if (existing && existing.license && existing.fullName) showAgent(existing);
+      } catch (e) {}
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        err.classList.remove("show");
+        var fullName = document.getElementById("fullName").value.trim();
+        var state = document.getElementById("state").value;
+        var license = document.getElementById("license").value.trim().replace(/\s+/g, "");
+        var licenseType = document.getElementById("licenseType").value;
+        var attest = document.getElementById("attest").checked;
+
+        if (!fullName || fullName.length < 3) {
+          err.textContent = "Enter the legal name on your license.";
+          err.classList.add("show");
+          return;
+        }
+        if (!state) {
+          err.textContent = "Select your licensing state.";
+          err.classList.add("show");
+          return;
+        }
+        if (!license || license.length < 4) {
+          err.textContent = "Enter a valid state real estate license number.";
+          err.classList.add("show");
+          return;
+        }
+        if (!attest) {
+          err.textContent = "Confirm the professional attestation to continue.";
+          err.classList.add("show");
+          return;
+        }
+
+        // Soft gate: professional attestation + license identifiers only.
+        // Production: server-side match against state license databases (e.g. Ohio eLicense).
+        var payload = {
+          fullName: fullName,
+          state: state,
+          license: license,
+          licenseType: licenseType,
+          verifiedAt: new Date().toISOString(),
+          method: "soft_attestation_v1"
+        };
+        sessionStorage.setItem(KEY, JSON.stringify(payload));
+        showAgent(payload);
+      });
+    })();
+  </script>
+</body>
+</html>

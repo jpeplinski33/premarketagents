@@ -2,33 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-
-  <!-- Primary SEO -->
-  <title>Pre Market Agents | Exclusive Pre-Market &amp; Pre-MLS Listings for Realtors</title>
-  <meta name="description" content="Pre Market Agents is an invite-only platform where listing agents present pre-market and pre-MLS homes with a private, high-end experience—before public marketing." />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pre Market Agents | Private Home Previews &amp; Smarter Real Estate Decisions</title>
+  <meta name="description" content="Learn how private pre-market home previews work, explore neighborhood education, and understand exclusive listings shared by invitation from your realtor—not a public MLS feed." />
   <meta name="robots" content="index, follow, max-image-preview:large" />
-  <meta name="keywords" content="pre-market listings, pre-MLS listings, exclusive real estate listings for agents, coming soon homes agents, off-market listings realtors, private listing preview" />
   <link rel="canonical" href="https://premarketagents.com/" />
-
-  <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://premarketagents.com/" />
-  <meta property="og:title" content="Pre Market Agents | Exclusive Pre-Market Listings for Realtors" />
-  <meta property="og:description" content="Invite-only pre-market and pre-MLS listing presentations for realtors. Private links from the listing agent—not a public MLS feed." />
+  <meta property="og:title" content="Pre Market Agents | Private Home Previews" />
+  <meta property="og:description" content="Educational tools and private, invite-only pre-market home previews—shared by realtors when the moment is right." />
   <meta property="og:site_name" content="Pre Market Agents" />
-  <meta property="og:locale" content="en_US" />
-
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Pre Market Agents | Exclusive Pre-Market Listings for Realtors" />
-  <meta name="twitter:description" content="Invite-only pre-market listing presentations. Shared by the listing agent. Built for quality, exclusivity, and agent branding." />
-
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-
-  <!-- JSON-LD -->
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/site.css" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -38,609 +25,149 @@
         "@id": "https://premarketagents.com/#organization",
         "name": "Pre Market Agents",
         "url": "https://premarketagents.com/",
-        "description": "Invite-only platform for realtors to present pre-market and pre-MLS residential listings with a private, high-end experience.",
-        "slogan": "Exclusive pre-market presentations for realtors"
+        "description": "Private pre-market home previews and homeowner education. Full listing access is by realtor invitation only."
       },
       {
         "@type": "WebSite",
         "@id": "https://premarketagents.com/#website",
         "url": "https://premarketagents.com/",
         "name": "Pre Market Agents",
-        "description": "Exclusive pre-market and pre-MLS listings presented by invitation from the listing agent.",
         "publisher": { "@id": "https://premarketagents.com/#organization" },
-        "inLanguage": "en-US"
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://premarketagents.com/learn/?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
       },
       {
         "@type": "WebPage",
         "@id": "https://premarketagents.com/#webpage",
         "url": "https://premarketagents.com/",
-        "name": "Pre Market Agents | Exclusive Pre-Market & Pre-MLS Listings for Realtors",
+        "name": "Pre Market Agents | Private Home Previews & Smarter Real Estate Decisions",
         "isPartOf": { "@id": "https://premarketagents.com/#website" },
-        "about": { "@id": "https://premarketagents.com/#organization" },
-        "description": "Learn how Pre Market Agents helps listing agents share exclusive pre-market home presentations by private invite.",
-        "inLanguage": "en-US"
+        "description": "Understand pre-market listings, neighborhood context, and how exclusive realtor invites work."
       }
     ]
   }
   </script>
-
-  <style>
-    :root {
-      --bg: #0c0c0d;
-      --bg-elev: #141416;
-      --bg-soft: #1a1a1d;
-      --line: rgba(255,255,255,0.08);
-      --line-strong: rgba(255,255,255,0.14);
-      --ink: #f5f2eb;
-      --muted: #9a958c;
-      --gold: #c4a574;
-      --gold-soft: #d4bc94;
-      --gold-dim: rgba(196,165,116,0.16);
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--bg);
-      color: var(--ink);
-      line-height: 1.55;
-      -webkit-font-smoothing: antialiased;
-    }
-    a { color: var(--gold-soft); text-decoration: none; }
-    a:hover { color: #fff; }
-    img { max-width: 100%; display: block; }
-
-    .site-header {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 24px;
-      background: rgba(12,12,13,0.92);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--line);
-    }
-    .brand { display: flex; flex-direction: column; gap: 3px; line-height: 1; }
-    .brand-pre {
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-weight: 600;
-      font-size: 26px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--ink);
-    }
-    .brand-agents {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.42em;
-      text-transform: uppercase;
-      color: var(--gold);
-      padding-left: 2px;
-    }
-    .nav {
-      display: flex;
-      align-items: center;
-      gap: 22px;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-    .nav a { color: var(--muted); }
-    .nav a:hover { color: var(--ink); }
-    .btn {
-      display: inline-block;
-      padding: 12px 20px;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      border: 1px solid transparent;
-      cursor: pointer;
-      text-align: center;
-    }
-    .btn-primary {
-      background: var(--gold);
-      color: #0c0c0d !important;
-      border-color: var(--gold);
-    }
-    .btn-primary:hover { background: var(--gold-soft); color: #0c0c0d !important; }
-    .btn-ghost {
-      background: transparent;
-      color: var(--ink) !important;
-      border-color: var(--line-strong);
-    }
-    .btn-ghost:hover { border-color: var(--gold); color: var(--gold-soft) !important; }
-
-    .hero {
-      position: relative;
-      min-height: min(88vh, 760px);
-      display: flex;
-      align-items: center;
-      padding: 72px 24px 80px;
-      overflow: hidden;
-      border-bottom: 1px solid var(--line);
-    }
-    .hero::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 80% 60% at 70% 20%, rgba(196,165,116,0.12), transparent 55%),
-        radial-gradient(ellipse 50% 40% at 15% 80%, rgba(196,165,116,0.06), transparent 50%),
-        linear-gradient(180deg, #101012 0%, var(--bg) 100%);
-      pointer-events: none;
-    }
-    .hero-inner {
-      position: relative;
-      max-width: 1100px;
-      margin: 0 auto;
-      width: 100%;
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 48px;
-      align-items: center;
-    }
-    @media (max-width: 860px) {
-      .hero-inner { grid-template-columns: 1fr; gap: 36px; }
-      .nav .hide-sm { display: none; }
-    }
-    .eyebrow {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 18px;
-    }
-    h1 {
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-weight: 500;
-      font-size: clamp(36px, 6vw, 56px);
-      line-height: 1.12;
-      letter-spacing: 0.01em;
-      margin-bottom: 18px;
-      max-width: 14ch;
-    }
-    .hero-lead {
-      font-size: 17px;
-      color: #c8c3b8;
-      max-width: 42ch;
-      margin-bottom: 28px;
-      line-height: 1.65;
-    }
-    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
-    .hero-note {
-      margin-top: 22px;
-      font-size: 13px;
-      color: var(--muted);
-      max-width: 40ch;
-    }
-    .hero-card {
-      border: 1px solid var(--line-strong);
-      background: linear-gradient(165deg, #17171a 0%, #101012 100%);
-      padding: 28px 24px;
-    }
-    .hero-card h2 {
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: 22px;
-      font-weight: 500;
-      margin-bottom: 12px;
-    }
-    .hero-card p {
-      font-size: 14px;
-      color: #a8a39a;
-      margin-bottom: 10px;
-      line-height: 1.6;
-    }
-    .hero-card ul {
-      list-style: none;
-      margin-top: 16px;
-    }
-    .hero-card li {
-      font-size: 13px;
-      color: #c8c3b8;
-      padding: 8px 0 8px 16px;
-      border-top: 1px solid var(--line);
-      position: relative;
-    }
-    .hero-card li::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0.85em;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--gold);
-      opacity: 0.75;
-    }
-
-    .section {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 72px 24px;
-    }
-    .section-head {
-      max-width: 620px;
-      margin-bottom: 40px;
-    }
-    .section-head h2 {
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: clamp(28px, 4vw, 36px);
-      font-weight: 500;
-      margin-bottom: 12px;
-      letter-spacing: 0.02em;
-    }
-    .section-head p {
-      color: #a8a39a;
-      font-size: 15px;
-      line-height: 1.65;
-    }
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-    }
-    @media (max-width: 800px) { .grid-3 { grid-template-columns: 1fr; } }
-    .card {
-      border: 1px solid var(--line);
-      background: var(--bg-elev);
-      padding: 26px 22px;
-      height: 100%;
-    }
-    .card .num {
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: 28px;
-      color: var(--gold);
-      margin-bottom: 10px;
-    }
-    .card h3 {
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      margin-bottom: 10px;
-    }
-    .card p {
-      font-size: 14px;
-      color: #a8a39a;
-      line-height: 1.6;
-    }
-
-    .split {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
-    @media (max-width: 800px) { .split { grid-template-columns: 1fr; } }
-    .panel {
-      border: 1px solid var(--line);
-      background: var(--bg-elev);
-      padding: 28px 24px;
-    }
-    .panel h3 {
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: 24px;
-      font-weight: 500;
-      margin-bottom: 10px;
-    }
-    .panel p, .panel li {
-      font-size: 14px;
-      color: #a8a39a;
-      line-height: 1.6;
-    }
-    .panel ul { margin: 14px 0 0 18px; }
-    .panel li { margin-bottom: 8px; }
-
-    .band {
-      border-top: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
-      background: var(--bg-elev);
-    }
-    .band .section { padding-top: 56px; padding-bottom: 56px; }
-    .cta-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .cta-row h2 {
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: clamp(26px, 3.5vw, 34px);
-      font-weight: 500;
-      max-width: 16ch;
-    }
-    .cta-row p {
-      color: #a8a39a;
-      font-size: 14px;
-      max-width: 36ch;
-      margin: 8px 0 0;
-    }
-
-    .faq details {
-      border-top: 1px solid var(--line);
-      padding: 16px 0;
-    }
-    .faq details:last-child { border-bottom: 1px solid var(--line); }
-    .faq summary {
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 15px;
-      list-style: none;
-      color: var(--ink);
-    }
-    .faq summary::-webkit-details-marker { display: none; }
-    .faq details p {
-      margin-top: 10px;
-      color: #a8a39a;
-      font-size: 14px;
-      max-width: 70ch;
-      line-height: 1.65;
-    }
-
-    .site-footer {
-      border-top: 1px solid var(--line);
-      padding: 40px 24px 48px;
-      text-align: center;
-    }
-    .footer-brand {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      margin-bottom: 14px;
-    }
-    .footer-brand .pm {
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: 20px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-    }
-    .footer-brand .ag {
-      font-size: 9px;
-      letter-spacing: 0.4em;
-      text-transform: uppercase;
-      color: var(--gold);
-      font-weight: 600;
-    }
-    .site-footer p {
-      font-size: 12px;
-      color: var(--muted);
-      max-width: 520px;
-      margin: 0 auto 8px;
-      line-height: 1.55;
-    }
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      gap: 18px;
-      flex-wrap: wrap;
-      margin-top: 16px;
-      font-size: 12px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-    .footer-links a { color: var(--muted); }
-    .footer-links a:hover { color: var(--gold-soft); }
-
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0,0,0,0);
-      border: 0;
-    }
-  </style>
 </head>
 <body>
   <header class="site-header">
-    <a href="/" class="brand" aria-label="Pre Market Agents home">
+    <a class="brand" href="/">
       <span class="brand-pre">Pre Market</span>
       <span class="brand-agents">Agents</span>
     </a>
     <nav class="nav" aria-label="Primary">
       <a class="hide-sm" href="#how-it-works">How it works</a>
-      <a class="hide-sm" href="#for-agents">For agents</a>
-      <a class="hide-sm" href="#faq">FAQ</a>
-      <a class="btn btn-ghost" href="mailto:hello@premarketagents.com?subject=Agent%20access%20inquiry">Request access</a>
+      <a class="hide-sm" href="#explore">Explore</a>
+      <a class="hide-sm" href="/learn/">Learn</a>
+      <a class="btn btn-ghost" href="/realtors/">I’m a realtor</a>
     </nav>
   </header>
 
   <main>
-    <section class="hero" aria-labelledby="hero-title">
+    <section class="hero">
       <div class="hero-inner">
-        <div>
-          <p class="eyebrow">Invite-only · Agent-presented</p>
-          <h1 id="hero-title">Pre-market listings, presented with exclusivity.</h1>
-          <p class="hero-lead">
-            Pre Market Agents is where listing agents share private pre-market and pre-MLS home
-            presentations—by invitation only. No public feed. No open map of inventory.
-            Just a refined experience that makes the listing agent look exceptional.
-          </p>
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="mailto:hello@premarketagents.com?subject=Listing%20agent%20interest">I’m a listing agent</a>
-            <a class="btn btn-ghost" href="#how-it-works">See how it works</a>
-          </div>
-          <p class="hero-note">
-            Have an invite link from your realtor? Use that private URL—listings are not published on this homepage.
-          </p>
+        <p class="eyebrow">For homeowners &amp; buyers</p>
+        <h1 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:clamp(36px,5.5vw,54px);line-height:1.12;max-width:16ch;margin-bottom:18px;">
+          See the right home at the right moment—privately.
+        </h1>
+        <p class="hero-lead">
+          Pre Market Agents helps you understand private previews, neighborhoods, and the path
+          from curiosity to a serious look—without a public free-for-all of every off-market home.
+          Full listing access arrives by invitation from a licensed realtor.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="/learn/">Homeowner guides</a>
+          <a class="btn btn-ghost" href="#explore">Preview explore tools</a>
         </div>
-        <aside class="hero-card" aria-label="Platform highlights">
-          <h2>Built for the moment before the MLS</h2>
-          <p>
-            When a home is ready for select eyes only, the presentation should feel as considered
-            as the property.
-          </p>
-          <ul>
-            <li>Private links branded with the listing agent’s name</li>
-            <li>High-end photo galleries and listing detail</li>
-            <li>Invite-only access—never a public search catalog</li>
-            <li>Designed so agents control who sees what, and when</li>
-          </ul>
-        </aside>
+        <p class="hero-note">
+          Already have a private link from your realtor? Open that invite URL—those pages are not listed here.
+        </p>
       </div>
     </section>
 
-    <section class="section" id="how-it-works" aria-labelledby="how-title">
+    <section class="section" id="how-it-works">
       <div class="section-head">
-        <h2 id="how-title">How Pre Market Agents works</h2>
-        <p>
-          A simple path from listing agent to invited buyer or cooperating agent—without dumping
-          inventory onto the open internet.
-        </p>
+        <h2>How private previews work</h2>
+        <p>Simple, calm, and controlled—so you never feel like inventory on a public billboard.</p>
       </div>
       <div class="grid-3">
         <article class="card">
-          <div class="num">01</div>
-          <h3>Listing agent prepares</h3>
-          <p>
-            The listing agent builds a polished pre-market presentation: photography, facts,
-            and the story of the home—before broad public marketing.
-          </p>
+          <h3>1. You work with a realtor</h3>
+          <p>Your agent (buyer’s or listing) decides when a private preview is appropriate and who should see it.</p>
         </article>
         <article class="card">
-          <div class="num">02</div>
-          <h3>Private invite link</h3>
-          <p>
-            They send a recognizable, agent-branded link (not a public directory). Access is
-            intentionally limited to people they choose.
-          </p>
+          <h3>2. You receive an invite link</h3>
+          <p>That link is personal and branded to the realtor who sent it—not a public search result anyone can browse.</p>
         </article>
         <article class="card">
-          <div class="num">03</div>
-          <h3>Controlled preview</h3>
-          <p>
-            Invited clients and colleagues experience a premium listing page. Map tools and
-            full inventory stay behind authorized access—not on this marketing site.
-          </p>
+          <h3>3. You review on your time</h3>
+          <p>Photos, facts, and (when invited) richer map context—without exposing every homeowner’s details to the open web.</p>
         </article>
       </div>
     </section>
 
-    <section class="section" id="for-agents" aria-labelledby="agents-title">
-      <div class="section-head">
-        <h2 id="agents-title">Who it’s for</h2>
-        <p>
-          Pre Market Agents is not a consumer home-search portal. It is infrastructure for
-          professional realtors who need discretion and presentation quality.
-        </p>
-      </div>
-      <div class="split">
-        <article class="panel">
-          <h3>Listing agents</h3>
-          <p>
-            Present a coming-soon or pre-MLS opportunity with a private page that elevates your brand.
-          </p>
-          <ul>
-            <li>Share links that include <em>your</em> name, plus a unique listing code</li>
-            <li>Control who receives access—homeowners, buyers, co-op agents</li>
-            <li>Look intentional, not “posted on another portal”</li>
-          </ul>
-        </article>
-        <article class="panel">
-          <h3>Buyer agents &amp; invited clients</h3>
-          <p>
-            When you receive a Pre Market Agents link, you know it came from the listing agent—not a scraped feed.
-          </p>
-          <ul>
-            <li>Open the private invite URL you were sent</li>
-            <li>Review the home presentation they authorized</li>
-            <li>No browsing other listings from this public site</li>
-          </ul>
-        </article>
-      </div>
-    </section>
-
-    <section class="band" aria-labelledby="privacy-title">
+    <section class="band" id="explore">
       <div class="section">
         <div class="section-head">
-          <h2 id="privacy-title">Private by design</h2>
+          <h2>Explore the area—without the private vault</h2>
           <p>
-            This website does <strong style="color:var(--ink);font-weight:600;">not</strong> publish
-            a searchable map of homes, a public listing grid, or owner-level tools. Those experiences
-            live only on authorized invite links and future signed-in agent sessions.
+            Public tools stay educational and high-level. Owner names, deep activity tracking for agents,
+            and full exclusive inventory stay behind realtor invites.
           </p>
         </div>
-        <div class="grid-3">
-          <article class="card">
-            <h3>No public inventory</h3>
-            <p>Guests landing here cannot open active pre-market listings without an invite.</p>
-          </article>
-          <article class="card">
-            <h3>No public map layer</h3>
-            <p>Parcel maps, satellite, and related tools are reserved for authorized listing views.</p>
-          </article>
-          <article class="card">
-            <h3>Agent-forward exclusivity</h3>
-            <p>Every invite experience is framed as access from the listing realtor—not an anonymous feed.</p>
-          </article>
+        <div class="map-teaser" aria-label="Neighborhood explore preview">
+          <div class="map-teaser-inner">
+            <span class="pill">Public tier · limited</span>
+            <h3>Neighborhood context, not a free private MLS</h3>
+            <p>
+              Coming soon on this public site: school districts, general market education, and
+              high-level area orientation. Parcel owner directories and full agent analytics remain invite-only.
+            </p>
+            <a class="btn btn-ghost" href="/learn/what-is-a-pre-market-listing/">Read: What is pre-market?</a>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="section faq" id="faq" aria-labelledby="faq-title">
+    <section class="section">
       <div class="section-head">
-        <h2 id="faq-title">Frequently asked questions</h2>
-        <p>Straight answers for agents evaluating pre-market presentation tools.</p>
+        <h2>Guides for homeowners</h2>
+        <p>Clear, non-salesy education—written to help you ask better questions of any realtor you trust.</p>
       </div>
-
-      <details>
-        <summary>What is a pre-market listing?</summary>
-        <p>
-          A pre-market (or pre-MLS / coming-soon) presentation is a home offered for limited preview
-          before—or outside of—full public MLS marketing. Rules vary by board and MLS; agents remain
-          responsible for compliance with local policy and seller instructions.
-        </p>
-      </details>
-      <details>
-        <summary>Can I browse homes on Pre Market Agents without an invite?</summary>
-        <p>
-          No. The public site explains the platform only. Listings are shared through private links
-          controlled by the listing agent. There is no public map or listing search on this homepage.
-        </p>
-      </details>
-      <details>
-        <summary>How do I get a listing link?</summary>
-        <p>
-          From the listing realtor who invited you. Links are agent-branded and include a unique
-          listing code so each home has its own address—even when one agent has many presentations.
-        </p>
-      </details>
-      <details>
-        <summary>Is this a replacement for the MLS?</summary>
-        <p>
-          No. Pre Market Agents is a presentation and access layer for exclusive previews.
-          MLS submission, Clear Cooperation, and local marketing rules still apply as required by your market.
-        </p>
-      </details>
-      <details>
-        <summary>How do listing agents join?</summary>
-        <p>
-          Request access and we’ll follow up as onboarding opens. Early partners work with us
-          one listing at a time to get the experience right.
-        </p>
-      </details>
+      <div class="article-list">
+        <a class="article-item" href="/learn/what-is-a-pre-market-listing/">
+          <div class="article-meta">Basics</div>
+          <h3>What is a pre-market listing?</h3>
+          <p>How private previews differ from a full MLS launch—and what to ask your agent.</p>
+        </a>
+        <a class="article-item" href="/learn/questions-to-ask-before-a-private-showing/">
+          <div class="article-meta">Buying</div>
+          <h3>Questions to ask before a private showing</h3>
+          <p>A practical checklist so exclusive access still feels informed, not rushed.</p>
+        </a>
+        <a class="article-item" href="/learn/how-neighborhood-research-helps-sellers/">
+          <div class="article-meta">Selling</div>
+          <h3>How neighborhood research helps sellers</h3>
+          <p>Why comps, schools, and parcel context matter when you price and position a home.</p>
+        </a>
+      </div>
+      <p style="margin-top:20px;"><a href="/learn/">All guides →</a></p>
     </section>
 
-    <section class="band" aria-labelledby="cta-title">
-      <div class="section">
-        <div class="cta-row">
-          <div>
-            <h2 id="cta-title">Bring your next pre-market home here.</h2>
-            <p>Early access for listing agents who want presentation quality and controlled distribution.</p>
-          </div>
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="mailto:hello@premarketagents.com?subject=Listing%20agent%20early%20access">Request agent access</a>
-            <a class="btn btn-ghost" href="mailto:hello@premarketagents.com?subject=General%20inquiry">Contact</a>
-          </div>
-        </div>
+    <section class="section">
+      <div class="grid-2">
+        <article class="panel">
+          <h3>If you’re a homeowner or buyer</h3>
+          <p>Use the guides, learn the process, and work with a licensed realtor you trust. Full private listings appear only when they invite you.</p>
+          <p style="margin-top:16px;"><a class="btn btn-primary" href="/learn/">Start learning</a></p>
+        </article>
+        <article class="panel">
+          <h3>If you’re a licensed realtor</h3>
+          <p>Agent materials are behind a professional verification gate—license details only, no phone or email required at the door.</p>
+          <p style="margin-top:16px;"><a class="btn btn-ghost" href="/realtors/">Realtor entrance →</a></p>
+        </article>
       </div>
     </section>
   </main>
@@ -650,24 +177,15 @@
       <span class="pm">Pre Market</span>
       <span class="ag">Agents</span>
     </div>
-    <p>
-      Pre Market Agents helps realtors present exclusive pre-market and pre-MLS residential listings
-      through private, agent-branded invite links.
-    </p>
-    <p>© <span id="y"></span> Pre Market Agents. All rights reserved.</p>
-    <nav class="footer-links" aria-label="Footer">
+    <p>Private previews by realtor invitation. Public pages are educational—not a free off-market catalog.</p>
+    <p>© <span id="y"></span> Pre Market Agents</p>
+    <nav class="footer-links">
       <a href="/">Home</a>
-      <a href="#how-it-works">How it works</a>
-      <a href="#faq">FAQ</a>
-      <a href="mailto:hello@premarketagents.com">Contact</a>
+      <a href="/learn/">Learn</a>
+      <a href="/realtors/">Realtors</a>
+      <a href="/privacy/">Privacy</a>
     </nav>
-    <p class="sr-only">
-      Keywords for context: pre-market listings for realtors, exclusive pre-MLS presentations,
-      invite-only coming soon homes, private listing agent previews.
-    </p>
   </footer>
-  <script>
-    document.getElementById("y").textContent = new Date().getFullYear();
-  </script>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
 </body>
 </html>

@@ -59,19 +59,22 @@
 
   <div id="lock-view" class="dash">
     <div class="gate-box panel">
-      <p class="eyebrow">Listing agent only</p>
-      <h1 style="font-size:28px;margin-bottom:12px;">Invite analytics</h1>
+      <p class="eyebrow">Agent sign-in · pilot</p>
+      <h1 style="font-size:28px;margin-bottom:12px;">Alan D. Hinson</h1>
       <p class="muted" style="margin-bottom:16px;">
-        Enter your agent dashboard key for <code>alan-hinson / 3czjbv9</code>.
-        MVP stores events in the invitee’s browser; this dashboard reads events captured on <em>this</em> device
-        (and demo seed data). Remote multi-device backend hooks when an endpoint is configured.
+        Dummy login for the Hanbys Loop invite dashboard. Not real accounts — client-side only for the pilot.
       </p>
-      <label for="key" style="display:block;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Dashboard key</label>
-      <input id="key" type="password" autocomplete="current-password" placeholder="Dashboard key"
-        style="width:100%;padding:12px;background:var(--bg);border:1px solid var(--line-strong);color:var(--ink);margin-bottom:12px;" />
-      <p class="form-error" id="err" style="color:#b85c4a;font-size:13px;display:none;margin-bottom:10px;"></p>
-      <button type="button" class="btn btn-primary" id="unlock" style="width:100%;">Open dashboard</button>
-      <p class="muted" style="margin-top:14px;">Default demo key for Alan’s pilot: <code>alan-hanbys-2026</code></p>
+      <form id="login-form">
+        <label for="email" style="display:block;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Email</label>
+        <input id="email" type="email" autocomplete="username" placeholder="you@brokerage.com" required
+          style="width:100%;padding:12px;background:var(--bg);border:1px solid var(--line-strong);color:var(--ink);margin-bottom:14px;" />
+        <label for="password" style="display:block;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Password</label>
+        <input id="password" type="password" autocomplete="current-password" placeholder="Password" required
+          style="width:100%;padding:12px;background:var(--bg);border:1px solid var(--line-strong);color:var(--ink);margin-bottom:12px;" />
+        <p class="form-error" id="err" style="color:#b85c4a;font-size:13px;display:none;margin-bottom:10px;"></p>
+        <button type="submit" class="btn btn-primary" id="unlock" style="width:100%;">Sign in</button>
+      </form>
+      <p class="muted" style="margin-top:14px;">Pilot only — not production auth.</p>
     </div>
   </div>
 
@@ -132,7 +135,10 @@
   <script>
     (function () {
       var INVITE = "alan-hinson/3czjbv9";
-      var DEMO_KEY = "alan-hanbys-2026";
+      // Dummy pilot credentials (client-side only — not real auth)
+      var DEMO_EMAIL = "alan@newalbanyrealty.com";
+      var DEMO_PASSWORD = "PreMarket2026";
+      var DEMO_KEY = "alan-hanbys-2026"; // still works via ?key=
       var lock = document.getElementById("lock-view");
       var dash = document.getElementById("dash-view");
       var err = document.getElementById("err");
@@ -201,11 +207,15 @@
         render();
       }
 
-      document.getElementById("unlock").addEventListener("click", function () {
-        var k = document.getElementById("key").value.trim();
-        if (k !== DEMO_KEY) {
+      document.getElementById("login-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var email = document.getElementById("email").value.trim().toLowerCase();
+        var password = document.getElementById("password").value;
+        var ok =
+          email === DEMO_EMAIL && password === DEMO_PASSWORD;
+        if (!ok) {
           err.style.display = "block";
-          err.textContent = "Incorrect key.";
+          err.textContent = "Incorrect email or password.";
           return;
         }
         err.style.display = "none";

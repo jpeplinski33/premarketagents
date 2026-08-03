@@ -7,7 +7,7 @@
   <meta name="description" content="Pre-market exclusive: 7013 Hanbys Loop, New Albany, OH. 5 bed · 4.5 bath · 5,200 sqft. Listed by Alan D. Hinson, New Albany Realty." />
   <meta property="og:title" content="Pre Market · 7013 Hanbys Loop · $2,315,000" />
   <meta property="og:description" content="Exclusive pre-market listing · New Albany, OH · Alan D. Hinson" />
-  <meta property="og:image" content="images/gallery/01.jpg" />
+  <meta property="og:image" content="/images/gallery/01.jpg" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -213,6 +213,31 @@
     }
     .thumb.active { opacity: 1; border-color: var(--gold); }
     .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    
+    .exclusive-banner {
+      width: 100%;
+      margin: 4px 0 14px;
+      padding: 14px 16px;
+      border: 1px solid rgba(196,165,116,0.35);
+      background: linear-gradient(135deg, rgba(196,165,116,0.12), rgba(196,165,116,0.04));
+    }
+    .exclusive-banner-kicker {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+    .exclusive-banner p {
+      font-size: 14px;
+      color: #c8c3b8;
+      line-height: 1.55;
+      max-width: 62ch;
+      margin: 0;
+    }
+    .exclusive-banner strong { color: var(--ink); font-weight: 600; }
 
     /* —— Body —— */
     .wrap {
@@ -618,7 +643,7 @@
   </header>
 
   <div class="gallery" id="gallery">
-    <img class="main-img" id="mainImg" src="images/gallery/01.jpg" alt="7013 Hanbys Loop" />
+    <img class="main-img" id="mainImg" src="/images/gallery/01.jpg" alt="7013 Hanbys Loop" />
     <div class="gallery-overlay"></div>
     <div class="gallery-badge" aria-label="Pre Market listing">
       <span class="pm">Pre Market</span>
@@ -637,6 +662,15 @@
 
   <main class="wrap">
     <div class="status-row">
+    <div class="exclusive-banner" role="note">
+      <div class="exclusive-banner-kicker">Exclusive access</div>
+      <p>
+        You’re viewing this <strong>Pre Market</strong> listing by invitation from
+        <strong>Alan D. Hinson</strong>, New Albany Realty.
+        This link is personal to his preview — not a public MLS page.
+      </p>
+    </div>
+
       <div class="badge-pre">
         <span class="pm">Pre Market</span>
         <span class="ag">Exclusive</span>
@@ -701,13 +735,13 @@
         <section id="floorplans">
           <h2>Floor plans</h2>
           <div class="fp-tabs" role="tablist">
-            <button type="button" class="fp-tab active" data-fp="images/floorplans/first-floor.jpg">1st floor</button>
-            <button type="button" class="fp-tab" data-fp="images/floorplans/second-floor.jpg">2nd floor</button>
-            <button type="button" class="fp-tab" data-fp="images/floorplans/site-plan.jpg">Site plan</button>
-            <button type="button" class="fp-tab" data-fp="images/floorplans/elevation-front.jpg">Elevation</button>
+            <button type="button" class="fp-tab active" data-fp="/images/floorplans/first-floor.jpg">1st floor</button>
+            <button type="button" class="fp-tab" data-fp="/images/floorplans/second-floor.jpg">2nd floor</button>
+            <button type="button" class="fp-tab" data-fp="/images/floorplans/site-plan.jpg">Site plan</button>
+            <button type="button" class="fp-tab" data-fp="/images/floorplans/elevation-front.jpg">Elevation</button>
           </div>
           <div class="fp-view">
-            <img id="fpImg" src="images/floorplans/first-floor.jpg" alt="Floor plan" />
+            <img id="fpImg" src="/images/floorplans/first-floor.jpg" alt="Floor plan" />
           </div>
         </section>
       </div>
@@ -715,7 +749,7 @@
       <aside class="side-card">
         <div class="side-label">Presented by</div>
         <div class="agent-row">
-          <img class="agent-photo" src="images/agent/alan-hinson.jpg" alt="Alan D. Hinson" width="72" height="72" />
+          <img class="agent-photo" src="/images/agent/alan-hinson.jpg" alt="Alan D. Hinson" width="72" height="72" />
           <div>
             <div class="agent-name">Alan D. Hinson</div>
             <div class="agent-co">New Albany Realty</div>
@@ -753,7 +787,7 @@
     </div>
     <div class="lb-stage">
       <button type="button" class="nav-btn prev" id="lbPrev" aria-label="Previous">‹</button>
-      <img id="lbImg" src="images/gallery/01.jpg" alt="" />
+      <img id="lbImg" src="/images/gallery/01.jpg" alt="" />
       <button type="button" class="nav-btn next" id="lbNext" aria-label="Next">›</button>
     </div>
   </div>
@@ -772,7 +806,7 @@
       const PHOTOS = [];
       for (let i = 1; i <= 71; i++) {
         const n = String(i).padStart(2, "0");
-        PHOTOS.push({ src: "images/gallery/" + n + ".jpg", alt: "7013 Hanbys Loop — photo " + i });
+        PHOTOS.push({ src: "/images/gallery/" + n + ".jpg", alt: "7013 Hanbys Loop — photo " + i });
       }
 
       let idx = 0;

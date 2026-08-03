@@ -1,0 +1,8 @@
+# Pre Market Agents — public marketing site only
+User-agent: *
+Allow: /
+Disallow: /r/
+Disallow: /l/
+Disallow: /invite/
+
+Sitemap: https://premarketagents.com/sitemap.xml

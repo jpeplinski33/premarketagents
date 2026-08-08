@@ -184,6 +184,21 @@
         }
       }
 
+      // Pilot preview: skip gate with ?preview=1 (no password; for quick internal review)
+      var params = new URLSearchParams(location.search);
+      if (params.get("preview") === "1" || params.get("key") === "realtor-preview-2026") {
+        var preview = {
+          fullName: "Preview Realtor",
+          state: "OH",
+          license: "PREVIEW",
+          licenseType: "salesperson",
+          method: "preview_bypass",
+          at: Date.now()
+        };
+        try { sessionStorage.setItem(KEY, JSON.stringify(preview)); } catch (e) {}
+        showAgent(preview);
+      }
+
       try {
         var existing = JSON.parse(sessionStorage.getItem(KEY) || "null");
         if (existing && existing.license && existing.fullName) showAgent(existing);

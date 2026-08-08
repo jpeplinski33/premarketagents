@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent dashboard · Natasha Petroff · Pre Market Agents</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/site.css" />
+  <style>
+    .dash { max-width: 960px; margin: 0 auto; padding: 40px 22px 80px; }
+    .dash h1 {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-weight: 500; font-size: clamp(28px, 4vw, 40px); margin-bottom: 8px;
+    }
+    .dash .sub { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+    .stat-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px;
+    }
+    @media (max-width: 720px) { .stat-grid { grid-template-columns: 1fr 1fr; } }
+    .stat {
+      border: 1px solid var(--line); background: var(--bg-elev); padding: 16px 14px;
+    }
+    .stat .n {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 32px; color: var(--gold-soft); line-height: 1.1;
+    }
+    .stat .l { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+    .panel { margin-bottom: 18px; }
+    .panel h3 { margin-bottom: 12px; }
+    table.simple { width: 100%; border-collapse: collapse; font-size: 13px; }
+    table.simple th, table.simple td {
+      text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); color: #c8c3b8;
+    }
+    table.simple th { color: var(--muted); font-weight: 600; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+    .gate-box { max-width: 420px; margin: 48px auto; }
+    .muted { color: var(--muted); font-size: 13px; }
+    .ok { color: var(--gold-soft); }
+    code { color: var(--gold-soft); font-size: 12px; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; align-items: center; }
+    .toolbar button, .toolbar a.btn { font-size: 11px; padding: 10px 14px; }
+    #lock-view[hidden], #dash-view[hidden] { display: none !important; }
+    .listing-card {
+      border: 1px solid var(--line); background: var(--bg-elev); padding: 18px; margin-bottom: 14px;
+    }
+    .listing-card h3 {
+      font-family: "Cormorant Garamond", Georgia, serif; font-size: 22px; font-weight: 500; margin-bottom: 6px;
+    }
+    .listing-card .meta { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+    .listing-card label {
+      display: block; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 6px;
+    }
+    .listing-card input[type="password"], .listing-card input[type="text"] {
+      width: 100%; max-width: 320px; padding: 10px 12px; background: var(--bg);
+      border: 1px solid var(--line-strong); color: var(--ink); margin-bottom: 10px;
+    }
+    .row-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .row-actions button, .row-actions a.btn { font-size: 11px; padding: 9px 12px; }
+    .copy-ok { color: var(--gold-soft); font-size: 12px; margin-left: 6px; }
+    .invite-box {
+      margin-top: 12px; padding: 12px; border: 1px solid rgba(196,165,116,0.25);
+      background: rgba(196,165,116,0.06); font-size: 13px; color: #c8c3b8; line-height: 1.5;
+    }
+    .invite-box strong { color: var(--ink); }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/">
+      <span class="brand-pre">Pre Market</span>
+      <span class="brand-agents">Agents</span>
+    </a>
+    <nav class="nav">
+      <a href="/r/natasha-petroff/n2pfrv7/">Open Yantis invite</a>
+    </nav>
+  </header>
+
+  <div id="lock-view" class="dash">
+    <div class="gate-box panel">
+      <p class="eyebrow">Agent sign-in · pilot</p>
+      <h1 style="font-size:28px;margin-bottom:12px;">Natasha Petroff</h1>
+      <p class="muted" style="margin-bottom:16px;">
+        Sign in to manage listings, set invite passwords, and view client engagement.
+        Pilot accounts are client-side only — not production auth.
+      </p>
+      <form id="login-form">
+        <label for="email" style="display:block;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Email</label>
+        <input id="email" type="email" autocomplete="username" placeholder="you@brokerage.com" required
+          style="width:100%;padding:12px;background:var(--bg);border:1px solid var(--line-strong);color:var(--ink);margin-bottom:14px;" />
+        <label for="password" style="display:block;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Password</label>
+        <input id="password" type="password" autocomplete="current-password" placeholder="Password" required
+          style="width:100%;padding:12px;background:var(--bg);border:1px solid var(--line-strong);color:var(--ink);margin-bottom:12px;" />
+        <p class="form-error" id="err" style="color:#b85c4a;font-size:13px;display:none;margin-bottom:10px;"></p>
+        <button type="submit" class="btn btn-primary" id="unlock" style="width:100%;">Sign in</button>
+      </form>
+      <p class="muted" style="margin-top:14px;">Pilot only — not production auth.</p>
+    </div>
+  </div>
+
+  <div id="dash-view" class="dash" hidden>
+    <p class="eyebrow">Natasha Petroff · Thomas|Riddle · New Albany Realty</p>
+    <h1>Your dashboard</h1>
+    <p class="sub">
+      Manage private listings, set <strong style="color:var(--ink)">invite passwords</strong>, and track client engagement.
+      <span id="asof" class="ok"></span>
+    </p>
+
+    <div class="toolbar">
+      <button type="button" class="btn btn-ghost" id="reload">Refresh activity</button>
+      <button type="button" class="btn btn-ghost" id="seed">Load demo session</button>
+      <button type="button" class="btn btn-ghost" id="export">Export JSON</button>
+      <button type="button" class="btn btn-ghost" id="signout">Sign out</button>
+    </div>
+
+    <div class="panel">
+      <h3>Your listings</h3>
+      <p class="muted" style="margin-bottom:14px;">
+        Every invite link is password-protected. Set the password buyers must enter, then copy the link + password to text or email.
+      </p>
+      <div id="listings"></div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n" id="s-events">0</div><div class="l">Events</div></div>
+      <div class="stat"><div class="n" id="s-sessions">0</div><div class="l">Sessions</div></div>
+      <div class="stat"><div class="n" id="s-map">0</div><div class="l">Map events</div></div>
+      <div class="stat"><div class="n" id="s-scroll">0%</div><div class="l">Max scroll</div></div>
+    </div>
+
+    <div class="panel">
+      <h3>Top photos · selected listing</h3>
+      <table class="simple" id="photo-table">
+        <thead><tr><th>#</th><th>Views</th><th>Dwell</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <p class="muted" id="photo-empty" style="display:none;margin-top:8px;">No photo events yet.</p>
+    </div>
+
+    <div class="panel">
+      <h3>Sessions</h3>
+      <table class="simple" id="session-table">
+        <thead><tr><th>Started</th><th>Duration</th><th>Events</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h3>CTAs &amp; external links</h3>
+      <p class="muted" id="cta-summary">—</p>
+    </div>
+
+    <div class="panel">
+      <h3>Disclosure</h3>
+      <p class="muted">
+        Clients see a plain-language notice that you can view engagement on this pre-market opportunity
+        (time, photos, map, links). Activity is invite-scoped.
+      </p>
+    </div>
+  </div>
+
+  <script src="/js/invite-gate.js"></script>
+  <script src="/js/invite-analytics.js"></script>
+  <script>
+    (function () {
+      var AGENT = "natasha-petroff";
+      var DEMO_EMAIL = "natashap@thomasriddle.com";
+      var DEMO_PASSWORD = "PreMarket2026";
+      var LISTINGS = [
+        {
+          code: "n2pfrv7",
+          address: "4879 Yantis Dr, New Albany, OH 43054",
+          price: "$2,795,000",
+          path: "/r/natasha-petroff/n2pfrv7/",
+          seedPassword: "Yantis2026",
+          seedHash: "ea284bd1fc7ac95b5e685fcad68b03ec832308476350cc75951a75e338577a81"
+        }
+      ];
+      var activeInvite = AGENT + "/" + LISTINGS[0].code;
+
+      var lock = document.getElementById("lock-view");
+      var dash = document.getElementById("dash-view");
+      var err = document.getElementById("err");
+
+      function unlocked() {
+        try { return sessionStorage.getItem("pma_dash_" + AGENT) === "1"; } catch (e) { return false; }
+      }
+      function setUnlocked() {
+        try { sessionStorage.setItem("pma_dash_" + AGENT, "1"); } catch (e) {}
+      }
+      function clearUnlocked() {
+        try { sessionStorage.removeItem("pma_dash_" + AGENT); } catch (e) {}
+      }
+
+      function fmtDur(ms) {
+        if (ms == null || ms < 0) return "—";
+        var s = Math.round(ms / 1000);
+        if (s < 60) return s + "s";
+        return Math.floor(s / 60) + "m " + (s % 60) + "s";
+      }
+      function fmtTime(t) {
+        if (!t) return "—";
+        return new Date(t).toLocaleString();
+      }
+
+      function absoluteUrl(path) {
+        return location.origin + path;
+      }
+
+      function ensureSeedPasswords() {
+        LISTINGS.forEach(function (L) {
+          var id = AGENT + "/" + L.code;
+          var cfg = PMAInviteGate.getConfig(id);
+          if (!cfg.hash && L.seedHash) {
+            // Seed into localStorage so dashboard edits work immediately
+            var store = PMAInviteGate.loadStore();
+            store[id] = { hash: L.seedHash, required: true, label: L.address, updatedAt: Date.now() };
+            try { localStorage.setItem(PMAInviteGate.STORE_KEY, JSON.stringify(store)); } catch (e) {}
+          }
+        });
+      }
+
+      function renderListings() {
+        var host = document.getElementById("listings");
+        host.innerHTML = "";
+        LISTINGS.forEach(function (L) {
+          var id = AGENT + "/" + L.code;
+          var cfg = PMAInviteGate.getConfig(id);
+          var card = document.createElement("div");
+          card.className = "listing-card";
+          card.innerHTML =
+            "<h3>" + L.address + "</h3>" +
+            '<p class="meta">' + L.price + " · Invite <code>" + id + "</code>" +
+            (cfg.updatedAt ? " · Password set " + fmtTime(cfg.updatedAt) : " · Using seed password") +
+            "</p>" +
+            '<label for="pw-' + L.code + '">Invite password (buyers enter this)</label>' +
+            '<input type="password" id="pw-' + L.code + '" placeholder="Set or change password" autocomplete="new-password" />' +
+            '<div class="row-actions">' +
+            '<button type="button" class="btn btn-primary" data-act="save" data-code="' + L.code + '">Save password</button>' +
+            '<button type="button" class="btn btn-ghost" data-act="copy-link" data-code="' + L.code + '">Copy invite link</button>' +
+            '<button type="button" class="btn btn-ghost" data-act="copy-msg" data-code="' + L.code + '">Copy link + password text</button>' +
+            '<a class="btn btn-ghost" href="' + L.path + '" target="_blank" rel="noopener">Open as client</a>' +
+            '<button type="button" class="btn btn-ghost" data-act="select" data-code="' + L.code + '">View activity</button>' +
+            '<span class="copy-ok" id="ok-' + L.code + '"></span>' +
+            "</div>" +
+            '<div class="invite-box" id="box-' + L.code + '">' +
+            "<strong>Share with buyers:</strong><br />" +
+            "1. Link: <code>" + absoluteUrl(L.path) + "</code><br />" +
+            "2. Password: the one you set above (seed default was <code>" + L.seedPassword + "</code> until you change it)" +
+            "</div>";
+          host.appendChild(card);
+        });
+
+        host.querySelectorAll("button[data-act]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var code = btn.getAttribute("data-code");
+            var L = LISTINGS.find(function (x) { return x.code === code; });
+            if (!L) return;
+            var id = AGENT + "/" + code;
+            var okEl = document.getElementById("ok-" + code);
+            var act = btn.getAttribute("data-act");
+
+            if (act === "save") {
+              var pw = document.getElementById("pw-" + code).value;
+              if (!pw || pw.length < 4) {
+                okEl.textContent = "Use at least 4 characters.";
+                return;
+              }
+              PMAInviteGate.setPassword(id, pw, { label: L.address }).then(function () {
+                okEl.textContent = "Password saved for this invite.";
+                L._lastPlain = pw;
+                renderListings();
+              });
+            } else if (act === "copy-link") {
+              navigator.clipboard.writeText(absoluteUrl(L.path)).then(function () {
+                okEl.textContent = "Link copied.";
+              });
+            } else if (act === "copy-msg") {
+              var plain = L._lastPlain || L.seedPassword;
+              var msg =
+                "Here's a private Pre Market preview of " + L.address + ":\n\n" +
+                absoluteUrl(L.path) + "\n\n" +
+                "Password: " + plain + "\n\n" +
+                "— Natasha Petroff, Thomas|Riddle Real Estate Group";
+              navigator.clipboard.writeText(msg).then(function () {
+                okEl.textContent = "Message copied (uses last saved or seed password).";
+              });
+            } else if (act === "select") {
+              activeInvite = id;
+              renderActivity();
+              okEl.textContent = "Showing activity for this listing.";
+            }
+          });
+        });
+      }
+
+      function renderActivity() {
+        var events = PMAInviteAnalytics.loadEvents(activeInvite);
+        var sum = PMAInviteAnalytics.summarize(events);
+        document.getElementById("s-events").textContent = sum.eventCount;
+        document.getElementById("s-sessions").textContent = sum.sessionCount;
+        document.getElementById("s-map").textContent = sum.mapEvents;
+        document.getElementById("s-scroll").textContent = (sum.scrollMax || 0) + "%";
+        document.getElementById("asof").textContent = sum.last
+          ? " · Last activity " + fmtTime(sum.last)
+          : " · No activity yet";
+
+        var pt = document.querySelector("#photo-table tbody");
+        pt.innerHTML = "";
+        if (!sum.photoViews.length) {
+          document.getElementById("photo-empty").style.display = "block";
+        } else {
+          document.getElementById("photo-empty").style.display = "none";
+          sum.photoViews.forEach(function (p) {
+            var tr = document.createElement("tr");
+            tr.innerHTML = "<td>Photo " + (p.index + 1) + "</td><td>" + p.views + "</td><td>" + fmtDur(p.dwell_ms) + "</td>";
+            pt.appendChild(tr);
+          });
+        }
+
+        var st = document.querySelector("#session-table tbody");
+        st.innerHTML = "";
+        sum.sessions
+          .sort(function (a, b) { return b.start - a.start; })
+          .forEach(function (s) {
+            var tr = document.createElement("tr");
+            tr.innerHTML = "<td>" + fmtTime(s.start) + "</td><td>" + fmtDur(s.end - s.start) + "</td><td>" + s.events + "</td>";
+            st.appendChild(tr);
+          });
+
+        var bits = [];
+        Object.keys(sum.ctas).forEach(function (k) { bits.push(k + ": " + sum.ctas[k]); });
+        Object.keys(sum.externals).forEach(function (k) { bits.push(k + " links: " + sum.externals[k]); });
+        document.getElementById("cta-summary").textContent = bits.length ? bits.join(" · ") : "No CTA or external clicks yet.";
+      }
+
+      function showDash() {
+        lock.hidden = true;
+        dash.hidden = false;
+        ensureSeedPasswords();
+        renderListings();
+        renderActivity();
+      }
+
+      document.getElementById("login-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var email = document.getElementById("email").value.trim().toLowerCase();
+        var password = document.getElementById("password").value;
+        if (email !== DEMO_EMAIL || password !== DEMO_PASSWORD) {
+          err.style.display = "block";
+          err.textContent = "Incorrect email or password.";
+          return;
+        }
+        err.style.display = "none";
+        setUnlocked();
+        showDash();
+      });
+
+      document.getElementById("reload").addEventListener("click", renderActivity);
+      document.getElementById("signout").addEventListener("click", function () {
+        clearUnlocked();
+        lock.hidden = false;
+        dash.hidden = true;
+      });
+      document.getElementById("seed").addEventListener("click", function () {
+        var sid = "demo-" + Date.now().toString(36);
+        var base = Date.now() - 12 * 60 * 1000;
+        var demo = [
+          { t: base, type: "page_view", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: {} },
+          { t: base + 2000, type: "disclosure_ack", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: {} },
+          { t: base + 5000, type: "photo_view", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: { index: 0, total: 68 } },
+          { t: base + 12000, type: "photo_dwell", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: { index: 0, dwell_ms: 7000 } },
+          { t: base + 40000, type: "scroll_depth", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: { pct: 80 } },
+          { t: base + 55000, type: "map_view", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: { zoom: 17 } },
+          { t: base + 70000, type: "open_external_link", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: { provider: "zillow" } },
+          { t: base + 90000, type: "cta_call", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: {} },
+          { t: base + 95000, type: "session_end", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: { duration_ms: 95000, scroll_max: 80 } }
+        ];
+        var all = PMAInviteAnalytics.loadEvents(activeInvite).concat(demo);
+        PMAInviteAnalytics.saveEvents(activeInvite, all);
+        renderActivity();
+      });
+
+      document.getElementById("export").addEventListener("click", function () {
+        var events = PMAInviteAnalytics.loadEvents(activeInvite);
+        var blob = new Blob([JSON.stringify(events, null, 2)], { type: "application/json" });
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "pma-" + activeInvite.replace("/", "-") + "-events.json";
+        a.click();
+      });
+
+      if (unlocked()) showDash();
+    })();
+  </script>
+</body>
+</html>

@@ -148,3 +148,10 @@ On-site blog supports keywords; **external mentions** raise domain authority. Bo
 - **Live comps feed** — Franklin sales layer stale (max sale ~2025-07-16); freshness guard required before shipping comps
 - **Automated content production run** — pipeline scaffolded; human edit still required before publish
 - Optional: realtor lead-gen opt-in after gate
+
+
+## 7. Shipped 2026-08-08 — Natasha + password invites
+- **Agent:** Natasha Petroff (Thomas|Riddle / New Albany Realty) — dashboard `/r/natasha-petroff/dashboard/`
+- **Listing:** 4879 Yantis Dr · invite `/r/natasha-petroff/n2pfrv7/` · 68 Zillow-sourced photos (private invite, noindex)
+- **Password-protected invites (all agents):** realtor sets password in dashboard; buyers enter on invite page (`invite-gate.js`)
+- **Pilot logins:** Natasha `natashap@thomasriddle.com` / `PreMarket2026`; Alan unchanged; seed invite passwords `Yantis2026` / `Hanbys2026`

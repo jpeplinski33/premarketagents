@@ -93,6 +93,23 @@
       <a class="btn btn-primary" href="/r/alan-hinson/3czjbv9/">View listing as client</a>
     </div>
 
+    <div class="panel" id="invite-password-panel">
+      <h3>Invite password</h3>
+      <p class="muted" style="margin-bottom:12px;">
+        All client invites are password-protected. Set the password buyers must enter, then share the link + password.
+      </p>
+      <label for="invite-pw" style="display:block;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">New invite password</label>
+      <input id="invite-pw" type="password" autocomplete="new-password" placeholder="At least 4 characters"
+        style="width:100%;max-width:320px;padding:10px 12px;background:var(--bg);border:1px solid var(--line-strong);color:var(--ink);margin-bottom:10px;" />
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+        <button type="button" class="btn btn-primary" id="save-invite-pw">Save password</button>
+        <button type="button" class="btn btn-ghost" id="copy-invite-link">Copy invite link</button>
+        <button type="button" class="btn btn-ghost" id="copy-invite-msg">Copy link + password text</button>
+        <span class="ok" id="pw-status" style="font-size:12px;align-self:center;"></span>
+      </div>
+      <p class="muted" id="pw-hint">Seed default password: <code>Hanbys2026</code> (change it anytime).</p>
+    </div>
+
     <div class="stat-grid">
       <div class="stat"><div class="n" id="s-events">0</div><div class="l">Events</div></div>
       <div class="stat"><div class="n" id="s-sessions">0</div><div class="l">Sessions</div></div>
@@ -131,6 +148,7 @@
     </div>
   </div>
 
+  <script src="/js/invite-gate.js"></script>
   <script src="/js/invite-analytics.js"></script>
   <script>
     (function () {
@@ -139,15 +157,26 @@
       var DEMO_EMAIL = "alan@newalbanyrealty.com";
       var DEMO_PASSWORD = "PreMarket2026";
       var DEMO_KEY = "alan-hanbys-2026"; // still works via ?key=
+      var SEED_INVITE_PASSWORD = "Hanbys2026";
+      var SEED_INVITE_HASH = "c87f0deba776e21dfc9fbce9a713b2ed329663bd3cb4cd84536d425e37a1ad08";
       var lock = document.getElementById("lock-view");
       var dash = document.getElementById("dash-view");
       var err = document.getElementById("err");
+      var lastInvitePlain = null;
 
       function unlocked() {
         try { return sessionStorage.getItem("pma_dash_alan") === "1"; } catch (e) { return false; }
       }
       function setUnlocked() {
         try { sessionStorage.setItem("pma_dash_alan", "1"); } catch (e) {}
+      }
+      function ensureSeedPassword() {
+        var cfg = PMAInviteGate.getConfig(INVITE);
+        if (!cfg.hash) {
+          var store = PMAInviteGate.loadStore();
+          store[INVITE] = { hash: SEED_INVITE_HASH, required: true, label: "7013 Hanbys Loop", updatedAt: Date.now() };
+          try { localStorage.setItem(PMAInviteGate.STORE_KEY, JSON.stringify(store)); } catch (e) {}
+        }
       }
 
       function fmtDur(ms) {
@@ -204,6 +233,7 @@
       function showDash() {
         lock.hidden = true;
         dash.hidden = false;
+        ensureSeedPassword();
         render();
       }
 
@@ -221,6 +251,38 @@
         err.style.display = "none";
         setUnlocked();
         showDash();
+      });
+
+      document.getElementById("save-invite-pw").addEventListener("click", function () {
+        var pw = document.getElementById("invite-pw").value;
+        var status = document.getElementById("pw-status");
+        if (!pw || pw.length < 4) {
+          status.textContent = "Use at least 4 characters.";
+          return;
+        }
+        PMAInviteGate.setPassword(INVITE, pw, { label: "7013 Hanbys Loop" }).then(function () {
+          lastInvitePlain = pw;
+          status.textContent = "Invite password saved.";
+          document.getElementById("pw-hint").innerHTML =
+            "Password updated. Buyers must use the new password on the invite page.";
+        });
+      });
+      document.getElementById("copy-invite-link").addEventListener("click", function () {
+        var url = location.origin + "/r/alan-hinson/3czjbv9/";
+        navigator.clipboard.writeText(url).then(function () {
+          document.getElementById("pw-status").textContent = "Link copied.";
+        });
+      });
+      document.getElementById("copy-invite-msg").addEventListener("click", function () {
+        var plain = lastInvitePlain || SEED_INVITE_PASSWORD;
+        var msg =
+          "Here's a private Pre Market preview of 7013 Hanbys Loop, New Albany:\n\n" +
+          location.origin + "/r/alan-hinson/3czjbv9/\n\n" +
+          "Password: " + plain + "\n\n" +
+          "— Alan D. Hinson, New Albany Realty";
+        navigator.clipboard.writeText(msg).then(function () {
+          document.getElementById("pw-status").textContent = "Message copied.";
+        });
       });
 
       document.getElementById("reload").addEventListener("click", render);

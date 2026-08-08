@@ -230,7 +230,8 @@
     var html = "";
     html += "<h4>" + (addr || "Parcel " + (p.PARCELID || "")) + "</h4>";
     if (p.PARCELID === this.opts.subjectParcelId) {
-      html += '<p class="tag">This listing · 7013 Hanbys Loop</p>';
+      var subjectTag = this.opts.subjectLabel || this.opts.subjectAddress || "This listing";
+      html += '<p class="tag">This listing · ' + escapeHtml(subjectTag) + "</p>";
     }
     if (owner) html += "<p><span class=\"k\">Owner</span> " + escapeHtml(owner) + "</p>";
     html += "<p><span class=\"k\">Parcel ID</span> " + escapeHtml(p.PARCELID || "—") + "</p>";

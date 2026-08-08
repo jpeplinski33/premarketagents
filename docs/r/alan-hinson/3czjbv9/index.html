@@ -706,6 +706,40 @@
     .pma-owner-label.subject span {
       border-color: rgba(196,165,116,0.55); color: var(--gold-soft);
     }
+
+    #invite-gate {
+      min-height: calc(100vh - 60px); display: flex; align-items: center; justify-content: center;
+      padding: 40px 22px;
+    }
+    #invite-gate[hidden] { display: none !important; }
+    #invite-content[hidden] { display: none !important; }
+    .gate-card {
+      width: 100%; max-width: 420px; border: 1px solid var(--line-strong);
+      background: linear-gradient(165deg, #17171a 0%, #101012 100%); padding: 28px 24px;
+    }
+    .gate-card .eyebrow {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.28em;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 12px;
+    }
+    .gate-card h1 {
+      font-family: "Cormorant Garamond", Georgia, serif; font-weight: 500;
+      font-size: 28px; margin-bottom: 10px;
+    }
+    .gate-card p { color: var(--muted); font-size: 14px; line-height: 1.55; margin-bottom: 18px; }
+    .gate-card label {
+      display: block; font-size: 11px; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+    }
+    .gate-card input {
+      width: 100%; padding: 12px; background: var(--bg);
+      border: 1px solid var(--line-strong); color: var(--ink); margin-bottom: 12px; font-size: 15px;
+    }
+    .gate-card .btn-primary {
+      display: block; width: 100%; text-align: center; background: var(--gold);
+      color: #0c0c0d; font-weight: 700; font-size: 13px; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 14px 12px; border: none; cursor: pointer;
+    }
+    .gate-error { color: var(--danger); font-size: 13px; display: none; margin-bottom: 10px; }
   </style>
 </head>
 <body>
@@ -720,6 +754,26 @@
       <span>New Albany, OH</span>
     </div>
   </header>
+
+  <div id="invite-gate">
+    <div class="gate-card">
+      <p class="eyebrow">Private invite</p>
+      <h1>Enter access password</h1>
+      <p>
+        This Pre Market preview for <strong style="color:var(--ink)">7013 Hanbys Loop</strong> was shared by
+        <strong style="color:var(--ink)">Alan D. Hinson</strong>. Enter the password he sent you to continue.
+      </p>
+      <form id="invite-gate-form">
+        <label for="invite-gate-password">Invite password</label>
+        <input id="invite-gate-password" type="password" autocomplete="current-password" required placeholder="Password from your realtor" />
+        <p class="gate-error" id="invite-gate-error"></p>
+        <button type="submit" class="btn-primary">View listing</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="invite-content" hidden>
+
 
   <div class="gallery" id="gallery">
     <img class="main-img" id="mainImg" src="/images/gallery/01.jpg" alt="7013 Hanbys Loop" />
@@ -746,7 +800,7 @@
       <p>
         You’re viewing this <strong>Pre Market</strong> listing by invitation from
         <strong>Alan D. Hinson</strong>, New Albany Realty.
-        This link is personal to his preview — not a public MLS page.
+        This link is password-protected and personal — not a public MLS page.
       </p>
     </div>
 
@@ -888,7 +942,20 @@
     <div class="photo-grid" id="photoGrid"></div>
   </div>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    </div><!-- /invite-content -->
+
+  
+  <script>
+    window.PMA_INVITE_SEED = {
+      agentSlug: "alan-hinson",
+      listingCode: "3czjbv9",
+      passwordHash: "c87f0deba776e21dfc9fbce9a713b2ed329663bd3cb4cd84536d425e37a1ad08",
+      required: true,
+      label: "7013 Hanbys Loop"
+    };
+  </script>
+  <script src="/js/invite-gate.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="/js/invite-analytics.js"></script>
   <script src="/js/invite-map.js"></script>
   <script>
@@ -898,6 +965,11 @@
         const n = String(i).padStart(2, "0");
         PHOTOS.push({ src: "/images/gallery/" + n + ".jpg", alt: "7013 Hanbys Loop — photo " + i });
       }
+
+      let listingStarted = false;
+      function startListing() {
+      if (listingStarted) return;
+      listingStarted = true;
 
       const analytics = new PMAInviteAnalytics({
         agentSlug: "alan-hinson",
@@ -1029,6 +1101,15 @@
           setTimeout(function () { map.map.invalidateSize(); }, 600);
         }
       });
+      } // end startListing
+
+      var gateResult = PMAInviteGate.mount({
+        agentSlug: "alan-hinson",
+        listingCode: "3czjbv9",
+        agentName: "Alan D. Hinson",
+        onUnlock: startListing
+      });
+      if (gateResult.unlocked) startListing();
     })();
   </script>
 </body>

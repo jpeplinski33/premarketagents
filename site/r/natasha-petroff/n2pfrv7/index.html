@@ -499,6 +499,7 @@
         </p>
         <a class="btn-primary" href="tel:+12168325446">Call (216) 832-5446</a>
         <a class="btn-secondary" href="mailto:natashap@thomasriddle.com?subject=Pre%20Market%20%C2%B7%204879%20Yantis%20Dr">Email Natasha</a>
+        <a class="btn-secondary" href="/r/natasha-petroff/profile/" target="_blank" rel="noopener" style="margin-top:8px;">View agent profile</a>
         <p class="side-meta">
           Pre Market Agents · Exclusive agent preview<br />
           Not a public MLS listing page. Information deemed reliable but not guaranteed.
@@ -557,7 +558,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="/js/invite-gate.js"></script>
   <script src="/js/invite-analytics.js"></script>
-  <script src="/js/invite-map.js"></script>
+  <script src="/js/invite-map.js?v=3"></script>
   <script>
     (function () {
       var AGENT = "natasha-petroff";
@@ -687,27 +688,26 @@
         var map = new PMAInviteMap("#invite-map", {
           analytics: analytics,
           showOwners: true,
+          hideSubjectOwner: true,
+          focusSubject: true,
+          subjectPad: 3.5,
+          focusMaxZoom: 17,
+          focusMinZoom: 16,
           center: [40.07972, -82.82417],
           zoom: 17,
           subjectParcelId: "222-001181",
           subjectAddress: "4879 Yantis Dr, New Albany, OH 43054",
           subjectLabel: "4879 Yantis Dr",
-          dataUrl: "/data/yantis-parcels-invite.geojson"
+          dataUrl: "/data/yantis-parcels-invite.geojson?v=3"
         });
         map.init().then(function () {
           if (map.map) {
-            // Drop a subject marker even if parcel geojson is missing
-            if (window.L) {
-              L.circleMarker([40.07972, -82.82417], {
-                radius: 10, color: "#c4a574", weight: 2,
-                fillColor: "#c4a574", fillOpacity: 0.45
-              }).addTo(map.map).bindPopup("4879 Yantis Dr");
-            }
-            setTimeout(function () { map.map.invalidateSize(); }, 200);
-            setTimeout(function () { map.map.invalidateSize(); }, 600);
+            setTimeout(function () { map.map.invalidateSize(); map._refreshLabels(); }, 200);
+            setTimeout(function () { map.map.invalidateSize(); map._refreshLabels(); }, 700);
+            setTimeout(function () { map.map.invalidateSize(); }, 1400);
           }
-        }).catch(function () {
-          // Map still shows satellite + marker via catch path in invite-map
+        }).catch(function (err) {
+          console.warn("map init failed", err);
         });
       }
 

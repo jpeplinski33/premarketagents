@@ -117,6 +117,14 @@
     var content = document.getElementById("invite-content");
     var gate = document.getElementById("invite-gate");
 
+    // Pilot preview: skip password with ?preview=1 or ?key=invite-preview-2026
+    try {
+      var params = new URLSearchParams(location.search);
+      if (params.get("preview") === "1" || params.get("key") === "invite-preview-2026") {
+        setUnlocked(id);
+      }
+    } catch (e) {}
+
     if (!cfg.required || !cfg.hash) {
       // If somehow no hash, still show gate with message
     }

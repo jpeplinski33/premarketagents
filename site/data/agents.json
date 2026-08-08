@@ -20,6 +20,23 @@
           "seedInvitePassword": "Hanbys2026",
           "seedInvitePasswordHash": "c87f0deba776e21dfc9fbce9a713b2ed329663bd3cb4cd84536d425e37a1ad08",
           "status": "active"
+        },
+        {
+          "code": "y5q3szn",
+          "address": "4879 Yantis Dr, New Albany, OH 43054",
+          "price": 2795000,
+          "beds": 5,
+          "baths": "5 full + 2 half",
+          "sqft": 7891,
+          "path": "/r/alan-hinson/y5q3szn/",
+          "seedInvitePassword": "YantisAlan2026",
+          "seedInvitePasswordHash": "d92492c6f8336ac13e272ae80a3fe626695ab4db673438168e325d3f7643c2c5",
+          "status": "active",
+          "role": "listing-agent",
+          "parcel": "222-001181",
+          "lat": 40.07972,
+          "lng": -82.82417,
+          "notes": "Listing agent invite for Yantis. Natasha also has a buyer-side invite (Byers)."
         }
       ]
     },
@@ -47,7 +64,9 @@
           "status": "active",
           "parcel": "222-001181",
           "lat": 40.07972,
-          "lng": -82.82417
+          "lng": -82.82417,
+          "role": "buyer-agent-invite",
+          "notes": "Buyer-side invite for Byers (and similar). Listing agent is Alan Hinson."
         }
       ]
     }

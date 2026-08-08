@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="robots" content="noindex, nofollow" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Agent dashboard · Alan Hinson · Pre Market Agents</title>
+  <title>Agent dashboard · Alan D. Hinson · Pre Market Agents</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -40,10 +40,31 @@
     .ok { color: var(--gold-soft); }
     code { color: var(--gold-soft); font-size: 12px; }
     .toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; align-items: center; }
-    .toolbar button, .toolbar a.btn {
-      font-size: 11px; padding: 10px 14px;
-    }
+    .toolbar button, .toolbar a.btn { font-size: 11px; padding: 10px 14px; }
     #lock-view[hidden], #dash-view[hidden] { display: none !important; }
+    .listing-card {
+      border: 1px solid var(--line); background: var(--bg-elev); padding: 18px; margin-bottom: 14px;
+    }
+    .listing-card h3 {
+      font-family: "Cormorant Garamond", Georgia, serif; font-size: 22px; font-weight: 500; margin-bottom: 6px;
+    }
+    .listing-card .meta { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+    .listing-card label {
+      display: block; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 6px;
+    }
+    .listing-card input[type="password"], .listing-card input[type="text"] {
+      width: 100%; max-width: 320px; padding: 10px 12px; background: var(--bg);
+      border: 1px solid var(--line-strong); color: var(--ink); margin-bottom: 10px;
+    }
+    .row-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .row-actions button, .row-actions a.btn { font-size: 11px; padding: 9px 12px; }
+    .copy-ok { color: var(--gold-soft); font-size: 12px; margin-left: 6px; }
+    .invite-box {
+      margin-top: 12px; padding: 12px; border: 1px solid rgba(196,165,116,0.25);
+      background: rgba(196,165,116,0.06); font-size: 13px; color: #c8c3b8; line-height: 1.5;
+    }
+    .invite-box strong { color: var(--ink); }
   </style>
 </head>
 <body>
@@ -53,7 +74,7 @@
       <span class="brand-agents">Agents</span>
     </a>
     <nav class="nav">
-      <a href="/r/alan-hinson/3czjbv9/">Open listing</a>
+      <a href="/r/alan-hinson/y5q3szn/">Open listings</a>
     </nav>
   </header>
 
@@ -62,7 +83,8 @@
       <p class="eyebrow">Agent sign-in · pilot</p>
       <h1 style="font-size:28px;margin-bottom:12px;">Alan D. Hinson</h1>
       <p class="muted" style="margin-bottom:16px;">
-        Dummy login for the Hanbys Loop invite dashboard. Not real accounts — client-side only for the pilot.
+        Sign in to manage Hanbys + Yantis invites, set passwords, and view client engagement.
+        Pilot accounts are client-side only — not production auth.
       </p>
       <form id="login-form">
         <label for="email" style="display:block;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Email</label>
@@ -80,34 +102,25 @@
 
   <div id="dash-view" class="dash" hidden>
     <p class="eyebrow">Alan D. Hinson · New Albany Realty</p>
-    <h1>Invite activity</h1>
+    <h1>Your dashboard</h1>
     <p class="sub">
-      Listing <code>/r/alan-hinson/3czjbv9</code> · 7013 Hanbys Loop ·
+      Manage private listings, set <strong style="color:var(--ink)">invite passwords</strong>, and track client engagement.
       <span id="asof" class="ok"></span>
     </p>
 
     <div class="toolbar">
-      <button type="button" class="btn btn-ghost" id="reload">Refresh</button>
+      <button type="button" class="btn btn-ghost" id="reload">Refresh activity</button>
       <button type="button" class="btn btn-ghost" id="seed">Load demo session</button>
       <button type="button" class="btn btn-ghost" id="export">Export JSON</button>
-      <a class="btn btn-primary" href="/r/alan-hinson/3czjbv9/">View listing as client</a>
+      <button type="button" class="btn btn-ghost" id="signout">Sign out</button>
     </div>
 
-    <div class="panel" id="invite-password-panel">
-      <h3>Invite password</h3>
-      <p class="muted" style="margin-bottom:12px;">
-        All client invites are password-protected. Set the password buyers must enter, then share the link + password.
+    <div class="panel">
+      <h3>Your listings</h3>
+      <p class="muted" style="margin-bottom:14px;">
+        Every invite link is password-protected. Set the password buyers must enter, then copy the link + password to text or email.
       </p>
-      <label for="invite-pw" style="display:block;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">New invite password</label>
-      <input id="invite-pw" type="password" autocomplete="new-password" placeholder="At least 4 characters"
-        style="width:100%;max-width:320px;padding:10px 12px;background:var(--bg);border:1px solid var(--line-strong);color:var(--ink);margin-bottom:10px;" />
-      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
-        <button type="button" class="btn btn-primary" id="save-invite-pw">Save password</button>
-        <button type="button" class="btn btn-ghost" id="copy-invite-link">Copy invite link</button>
-        <button type="button" class="btn btn-ghost" id="copy-invite-msg">Copy link + password text</button>
-        <span class="ok" id="pw-status" style="font-size:12px;align-self:center;"></span>
-      </div>
-      <p class="muted" id="pw-hint">Seed default password: <code>Hanbys2026</code> (change it anytime).</p>
+      <div id="listings"></div>
     </div>
 
     <div class="stat-grid">
@@ -118,7 +131,7 @@
     </div>
 
     <div class="panel">
-      <h3>Top photos</h3>
+      <h3>Top photos · selected listing</h3>
       <table class="simple" id="photo-table">
         <thead><tr><th>#</th><th>Views</th><th>Dwell</th></tr></thead>
         <tbody></tbody>
@@ -143,7 +156,7 @@
       <h3>Disclosure</h3>
       <p class="muted">
         Clients see a plain-language notice that you can view engagement on this pre-market opportunity
-        (time, photos, map, links). Activity is invite-scoped—not a public surveillance product.
+        (time, photos, map, links). Activity is invite-scoped.
       </p>
     </div>
   </div>
@@ -152,31 +165,42 @@
   <script src="/js/invite-analytics.js"></script>
   <script>
     (function () {
-      var INVITE = "alan-hinson/3czjbv9";
-      // Dummy pilot credentials (client-side only — not real auth)
+      var AGENT = "alan-hinson";
       var DEMO_EMAIL = "alan@newalbanyrealty.com";
       var DEMO_PASSWORD = "PreMarket2026";
-      var DEMO_KEY = "alan-hanbys-2026"; // still works via ?key=
-      var SEED_INVITE_PASSWORD = "Hanbys2026";
-      var SEED_INVITE_HASH = "c87f0deba776e21dfc9fbce9a713b2ed329663bd3cb4cd84536d425e37a1ad08";
+      var DEMO_KEY = "alan-hanbys-2026";
+      var LISTINGS = [
+        {
+          code: "3czjbv9",
+          address: "7013 Hanbys Loop, New Albany, OH 43054",
+          price: "$2,315,000",
+          path: "/r/alan-hinson/3czjbv9/",
+          seedPassword: "Hanbys2026",
+          seedHash: "c87f0deba776e21dfc9fbce9a713b2ed329663bd3cb4cd84536d425e37a1ad08"
+        },
+        {
+          code: "y5q3szn",
+          address: "4879 Yantis Dr, New Albany, OH 43054",
+          price: "$2,795,000",
+          path: "/r/alan-hinson/y5q3szn/",
+          seedPassword: "YantisAlan2026",
+          seedHash: "d92492c6f8336ac13e272ae80a3fe626695ab4db673438168e325d3f7643c2c5"
+        }
+      ];
+      var activeInvite = AGENT + "/" + LISTINGS[0].code;
+
       var lock = document.getElementById("lock-view");
       var dash = document.getElementById("dash-view");
       var err = document.getElementById("err");
-      var lastInvitePlain = null;
 
       function unlocked() {
-        try { return sessionStorage.getItem("pma_dash_alan") === "1"; } catch (e) { return false; }
+        try { return sessionStorage.getItem("pma_dash_" + AGENT) === "1"; } catch (e) { return false; }
       }
       function setUnlocked() {
-        try { sessionStorage.setItem("pma_dash_alan", "1"); } catch (e) {}
+        try { sessionStorage.setItem("pma_dash_" + AGENT, "1"); } catch (e) {}
       }
-      function ensureSeedPassword() {
-        var cfg = PMAInviteGate.getConfig(INVITE);
-        if (!cfg.hash) {
-          var store = PMAInviteGate.loadStore();
-          store[INVITE] = { hash: SEED_INVITE_HASH, required: true, label: "7013 Hanbys Loop", updatedAt: Date.now() };
-          try { localStorage.setItem(PMAInviteGate.STORE_KEY, JSON.stringify(store)); } catch (e) {}
-        }
+      function clearUnlocked() {
+        try { sessionStorage.removeItem("pma_dash_" + AGENT); } catch (e) {}
       }
 
       function fmtDur(ms) {
@@ -190,16 +214,107 @@
         return new Date(t).toLocaleString();
       }
 
-      function render() {
-        var events = PMAInviteAnalytics.loadEvents(INVITE);
+      function absoluteUrl(path) {
+        return location.origin + path;
+      }
+
+      function ensureSeedPasswords() {
+        LISTINGS.forEach(function (L) {
+          var id = AGENT + "/" + L.code;
+          var cfg = PMAInviteGate.getConfig(id);
+          if (!cfg.hash && L.seedHash) {
+            // Seed into localStorage so dashboard edits work immediately
+            var store = PMAInviteGate.loadStore();
+            store[id] = { hash: L.seedHash, required: true, label: L.address, updatedAt: Date.now() };
+            try { localStorage.setItem(PMAInviteGate.STORE_KEY, JSON.stringify(store)); } catch (e) {}
+          }
+        });
+      }
+
+      function renderListings() {
+        var host = document.getElementById("listings");
+        host.innerHTML = "";
+        LISTINGS.forEach(function (L) {
+          var id = AGENT + "/" + L.code;
+          var cfg = PMAInviteGate.getConfig(id);
+          var card = document.createElement("div");
+          card.className = "listing-card";
+          card.innerHTML =
+            "<h3>" + L.address + "</h3>" +
+            '<p class="meta">' + L.price + " · Invite <code>" + id + "</code>" +
+            (cfg.updatedAt ? " · Password set " + fmtTime(cfg.updatedAt) : " · Using seed password") +
+            "</p>" +
+            '<label for="pw-' + L.code + '">Invite password (buyers enter this)</label>' +
+            '<input type="password" id="pw-' + L.code + '" placeholder="Set or change password" autocomplete="new-password" />' +
+            '<div class="row-actions">' +
+            '<button type="button" class="btn btn-primary" data-act="save" data-code="' + L.code + '">Save password</button>' +
+            '<button type="button" class="btn btn-ghost" data-act="copy-link" data-code="' + L.code + '">Copy invite link</button>' +
+            '<button type="button" class="btn btn-ghost" data-act="copy-msg" data-code="' + L.code + '">Copy link + password text</button>' +
+            '<a class="btn btn-ghost" href="' + L.path + '" target="_blank" rel="noopener">Open as client</a>' +
+            '<button type="button" class="btn btn-ghost" data-act="select" data-code="' + L.code + '">View activity</button>' +
+            '<span class="copy-ok" id="ok-' + L.code + '"></span>' +
+            "</div>" +
+            '<div class="invite-box" id="box-' + L.code + '">' +
+            "<strong>Share with buyers:</strong><br />" +
+            "1. Link: <code>" + absoluteUrl(L.path) + "</code><br />" +
+            "2. Password: the one you set above (seed default was <code>" + L.seedPassword + "</code> until you change it)" +
+            "</div>";
+          host.appendChild(card);
+        });
+
+        host.querySelectorAll("button[data-act]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var code = btn.getAttribute("data-code");
+            var L = LISTINGS.find(function (x) { return x.code === code; });
+            if (!L) return;
+            var id = AGENT + "/" + code;
+            var okEl = document.getElementById("ok-" + code);
+            var act = btn.getAttribute("data-act");
+
+            if (act === "save") {
+              var pw = document.getElementById("pw-" + code).value;
+              if (!pw || pw.length < 4) {
+                okEl.textContent = "Use at least 4 characters.";
+                return;
+              }
+              PMAInviteGate.setPassword(id, pw, { label: L.address }).then(function () {
+                okEl.textContent = "Password saved for this invite.";
+                L._lastPlain = pw;
+                renderListings();
+              });
+            } else if (act === "copy-link") {
+              navigator.clipboard.writeText(absoluteUrl(L.path)).then(function () {
+                okEl.textContent = "Link copied.";
+              });
+            } else if (act === "copy-msg") {
+              var plain = L._lastPlain || L.seedPassword;
+              var msg =
+                "Here's a private Pre Market preview of " + L.address + ":\n\n" +
+                absoluteUrl(L.path) + "\n\n" +
+                "Password: " + plain + "\n\n" +
+                "— Alan D. Hinson, New Albany Realty";
+              navigator.clipboard.writeText(msg).then(function () {
+                okEl.textContent = "Message copied (uses last saved or seed password).";
+              });
+            } else if (act === "select") {
+              activeInvite = id;
+              renderActivity();
+              okEl.textContent = "Showing activity for this listing.";
+            }
+          });
+        });
+      }
+
+      function renderActivity() {
+        var events = PMAInviteAnalytics.loadEvents(activeInvite);
         var sum = PMAInviteAnalytics.summarize(events);
         document.getElementById("s-events").textContent = sum.eventCount;
         document.getElementById("s-sessions").textContent = sum.sessionCount;
         document.getElementById("s-map").textContent = sum.mapEvents;
         document.getElementById("s-scroll").textContent = (sum.scrollMax || 0) + "%";
         document.getElementById("asof").textContent = sum.last
-          ? "Last activity " + fmtTime(sum.last)
-          : "No activity yet — open the listing or load demo";
+          ? " · Last activity " + fmtTime(sum.last)
+          : " · No activity yet";
 
         var pt = document.querySelector("#photo-table tbody");
         pt.innerHTML = "";
@@ -233,17 +348,16 @@
       function showDash() {
         lock.hidden = true;
         dash.hidden = false;
-        ensureSeedPassword();
-        render();
+        ensureSeedPasswords();
+        renderListings();
+        renderActivity();
       }
 
       document.getElementById("login-form").addEventListener("submit", function (e) {
         e.preventDefault();
         var email = document.getElementById("email").value.trim().toLowerCase();
         var password = document.getElementById("password").value;
-        var ok =
-          email === DEMO_EMAIL && password === DEMO_PASSWORD;
-        if (!ok) {
+        if (email !== DEMO_EMAIL || password !== DEMO_PASSWORD) {
           err.style.display = "block";
           err.textContent = "Incorrect email or password.";
           return;
@@ -253,77 +367,43 @@
         showDash();
       });
 
-      document.getElementById("save-invite-pw").addEventListener("click", function () {
-        var pw = document.getElementById("invite-pw").value;
-        var status = document.getElementById("pw-status");
-        if (!pw || pw.length < 4) {
-          status.textContent = "Use at least 4 characters.";
-          return;
-        }
-        PMAInviteGate.setPassword(INVITE, pw, { label: "7013 Hanbys Loop" }).then(function () {
-          lastInvitePlain = pw;
-          status.textContent = "Invite password saved.";
-          document.getElementById("pw-hint").innerHTML =
-            "Password updated. Buyers must use the new password on the invite page.";
-        });
+      document.getElementById("reload").addEventListener("click", renderActivity);
+      document.getElementById("signout").addEventListener("click", function () {
+        clearUnlocked();
+        lock.hidden = false;
+        dash.hidden = true;
       });
-      document.getElementById("copy-invite-link").addEventListener("click", function () {
-        var url = location.origin + "/r/alan-hinson/3czjbv9/";
-        navigator.clipboard.writeText(url).then(function () {
-          document.getElementById("pw-status").textContent = "Link copied.";
-        });
-      });
-      document.getElementById("copy-invite-msg").addEventListener("click", function () {
-        var plain = lastInvitePlain || SEED_INVITE_PASSWORD;
-        var msg =
-          "Here's a private Pre Market preview of 7013 Hanbys Loop, New Albany:\n\n" +
-          location.origin + "/r/alan-hinson/3czjbv9/\n\n" +
-          "Password: " + plain + "\n\n" +
-          "— Alan D. Hinson, New Albany Realty";
-        navigator.clipboard.writeText(msg).then(function () {
-          document.getElementById("pw-status").textContent = "Message copied.";
-        });
-      });
-
-      document.getElementById("reload").addEventListener("click", render);
       document.getElementById("seed").addEventListener("click", function () {
         var sid = "demo-" + Date.now().toString(36);
         var base = Date.now() - 12 * 60 * 1000;
         var demo = [
-          { t: base, type: "page_view", inviteId: INVITE, agentSlug: "alan-hinson", listingCode: "3czjbv9", sessionId: sid, props: {} },
-          { t: base + 2000, type: "disclosure_ack", inviteId: INVITE, agentSlug: "alan-hinson", listingCode: "3czjbv9", sessionId: sid, props: {} },
-          { t: base + 5000, type: "photo_view", inviteId: INVITE, agentSlug: "alan-hinson", listingCode: "3czjbv9", sessionId: sid, props: { index: 0, total: 71 } },
-          { t: base + 12000, type: "photo_dwell", inviteId: INVITE, agentSlug: "alan-hinson", listingCode: "3czjbv9", sessionId: sid, props: { index: 0, dwell_ms: 7000 } },
-          { t: base + 13000, type: "photo_view", inviteId: INVITE, agentSlug: "alan-hinson", listingCode: "3czjbv9", sessionId: sid, props: { index: 4, total: 71 } },
-          { t: base + 20000, type: "photo_dwell", inviteId: INVITE, agentSlug: "alan-hinson", listingCode: "3czjbv9", sessionId: sid, props: { index: 4, dwell_ms: 6000 } },
-          { t: base + 25000, type: "floorplan_open", inviteId: INVITE, agentSlug: "alan-hinson", listingCode: "3czjbv9", sessionId: sid, props: { label: "1st floor" } },
-          { t: base + 40000, type: "scroll_depth", inviteId: INVITE, agentSlug: "alan-hinson", listingCode: "3czjbv9", sessionId: sid, props: { pct: 75 } },
-          { t: base + 55000, type: "map_view", inviteId: INVITE, agentSlug: "alan-hinson", listingCode: "3czjbv9", sessionId: sid, props: { zoom: 16 } },
-          { t: base + 62000, type: "parcel_select", inviteId: INVITE, agentSlug: "alan-hinson", listingCode: "3czjbv9", sessionId: sid, props: { parcelId: "222-004841" } },
-          { t: base + 70000, type: "open_external_link", inviteId: INVITE, agentSlug: "alan-hinson", listingCode: "3czjbv9", sessionId: sid, props: { provider: "county" } },
-          { t: base + 90000, type: "cta_call", inviteId: INVITE, agentSlug: "alan-hinson", listingCode: "3czjbv9", sessionId: sid, props: {} },
-          { t: base + 95000, type: "session_end", inviteId: INVITE, agentSlug: "alan-hinson", listingCode: "3czjbv9", sessionId: sid, props: { duration_ms: 95000, scroll_max: 75 } }
+          { t: base, type: "page_view", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: {} },
+          { t: base + 2000, type: "disclosure_ack", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: {} },
+          { t: base + 5000, type: "photo_view", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: { index: 0, total: 68 } },
+          { t: base + 12000, type: "photo_dwell", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: { index: 0, dwell_ms: 7000 } },
+          { t: base + 40000, type: "scroll_depth", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: { pct: 80 } },
+          { t: base + 55000, type: "map_view", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: { zoom: 17 } },
+          { t: base + 70000, type: "open_external_link", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: { provider: "county" } },
+          { t: base + 90000, type: "cta_call", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: {} },
+          { t: base + 95000, type: "session_end", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: { duration_ms: 95000, scroll_max: 80 } }
         ];
-        var all = PMAInviteAnalytics.loadEvents(INVITE).concat(demo);
-        PMAInviteAnalytics.saveEvents(INVITE, all);
-        render();
+        var all = PMAInviteAnalytics.loadEvents(activeInvite).concat(demo);
+        PMAInviteAnalytics.saveEvents(activeInvite, all);
+        renderActivity();
       });
 
       document.getElementById("export").addEventListener("click", function () {
-        var events = PMAInviteAnalytics.loadEvents(INVITE);
+        var events = PMAInviteAnalytics.loadEvents(activeInvite);
         var blob = new Blob([JSON.stringify(events, null, 2)], { type: "application/json" });
         var a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
-        a.download = "pma-alan-hinson-3czjbv9-events.json";
+        a.download = "pma-" + activeInvite.replace("/", "-") + "-events.json";
         a.click();
       });
 
-      // ?key= in URL
       var params = new URLSearchParams(location.search);
-      if (params.get("key") === DEMO_KEY) {
+      if (params.get("key") === DEMO_KEY || unlocked()) {
         setUnlocked();
-        showDash();
-      } else if (unlocked()) {
         showDash();
       }
     })();

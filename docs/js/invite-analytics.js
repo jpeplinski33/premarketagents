@@ -204,7 +204,7 @@
     });
 
     // external history links
-    document.querySelectorAll('a[data-external="zillow"], a[data-external="redfin"], a[data-external="county"]').forEach(function (a) {
+    document.querySelectorAll('a[data-external]').forEach(function (a) {
       a.addEventListener("click", function () {
         self.track("open_external_link", {
           provider: a.getAttribute("data-external"),

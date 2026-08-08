@@ -10,7 +10,7 @@ Let’s break it down calmly and clearly.
 
 ## What is the MLS?
 
-The MLS is a shared database that real estate agents use to list properties for sale. When a home is “on the MLS,” it means the listing is visible to all participating agents, and through syndication, it appears on public sites like Zillow, Redfin, and Realtor.com.
+The MLS is a shared database that real estate agents use to list properties for sale. When a home is “on the MLS,” it means the listing is visible to all participating agents, and through syndication, it appears on public sites like major consumer real-estate portals.
 
 Key features of an MLS listing:
 
@@ -68,7 +68,7 @@ Pre-market can also give you a **head start**. If a home is coming soon, you can
 
 ## The catch: pre-market is invite-only
 
-Here’s the important part: pre-market is not something you can browse on a public website. There’s no “pre-market filter” on Zillow. These homes are shared through private networks—usually between agents who know each other, or through exclusive buyer groups.
+Here’s the important part: pre-market is not something you can browse on a public website. There’s no “pre-market filter” on public portals. These homes are shared through private networks—usually between agents who know each other, or through exclusive buyer groups.
 
 That means you need to be “in the room” to know about them. How do you get in the room?
 

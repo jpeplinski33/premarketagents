@@ -66,7 +66,7 @@ Removed from public hero: *“makes the listing agent look exceptional.”* That
 
 **Hold back for invites (the “real cards”):**
 - Owner-name labels / neighbor directory
-- Full parcel intelligence + Zillow deep-link packs per pin
+- Full parcel intelligence + public county deep-link packs per pin
 - “Homes this client lingered on” agent dashboard
 - Full photo galleries of private listings
 
@@ -137,7 +137,7 @@ On-site blog supports keywords; **external mentions** raise domain authority. Bo
 ## 5b. Shipped 2026-08-03 (backlog sprint)
 - **Invite analytics MVP:** `site/js/invite-analytics.js` — page/photo/scroll/CTA/map events, disclosure bar, localStorage store, optional remote `endpoint`
 - **Agent dashboard:** `/r/alan-hinson/dashboard/` (demo key `alan-hanbys-2026`) — sessions, top photos, CTAs; multi-device backend still optional
-- **Invite map:** Leaflet + Esri satellite + Franklin parcel GeoJSON, decluttered owner labels, Zillow + county link-outs (no MLS photo scrape)
+- **Invite map:** Leaflet + Esri satellite + Franklin parcel GeoJSON, decluttered owner labels, county link-outs only (no MLS photo scrape; no Zillow)
 - **Public explore:** `/explore/` — same sample area, **no owner names**, no tracking product
 - **Realtor gate v2:** stronger OH format checks, localStorage session, `VERIFY_ENDPOINT` stub for hard eLicense match
 - **Content pipeline:** `site/content/queue.md` + `scripts/draft-learn-article.sh` (DeepSeek/Gemini → drafts only)
@@ -152,6 +152,19 @@ On-site blog supports keywords; **external mentions** raise domain authority. Bo
 
 ## 7. Shipped 2026-08-08 — Natasha + password invites
 - **Agent:** Natasha Petroff (Thomas|Riddle / New Albany Realty) — dashboard `/r/natasha-petroff/dashboard/`
-- **Listing:** 4879 Yantis Dr · invite `/r/natasha-petroff/n2pfrv7/` · 68 Zillow-sourced photos (private invite, noindex)
+- **Listing:** 4879 Yantis Dr · invite `/r/natasha-petroff/n2pfrv7/` · 68 listing photos (private invite, noindex)
 - **Password-protected invites (all agents):** realtor sets password in dashboard; buyers enter on invite page (`invite-gate.js`)
 - **Pilot logins:** Natasha `natashap@thomasriddle.com` / `PreMarket2026`; Alan unchanged; seed invite passwords `Yantis2026` / `Hanbys2026`
+
+
+## HARD RULE — No Zillow (2026-08-08)
+
+**Never** mention, link to, or brand against **Zillow** (including Zestimate®) on any Pre Market Agents surface — listings, maps, marketing pages, dashboards, agent profiles, emails/templates generated for clients.
+
+| Do | Don't |
+|----|--------|
+| County auditor / Franklin GIS parcel links | Zillow homedetails links |
+| Public recorded sale history from county | "View on Zillow" CTAs |
+| Neutral "public portals" wording if needed | Competitor-name comparisons in product UI |
+
+Internal research notes may name third parties; **anything under `site/` / live domain must not.**

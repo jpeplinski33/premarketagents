@@ -2,6 +2,7 @@
  * Pre Market Agents — invite map (Leaflet)
  * Parcels from Franklin County public GIS (cached GeoJSON).
  * Owner labels: invite-only, decluttered. Subject listing owner is never shown.
+ * HARD RULE: never mention or link to Zillow (or Zestimate) on the map or panel.
  */
 (function (global) {
   "use strict";
@@ -14,20 +15,13 @@
     subjectLabel: "",
     dataUrl: "/data/hanbys-parcels-invite.geojson",
     showOwners: true,
-    /** Never show owner name for the listed parcel (map labels + detail panel). */
     hideSubjectOwner: true,
-    /** Frame the subject + nearby neighbors instead of the whole GeoJSON extent. */
     focusSubject: true,
-    /** Leaflet pad() around subject bounds — higher = more neighbors visible. */
     subjectPad: 3.5,
     focusMaxZoom: 17,
     focusMinZoom: 16,
     analytics: null
   };
-
-  function zillowSearchUrl(address) {
-    return "https://www.zillow.com/homes/" + encodeURIComponent(address.replace(/,/g, " ")) + "_rb/";
-  }
 
   function countyParcelUrl(parcelId) {
     var compact = String(parcelId || "").replace(/-/g, "");
@@ -76,29 +70,50 @@
       return Promise.reject(new Error("leaflet"));
     }
 
-    // Ensure container has layout before Leaflet measures it
     this.map = L.map(this.el, {
       zoomControl: true,
       attributionControl: true
     }).setView(this.opts.center, this.opts.zoom);
 
+    // Basemaps — default Satellite so aerial roof/lot detail stays readable
     var satellite = L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
       { attribution: "Tiles © Esri · Parcels Franklin County OH", maxZoom: 19 }
-    ).addTo(this.map);
-    var labels = L.tileLayer(
+    );
+    var hybridLabels = L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
-      { attribution: "Labels © Esri", maxZoom: 19, opacity: 0.85 }
-    ).addTo(this.map);
+      { attribution: "Labels © Esri", maxZoom: 19, opacity: 0.9 }
+    );
+    // Hybrid group: imagery + place labels
+    var hybrid = L.layerGroup([
+      L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        { attribution: "Tiles © Esri", maxZoom: 19 }
+      ),
+      hybridLabels
+    ]);
     var streets = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: "© OpenStreetMap",
       maxZoom: 19
     });
+    // LiDAR-style terrain (Esri multi-directional hillshade) — elevation relief view
+    var lidar = L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}",
+      { attribution: "Hillshade © Esri", maxZoom: 16, maxNativeZoom: 16 }
+    );
+
+    satellite.addTo(this.map);
+
     L.control
       .layers(
-        { Satellite: satellite, Streets: streets },
-        { Labels: labels },
-        { position: "topright", collapsed: true }
+        {
+          Satellite: satellite,
+          Hybrid: hybrid,
+          Streets: streets,
+          LiDAR: lidar
+        },
+        {},
+        { position: "topright", collapsed: false }
       )
       .addTo(this.map);
 
@@ -117,9 +132,8 @@
     });
 
     var dataUrl = this.opts.dataUrl;
-    // Cache-bust when version query not already present
     if (dataUrl && dataUrl.indexOf("?") === -1) {
-      dataUrl = dataUrl + "?v=2";
+      dataUrl = dataUrl + "?v=4";
     }
 
     return fetch(dataUrl)
@@ -130,7 +144,6 @@
       .then(function (geo) {
         self._addParcels(geo);
         self._track("map_ready", { features: (geo.features || []).length });
-        // Leaflet needs a second measure pass when the map was inside a gated/hidden layout
         [100, 350, 800, 1500].forEach(function (ms) {
           setTimeout(function () {
             if (self.map) {
@@ -178,20 +191,21 @@
       style: function (feature) {
         var id = feature.properties && feature.properties.PARCELID;
         if (id === subjectId) {
+          // Outline only — no grey/gold fill so aerial imagery of the home stays visible
           return {
             color: "#e8c99a",
-            weight: 3,
+            weight: 2.75,
             fillColor: "#c4a574",
-            fillOpacity: 0.34,
+            fillOpacity: 0,
             opacity: 1
           };
         }
         return {
-          color: "rgba(255,255,255,0.82)",
-          weight: 1.6,
-          fillColor: "#1a1a1d",
-          fillOpacity: 0.08,
-          opacity: 1
+          color: "rgba(255,255,255,0.78)",
+          weight: 1.4,
+          fillColor: "#ffffff",
+          fillOpacity: 0,
+          opacity: 0.95
         };
       },
       onEachFeature: function (feature, layer) {
@@ -200,7 +214,9 @@
         }
         layer.on("mouseover", function () {
           if (feature.properties && feature.properties.PARCELID !== subjectId) {
-            layer.setStyle({ weight: 2.4, fillOpacity: 0.2 });
+            layer.setStyle({ weight: 2.2, fillOpacity: 0.06, fillColor: "#c4a574" });
+          } else {
+            layer.setStyle({ weight: 3.4 });
           }
           self._track("parcel_hover", { parcelId: feature.properties && feature.properties.PARCELID });
         });
@@ -213,7 +229,6 @@
       }
     }).addTo(this.map);
 
-    // Frame subject + neighbors (not the entire dataset — that zooms out too far)
     try {
       if (this.opts.focusSubject !== false && this._subjectLayer) {
         var sb = this._subjectLayer.getBounds();
@@ -222,7 +237,6 @@
             maxZoom: this.opts.focusMaxZoom || 17,
             animate: false
           });
-          // Keep a useful neighborhood zoom floor
           if (this.map.getZoom() < (this.opts.focusMinZoom || 16)) {
             this.map.setView(sb.getCenter(), this.opts.focusMinZoom || 16, { animate: false });
           }
@@ -237,7 +251,6 @@
       this.map.setView(this.opts.center, this.opts.zoom || 17);
     }
 
-    // Open the listing parcel in the side panel so visitors know what they're looking at
     if (this._subjectLayer && this._subjectLayer.feature) {
       this.selectFeature(this._subjectLayer.feature, this._subjectLayer);
     }
@@ -255,13 +268,8 @@
     });
 
     var addr = titleCaseAddr(p.SITEADDRESS || "");
-    var fullAddr = addr ? addr + ", New Albany, OH" : this.opts.subjectAddress;
-    // Hide owner on the listed parcel (privacy for the home being sold)
-    var showOwner =
-      this.opts.showOwners &&
-      !(this.opts.hideSubjectOwner && isSubject);
+    var showOwner = this.opts.showOwners && !(this.opts.hideSubjectOwner && isSubject);
     var owner = showOwner ? ownerLabel(p.OWNERNME1) : null;
-    var zUrl = zillowSearchUrl(fullAddr);
     var cUrl = countyParcelUrl(p.PARCELID);
     var sale = fmtMoney(p.SALEPRICE);
     var ag =
@@ -320,11 +328,7 @@
     html +=
       '<a class="btn-link ghost" data-external="county" href="' +
       cUrl +
-      '" target="_blank" rel="noopener">More on county site ↗</a>';
-    html +=
-      '<a class="btn-link ghost" data-external="zillow" href="' +
-      zUrl +
-      '" target="_blank" rel="noopener">Compare on Zillow ↗</a>';
+      '" target="_blank" rel="noopener">County parcel record ↗</a>';
     html += "</div>";
     body.innerHTML = html;
 
@@ -350,9 +354,6 @@
       .replace(/"/g, "&quot;");
   }
 
-  /**
-   * Decluttered owner labels. Subject parcel owner is never labeled.
-   */
   InviteMap.prototype._refreshLabels = function () {
     if (!this.labelLayer || !this.parcelLayer || !this.opts.showOwners) {
       if (this.labelLayer) this.labelLayer.clearLayers();
@@ -376,12 +377,7 @@
       if (!c || !bounds.contains(c)) return;
       var name = ownerLabel(f.properties.OWNERNME1);
       if (!name) return;
-      candidates.push({
-        latlng: c,
-        name: name,
-        priority: 1,
-        parcelId: f.properties.PARCELID
-      });
+      candidates.push({ latlng: c, name: name, parcelId: f.properties.PARCELID });
     });
 
     var maxLabels = zoom >= 18 ? 48 : zoom >= 17 ? 32 : zoom >= 16 ? 22 : 12;
@@ -391,8 +387,8 @@
     candidates.forEach(function (c) {
       if (count >= maxLabels) return;
       var pt = map.latLngToContainerPoint(c.latlng);
-      var w = Math.min(140, 8 + c.name.length * 6.2);
-      var h = 16;
+      var w = Math.min(150, 10 + c.name.length * 6.4);
+      var h = 18;
       var box = { x: pt.x - w / 2, y: pt.y - h / 2, w: w, h: h };
       var hit = placed.some(function (p) {
         return !(box.x + box.w < p.x || p.x + p.w < box.x || box.y + box.h < p.y || p.y + p.h < box.y);
@@ -411,7 +407,6 @@
     }, this);
   };
 
-  InviteMap.zillowSearchUrl = zillowSearchUrl;
   InviteMap.countyParcelUrl = countyParcelUrl;
   global.PMAInviteMap = InviteMap;
 })(typeof window !== "undefined" ? window : globalThis);

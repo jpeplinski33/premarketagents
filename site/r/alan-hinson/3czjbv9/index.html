@@ -693,18 +693,18 @@
       background: transparent; color: var(--ink) !important;
       border: 1px solid var(--line-strong);
     }
-    .pma-owner-label {
-      background: transparent !important; border: none !important;
-    }
+    .pma-owner-label { background: transparent !important; border: none !important; }
     .pma-owner-label span {
-      display: inline-block; padding: 2px 6px;
-      background: rgba(12,12,13,0.82); color: #e8e2d6;
-      font-size: 10px; font-weight: 600; letter-spacing: 0.02em;
-      border: 1px solid rgba(255,255,255,0.12); white-space: nowrap;
-      max-width: 140px; overflow: hidden; text-overflow: ellipsis;
-    }
-    .pma-owner-label.subject span {
-      border-color: rgba(196,165,116,0.55); color: var(--gold-soft);
+      display: inline-block; padding: 0; background: transparent !important; color: #fff;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.02em;
+      border: none !important; white-space: nowrap;
+      max-width: 150px; overflow: hidden; text-overflow: ellipsis;
+      text-shadow:
+        0 0 4px rgba(0,0,0,0.95),
+        0 1px 3px rgba(0,0,0,0.95),
+        0 0 10px rgba(0,0,0,0.75),
+        1px 1px 0 rgba(0,0,0,0.55),
+        -1px -1px 0 rgba(0,0,0,0.55);
     }
 
     #invite-gate {
@@ -957,7 +957,7 @@
   <script src="/js/invite-gate.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="/js/invite-analytics.js"></script>
-  <script src="/js/invite-map.js?v=3"></script>
+  <script src="/js/invite-map.js?v=4"></script>
   <script>
     (function () {
       const PHOTOS = [];

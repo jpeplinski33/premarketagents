@@ -27,7 +27,7 @@ Draft pipeline: `scripts/draft-learn-article.sh` → human/Claude edit → publi
 ## Editorial rules
 1. No invented stats — cite public sources or say “typically / often.”
 2. Homeowner tone on public site; agent vanity copy only behind `/realtors/`.
-3. Never instruct scraping MLS/Zillow photos.
+3. Never instruct scraping MLS/portal photos.
 4. Link to `/explore/` and `/realtors/` where natural; never expose invite URLs in sitemap.
 5. Each article: unique title, meta description, canonical, Article JSON-LD.
 

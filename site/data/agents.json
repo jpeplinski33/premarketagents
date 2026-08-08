@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "Pilot agent registry — client-side only. Not production auth.",
+  "note": "Pilot agent registry \u2014 client-side only. Not production auth.",
   "agents": {
     "alan-hinson": {
       "slug": "alan-hinson",
@@ -29,7 +29,7 @@
       "email": "natashap@thomasriddle.com",
       "password": "PreMarket2026",
       "phone": "(216) 832-5446",
-      "brokerage": "Thomas|Riddle Real Estate Group · New Albany Realty",
+      "brokerage": "Thomas|Riddle Real Estate Group \u00b7 New Albany Realty",
       "photo": "/images/agent/natasha-petroff.jpg",
       "teamUrl": "https://newalbanyohio.com/team/natasha-petroff/",
       "dashboardPath": "/r/natasha-petroff/dashboard/",
@@ -45,8 +45,6 @@
           "seedInvitePassword": "Yantis2026",
           "seedInvitePasswordHash": "ea284bd1fc7ac95b5e685fcad68b03ec832308476350cc75951a75e338577a81",
           "status": "active",
-          "zillowUrl": "https://www.zillow.com/homedetails/4879-Yantis-Dr-New-Albany-OH-43054/34051781_zpid/",
-          "zestimate": 2816700,
           "parcel": "222-001181",
           "lat": 40.07972,
           "lng": -82.82417

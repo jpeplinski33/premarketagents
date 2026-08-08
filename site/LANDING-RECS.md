@@ -8,7 +8,7 @@
 ## Recommended brand direction (what we shipped v1)
 | Choice | Why |
 |--------|-----|
-| Dark, gold, serif/sans luxury | Matches existing listing UI; signals exclusivity vs Zillow-blue consumer portals |
+| Dark, gold, serif/sans luxury | Matches existing listing UI; signals exclusivity vs mass-market consumer portals |
 | No listing grid / no map | Explicit product rule: public site ≠ inventory |
 | Agent CTAs only | ICP is listing agents first; buyers arrive via invite links |
 | FAQ block | Cheap SEO for “what is pre-market,” “browse without invite,” etc. |

@@ -46,6 +46,12 @@
     return out;
   }
 
+  /** Human-friendly password (no ambiguous 0/O/1/l) — auto for realtor */
+  function genPassword() {
+    // e.g. k7m2-n4pq
+    return genToken(4) + "-" + genToken(4);
+  }
+
   function sha256(text) {
     var enc = new TextEncoder().encode(String(text));
     return crypto.subtle.digest("SHA-256", enc).then(function (buf) {
@@ -95,14 +101,16 @@
     var lastName = String(opts.lastName || "").trim();
     var phone = String(opts.phone || "").trim();
     var email = String(opts.email || "").trim();
-    var password = String(opts.password || "");
+    var password = String(opts.password || "").trim();
     var listingLabel = opts.listingLabel || "";
+    var listingPrice = opts.listingPrice || "";
 
     if (!agentSlug || !listingCode) return Promise.reject(new Error("missing listing"));
     if (!firstName || !lastName) return Promise.reject(new Error("name required"));
     if (!phone) return Promise.reject(new Error("phone required"));
     if (!email || email.indexOf("@") < 1) return Promise.reject(new Error("email required"));
-    if (!password || password.length < 4) return Promise.reject(new Error("password min 4"));
+    // Auto-generate password if realtor leaves it blank
+    if (!password || password.length < 4) password = genPassword();
 
     var token = genToken(8);
     var store = loadAll();
@@ -115,12 +123,13 @@
         agentSlug: agentSlug,
         listingCode: listingCode,
         listingLabel: listingLabel,
+        listingPrice: listingPrice,
         firstName: firstName,
         lastName: lastName,
         phone: phone,
         email: email,
         passwordHash: hash,
-        // pilot: keep plain in realtor browser so they can re-copy invite text
+        // pilot: keep plain in realtor browser so they can re-copy / re-send
         passwordPlain: password,
         createdAt: Date.now(),
         id: fullId(agentSlug, listingCode, token)
@@ -149,22 +158,75 @@
 
   function inviteMessage(rec, agentName, origin) {
     var url = inviteUrl(rec, origin);
-    var name = (rec.firstName || "") + " " + (rec.lastName || "");
+    var line =
+      "Here's your private Pre Market preview" +
+      (rec.listingLabel ? " of " + rec.listingLabel : "") +
+      (rec.listingPrice ? " · " + rec.listingPrice : "") +
+      ".";
     return (
       "Hi " +
       (rec.firstName || "there") +
       ",\n\n" +
-      "Here's your private Pre Market preview" +
-      (rec.listingLabel ? " of " + rec.listingLabel : "") +
-      ":\n\n" +
+      line +
+      "\n\n" +
+      "Open this link (you'll be asked for the password):\n" +
       url +
       "\n\n" +
       "Password: " +
-      (rec.passwordPlain || "(the password your agent set)") +
+      (rec.passwordPlain || "(ask your agent)") +
       "\n\n" +
       "— " +
       (agentName || "Your realtor")
     );
+  }
+
+  /** Digits-only for sms: links */
+  function phoneDigits(phone) {
+    var d = String(phone || "").replace(/\D/g, "");
+    if (d.length === 10) d = "1" + d; // US default
+    return d;
+  }
+
+  /** Open device Messages with invite pre-filled */
+  function smsHref(rec, agentName, origin) {
+    var body = inviteMessage(rec, agentName, origin);
+    var to = phoneDigits(rec.phone);
+    // Works on iOS/macOS Messages and most Android handlers
+    return "sms:" + (to ? to : "") + "?&body=" + encodeURIComponent(body);
+  }
+
+  /** Open email client with invite pre-filled */
+  function emailHref(rec, agentName, origin) {
+    var body = inviteMessage(rec, agentName, origin);
+    var sub =
+      "Your private Pre Market preview" +
+      (rec.listingLabel ? " · " + rec.listingLabel : "");
+    return (
+      "mailto:" +
+      encodeURIComponent(rec.email || "") +
+      "?subject=" +
+      encodeURIComponent(sub) +
+      "&body=" +
+      encodeURIComponent(body)
+    );
+  }
+
+  function openSend(rec, mode, agentName, origin) {
+    mode = mode || "both";
+    if (mode === "text" || mode === "both") {
+      global.location.href = smsHref(rec, agentName, origin);
+    }
+    if (mode === "email" || mode === "both") {
+      var href = emailHref(rec, agentName, origin);
+      if (mode === "both") {
+        // slight delay so both can open on desktop
+        setTimeout(function () {
+          global.location.href = href;
+        }, 400);
+      } else {
+        global.location.href = href;
+      }
+    }
   }
 
   /** Parse client token from current page URL (?i=) */
@@ -180,6 +242,7 @@
     STORE_KEY: STORE_KEY,
     fullId: fullId,
     genToken: genToken,
+    genPassword: genPassword,
     sha256: sha256,
     loadAll: loadAll,
     listForListing: listForListing,
@@ -189,6 +252,10 @@
     remove: remove,
     inviteUrl: inviteUrl,
     inviteMessage: inviteMessage,
+    phoneDigits: phoneDigits,
+    smsHref: smsHref,
+    emailHref: emailHref,
+    openSend: openSend,
     tokenFromLocation: tokenFromLocation
   };
 })(typeof window !== "undefined" ? window : this);

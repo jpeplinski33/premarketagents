@@ -151,8 +151,8 @@
     <div class="panel">
       <h3>Create a trackable invite link</h3>
       <p class="muted" style="margin-bottom:14px;">
-        For <strong id="create-for" style="color:var(--ink)">—</strong>. Enter the homeowner’s details and an invite password.
-        Each person gets their own link so you can see their activity separately.
+        For <strong id="create-for" style="color:var(--ink)">—</strong>. Enter the homeowner’s details. A password is generated automatically.
+        Then text and/or email their personal link — they enter the password to open the listing.
       </p>
       <form id="create-form">
         <div class="grid-2">
@@ -169,8 +169,10 @@
         <input class="field" id="phone" type="tel" required autocomplete="tel" placeholder="(614) 555-0100" />
         <label class="field" for="em">Email</label>
         <input class="field" id="em" type="email" required autocomplete="email" placeholder="homeowner@email.com" />
-        <label class="field" for="inv-pw">Invite password (they enter this)</label>
-        <input class="field" id="inv-pw" type="text" required minlength="4" placeholder="e.g. Byers2026" autocomplete="off" />
+        <p class="muted" style="margin:0 0 12px;">
+          A unique invite password is <strong style="color:var(--ink)">auto-created</strong> for each homeowner.
+          You can text and/or email it with one click after creating.
+        </p>
         <p class="form-error" id="create-err"></p>
         <p class="form-ok" id="create-ok"></p>
         <button type="submit" class="btn btn-primary">Create trackable invite</button>
@@ -323,13 +325,17 @@
             '<div class="stat"><div class="n">' + sum.mapEvents + '</div><div class="l">Map events</div></div>' +
             "</div>" +
             '<div class="row-actions">' +
-            '<button type="button" class="btn btn-primary" data-act="copy-link">Copy invite link</button>' +
-            '<button type="button" class="btn btn-ghost" data-act="copy-msg">Copy text + password</button>' +
+            '<button type="button" class="btn btn-primary" data-act="text">Text invite</button>' +
+            '<button type="button" class="btn btn-primary" data-act="email">Email invite</button>' +
+            '<button type="button" class="btn btn-primary" data-act="both">Text + email</button>' +
+            '<button type="button" class="btn btn-ghost" data-act="copy-link">Copy link</button>' +
+            '<button type="button" class="btn btn-ghost" data-act="copy-msg">Copy full message</button>' +
             '<button type="button" class="btn btn-ghost" data-act="toggle">Activity detail</button>' +
             '<a class="btn btn-ghost" href="' + url + '" target="_blank" rel="noopener">Open their link</a>' +
             '<button type="button" class="btn btn-ghost" data-act="remove">Remove</button>' +
             '<span class="ok" data-status></span>' +
             "</div>" +
+            '<p class="meta" style="margin-top:8px;">Password: <code>' + escapeHtml(rec.passwordPlain || "—") + '</code></p>' +
             '<div class="detail-box" data-detail></div>';
           host.appendChild(row);
 
@@ -338,7 +344,16 @@
           row.querySelectorAll("button[data-act]").forEach(function (btn) {
             btn.addEventListener("click", function () {
               var act = btn.getAttribute("data-act");
-              if (act === "copy-link") {
+              if (act === "text") {
+                status.textContent = "Opening Messages…";
+                PMAInviteRegistry.openSend(rec, "text", agentName);
+              } else if (act === "email") {
+                status.textContent = "Opening email…";
+                PMAInviteRegistry.openSend(rec, "email", agentName);
+              } else if (act === "both") {
+                status.textContent = "Opening text + email…";
+                PMAInviteRegistry.openSend(rec, "both", agentName);
+              } else if (act === "copy-link") {
                 navigator.clipboard.writeText(url).then(function () {
                   status.textContent = "Link copied.";
                 });
@@ -414,17 +429,19 @@
           lastName: document.getElementById("ln").value,
           phone: document.getElementById("phone").value,
           email: document.getElementById("em").value,
-          password: document.getElementById("inv-pw").value
+          listingPrice: L.price || ""
         })
           .then(function (rec) {
             cok.style.display = "block";
-            cok.textContent = "Invite created for " + rec.firstName + " " + rec.lastName + ".";
+            cok.innerHTML =
+              "Invite created for <strong style='color:var(--ink)'>" +
+              rec.firstName + " " + rec.lastName +
+              "</strong>. Password: <code>" + rec.passwordPlain + "</code>";
             document.getElementById("create-form").reset();
+            lastCreatedId = rec.id;
             renderInvites();
             renderListings();
-            return navigator.clipboard.writeText(PMAInviteRegistry.inviteMessage(rec, agentName)).then(function () {
-              cok.textContent += " Link + password text copied to clipboard.";
-            }).catch(function () {});
+            return navigator.clipboard.writeText(PMAInviteRegistry.inviteMessage(rec, agentName)).catch(function () {});
           })
           .catch(function (ex) {
             cerr.style.display = "block";

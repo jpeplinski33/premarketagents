@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Realtor login · Pre Market Agents</title>
+  <meta name="description" content="Sign in to your Pre Market Agents dashboard to manage listings and send trackable homeowner invites." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href="https://premarketagents.com/login/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/site.css" />
+  <style>
+    .login-wrap {
+      max-width: 440px;
+      margin: 0 auto;
+      padding: 48px 22px 80px;
+    }
+    .login-wrap h1 {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-weight: 500;
+      font-size: clamp(28px, 4vw, 40px);
+      margin-bottom: 10px;
+    }
+    .login-wrap .sub {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+      margin-bottom: 22px;
+    }
+    .login-box {
+      border: 1px solid var(--line-strong);
+      background: var(--bg-elev);
+      padding: 24px 22px;
+    }
+    label.field {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0 0 8px;
+    }
+    input.field {
+      width: 100%;
+      padding: 12px;
+      background: var(--bg);
+      border: 1px solid var(--line-strong);
+      color: var(--ink);
+      margin-bottom: 14px;
+      font-size: 15px;
+    }
+    .form-error {
+      color: #b85c4a;
+      font-size: 13px;
+      display: none;
+      margin-bottom: 12px;
+    }
+    .form-error.show { display: block; }
+    .alt-links {
+      margin-top: 22px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .alt-links a { color: var(--gold-soft); }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/">
+      <span class="brand-pre">Pre Market</span>
+      <span class="brand-agents">Agents</span>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a href="/">Home</a>
+      <a href="/realtors/">Realtor access</a>
+    </nav>
+  </header>
+
+  <main class="login-wrap">
+    <p class="eyebrow">Agents</p>
+    <h1>Realtor login</h1>
+    <p class="sub">
+      Sign in to your agent dashboard to manage listings and send trackable homeowner invites.
+      This is not the public realtor materials gate.
+    </p>
+
+    <div class="login-box">
+      <form id="login-form">
+        <label class="field" for="email">Email</label>
+        <input class="field" id="email" type="email" autocomplete="username" required placeholder="you@brokerage.com" />
+
+        <label class="field" for="password">Password</label>
+        <input class="field" id="password" type="password" autocomplete="current-password" required />
+
+        <p class="form-error" id="err" role="alert"></p>
+        <button type="submit" class="btn btn-primary" style="width:100%;">Sign in to dashboard</button>
+      </form>
+    </div>
+
+    <p class="alt-links">
+      Looking for product overview for licensed agents (not your personal dashboard)?
+      <a href="/realtors/">Go to realtor access →</a>
+    </p>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-brand"><span class="pm">Pre Market</span><span class="ag">Agents</span></div>
+    <nav class="footer-links">
+      <a href="/">Home</a>
+      <a href="/login/">Realtor login</a>
+      <a href="/realtors/">Realtor access</a>
+      <a href="/privacy/">Privacy</a>
+    </nav>
+  </footer>
+
+  <script>
+    (function () {
+      // Pilot accounts — same as per-agent dashboard credentials
+      var ACCOUNTS = {
+        "natashap@thomasriddle.com": {
+          password: "PreMarket2026",
+          slug: "natasha-petroff",
+          dashboard: "/r/natasha-petroff/dashboard/"
+        },
+        "alan@newalbanyrealty.com": {
+          password: "PreMarket2026",
+          slug: "alan-hinson",
+          dashboard: "/r/alan-hinson/dashboard/"
+        },
+        "alanh@newalbanyrealty.com": {
+          password: "PreMarket2026",
+          slug: "alan-hinson",
+          dashboard: "/r/alan-hinson/dashboard/"
+        }
+      };
+
+      var form = document.getElementById("login-form");
+      var err = document.getElementById("err");
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        err.classList.remove("show");
+        err.textContent = "";
+
+        var email = document.getElementById("email").value.trim().toLowerCase();
+        var password = document.getElementById("password").value;
+        var acct = ACCOUNTS[email];
+
+        if (!acct || acct.password !== password) {
+          err.textContent = "Incorrect email or password.";
+          err.classList.add("show");
+          return;
+        }
+
+        // Unlock the agent dashboard session (same key each dashboard checks)
+        try {
+          sessionStorage.setItem("pma_dash_" + acct.slug, "1");
+        } catch (ex) {}
+
+        location.href = acct.dashboard;
+      });
+    })();
+  </script>
+</body>
+</html>

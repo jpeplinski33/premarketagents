@@ -16,6 +16,26 @@
   var STORE_KEY = "pma_invite_passwords_v1";
   var UNLOCK_PREFIX = "pma_invite_unlock_v1:";
 
+  function phFromLocation() {
+    try {
+      var params = new URLSearchParams(location.search);
+      var q = params.get("ph");
+      if (q && /^[a-f0-9]{64}$/i.test(q)) return q.toLowerCase();
+    } catch (e) {}
+    try {
+      var h = String(location.hash || "").replace(/^#/, "");
+      if (!h) return "";
+      // #ph=hex or #ph=hex&other
+      var hp = new URLSearchParams(h.indexOf("ph=") === 0 || h.indexOf("ph=") > 0 ? h : "ph=");
+      // also support raw #ph=...
+      var m = h.match(/(?:^|[&#])ph=([a-f0-9]{64})/i);
+      if (m) return m[1].toLowerCase();
+      var v = hp.get("ph");
+      if (v && /^[a-f0-9]{64}$/i.test(v)) return v.toLowerCase();
+    } catch (e2) {}
+    return "";
+  }
+
   function inviteId(agentSlug, listingCode) {
     return String(agentSlug || "") + "/" + String(listingCode || "");
   }
@@ -216,12 +236,10 @@
     // When homeowner opens link, gate uses ph from query if registry miss.
 
     if (!cfg.hash) {
-      try {
-        var ph = new URLSearchParams(location.search).get("ph");
-        if (ph && /^[a-f0-9]{64}$/i.test(ph)) {
-          cfg = { hash: ph.toLowerCase(), required: true, label: "" };
-        }
-      } catch (e2) {}
+      var ph0 = phFromLocation();
+      if (ph0) {
+        cfg = { hash: ph0, required: true, label: "" };
+      }
     }
 
     if (isPreview || isUnlocked(unlockId)) {
@@ -267,10 +285,8 @@
         };
         var liveCfg = getConfig(listingId, liveOpts);
         if (!liveCfg.hash) {
-          try {
-            var ph2 = new URLSearchParams(location.search).get("ph");
-            if (ph2 && /^[a-f0-9]{64}$/i.test(ph2)) liveCfg.hash = ph2.toLowerCase();
-          } catch (e3) {}
+          var ph2 = phFromLocation();
+          if (ph2) liveCfg.hash = ph2;
         }
         if (!liveCfg.hash) {
           if (err) {

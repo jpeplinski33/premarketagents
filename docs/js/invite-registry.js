@@ -148,36 +148,38 @@
 
   function inviteUrl(rec, origin) {
     origin = origin || (typeof location !== "undefined" ? location.origin : "");
-    // Include password hash so any browser can verify without the realtor's localStorage
-    var q =
-      "?i=" +
-      encodeURIComponent(rec.token) +
-      (rec.passwordHash ? "&ph=" + encodeURIComponent(rec.passwordHash) : "");
-    return origin + "/r/" + rec.agentSlug + "/" + rec.listingCode + "/" + q;
+    // Token in query; password hash in fragment so share unfurlers (iMessage etc.)
+    // fetch a clean URL path and still get our branded OG image. Gate reads #ph=…
+    var q = "?i=" + encodeURIComponent(rec.token);
+    var hash = rec.passwordHash ? "#ph=" + encodeURIComponent(rec.passwordHash) : "";
+    return origin + "/r/" + rec.agentSlug + "/" + rec.listingCode + "/" + q + hash;
   }
 
+  /**
+   * Body first, password, sign-off — then the URL alone on the last lines
+   * so iMessage/SMS place the preview card under the message text.
+   */
   function inviteMessage(rec, agentName, origin) {
     var url = inviteUrl(rec, origin);
     var line =
-      "Here's your private Pre Market preview" +
-      (rec.listingLabel ? " of " + rec.listingLabel : "") +
+      "Here's your private Pre Market exclusive invite" +
+      (rec.listingLabel ? " for " + rec.listingLabel : "") +
       (rec.listingPrice ? " · " + rec.listingPrice : "") +
       ".";
-    // Put the URL on its own line near the top so iMessage can unfurl a preview image.
     return (
       "Hi " +
       (rec.firstName || "there") +
       ",\n\n" +
       line +
       "\n\n" +
-      url +
-      "\n\n" +
-      "Password: " +
+      "Access password: " +
       (rec.passwordPlain || "(ask your agent)") +
-      "\n\n" +
-      "(You'll enter the password after you open the link.)\n\n" +
+      "\n" +
+      "(You'll enter this password after you open the link.)\n\n" +
       "— " +
-      (agentName || "Your realtor")
+      (agentName || "Your realtor") +
+      "\n\n" +
+      url
     );
   }
 

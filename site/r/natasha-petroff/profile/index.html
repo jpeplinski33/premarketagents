@@ -11,10 +11,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #0c0c0d; --bg-elev: #141416; --bg-soft: #1a1a1d;
+      --bg: #0c0c0d; --bg-elev: #141416;
       --line: rgba(255,255,255,0.08); --line-strong: rgba(255,255,255,0.14);
       --ink: #f5f2eb; --muted: #9a958c; --gold: #c4a574; --gold-soft: #d4bc94;
-      --gold-dim: rgba(196,165,116,0.18);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -43,7 +42,6 @@
       font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
       color: var(--muted); margin-left: 16px;
     }
-    .nav a:hover { color: var(--gold-soft); }
     .hero {
       max-width: 1040px; margin: 0 auto; padding: 48px 22px 28px;
       display: grid; grid-template-columns: minmax(240px, 320px) 1fr; gap: 44px; align-items: start;
@@ -51,20 +49,13 @@
     @media (max-width: 780px) {
       .hero { grid-template-columns: 1fr; gap: 24px; padding-top: 28px; }
     }
-    /* Full portrait — match company site framing (no aggressive crop) */
     .photo-wrap {
       border: 1px solid rgba(196,165,116,0.35);
-      background: #101012;
-      overflow: hidden;
-      line-height: 0;
+      background: #101012; overflow: hidden; line-height: 0;
     }
     .photo-wrap img {
-      width: 100%;
-      height: auto;
-      display: block;
-      object-fit: contain;
-      object-position: center top;
-      vertical-align: top;
+      width: 100%; height: auto; display: block;
+      object-fit: contain; object-position: center top;
     }
     .eyebrow {
       font-size: 10px; font-weight: 700; letter-spacing: 0.28em;
@@ -89,110 +80,191 @@
     .btn-primary:hover { background: var(--gold-soft); color: #0c0c0d !important; }
     .btn:hover { border-color: var(--gold); color: var(--gold-soft) !important; }
     .social { display: flex; gap: 18px; font-size: 13px; }
-    .body {
+    .about-wrap {
       max-width: 1040px; margin: 0 auto; padding: 8px 22px 40px;
     }
-    section { border-top: 1px solid var(--line); padding: 28px 0; }
-    h2 {
+    .about-wrap h2 {
       font-family: "Cormorant Garamond", Georgia, serif;
       font-size: 26px; font-weight: 500; margin-bottom: 14px;
     }
-    .prose p {
+    .about-wrap p {
       color: #c8c3b8; font-size: 15px; line-height: 1.7; max-width: 68ch; margin-bottom: 14px;
     }
-    /* Google-style review cards (match company site; no carousel dots) */
-    .reviews-section { border-top: 1px solid var(--line); padding: 28px 0 8px; }
-    .reviews-section > h2 {
-      text-align: center; margin-bottom: 28px; font-size: clamp(28px, 4vw, 36px);
+    .about-wrap section { border-top: 1px solid var(--line); padding: 28px 0; }
+
+    /* ===== Company-site Google review clone (WP Review Slider T1) ===== */
+    .reviews-band {
+      width: 100%;
+      background: #f7f8fa;
+      color: #002340;
+      padding: 56px 0 64px;
+      border-top: none;
     }
-    .reviews-head {
-      display: flex; align-items: center; justify-content: center;
-      gap: 12px; margin-bottom: 8px; flex-wrap: wrap; position: relative;
+    .reviews-inner {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 18px;
     }
-    .reviews-nav {
-      position: absolute; right: 0; top: 50%; transform: translateY(-50%);
-      display: flex; gap: 8px;
+    .reviews-band h2 {
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-weight: 500;
+      font-size: clamp(26px, 3.2vw, 34px);
+      text-align: center;
+      color: #002340;
+      margin: 0 0 32px;
+      letter-spacing: 0;
     }
-    @media (max-width: 640px) {
-      .reviews-nav { position: static; transform: none; width: 100%; justify-content: center; margin-top: 8px; }
+    .pma-rev-viewport {
+      overflow: hidden;
+      width: 100%;
     }
-    .reviews-nav button {
-      width: 40px; height: 40px; border-radius: 50%;
-      border: 1px solid var(--line-strong); background: transparent;
-      color: var(--ink); font-size: 18px; cursor: pointer;
+    .pma-rev-track {
+      display: flex;
+      transition: transform 0.75s ease;
+      will-change: transform;
     }
-    .reviews-nav button:hover { border-color: var(--gold); color: var(--gold-soft); }
-    .reviews-track-wrap {
-      overflow: hidden; margin: 0 -4px;
+    .pma-rev-slide {
+      flex: 0 0 33.333%;
+      max-width: 33.333%;
+      padding: 0 6px 8px;
+      box-sizing: border-box;
     }
-    .reviews-track {
-      display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory;
-      scroll-behavior: smooth; padding: 8px 4px 20px;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none; /* no scrollbar chrome — arrows only; no dots */
+    @media (max-width: 900px) {
+      .pma-rev-slide { flex-basis: 50%; max-width: 50%; }
     }
-    .reviews-track::-webkit-scrollbar { display: none; }
-    /* Light cards like Google reviews on company site */
-    .review-card {
-      flex: 0 0 min(340px, 86vw);
-      scroll-snap-align: start;
-      border: 1px solid #e8e8e8;
-      background: #fff;
-      border-radius: 12px;
-      padding: 22px 20px 18px;
-      min-height: 248px;
-      display: flex; flex-direction: column;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-      color: #2c3e50;
+    @media (max-width: 600px) {
+      .pma-rev-slide { flex-basis: 100%; max-width: 100%; }
+    }
+    /* White bubble card — matches wprevpro_t1_DIV_2 + company overrides */
+    .pma-rev-card {
       position: relative;
+      background: #fff;
+      border: 1px solid #f5f5f5;
+      border-radius: 10px;
+      box-shadow: 0 0 10px 2px rgba(0,0,0,0.14);
+      margin: 10px 6px 18px;
+      padding: 22px 42px 28px 42px;
+      min-height: 210px;
+      text-align: left;
     }
-    .review-card .rev-top {
-      display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;
+    .pma-rev-quote {
+      position: absolute;
+      top: 8px;
+      left: 12px;
+      font: 60px/1 Georgia, serif;
+      color: #bbb;
+      pointer-events: none;
+      user-select: none;
     }
-    .review-card .stars {
-      color: #f4b400; letter-spacing: 1px; font-size: 15px; line-height: 1;
+    .pma-rev-body {
+      color: rgb(0, 35, 64);
+      font-size: 16px;
+      line-height: 1.45;
+      font-style: italic;
+      margin: 0 0 8px;
+    }
+    .pma-rev-body.indrevlineclamp {
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .pma-rev-body.is-open {
+      display: block;
+      -webkit-line-clamp: unset;
+      overflow: visible;
+    }
+    .pma-rev-stars {
+      display: inline-block;
+      margin-right: 6px;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+    .pma-star {
+      color: #FDD314;
+      font-size: 18px;
+      line-height: 1;
+      margin-right: 1px;
+    }
+    .pma-rev-verified {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 15px; height: 15px;
+      border-radius: 50%;
+      background: #9aa5b1;
+      color: #fff;
+      font-size: 9px;
+      font-style: normal;
       font-weight: 700;
+      margin-left: 4px;
+      vertical-align: middle;
     }
-    .review-card .verified {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 12px; font-weight: 600; color: #3d4f5f;
-      letter-spacing: 0.01em;
+    .pma-rev-more {
+      background: none;
+      border: 0;
+      padding: 0;
+      margin: 4px 0 0;
+      font: inherit;
+      font-size: 15px;
+      font-style: normal;
+      color: #dd9933;
+      cursor: pointer;
     }
-    .review-card .verified .check {
-      width: 14px; height: 14px; border-radius: 50%;
-      background: #9aa5b1; color: #fff; font-size: 9px;
-      display: inline-flex; align-items: center; justify-content: center;
+    .pma-rev-more:hover { text-decoration: underline; }
+    .pma-rev-more[hidden] { display: none !important; }
+    .pma-rev-g {
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+    }
+    /* speech tail under card (company T1) */
+    .pma-rev-card::after {
+      content: "";
+      position: absolute;
+      left: 72px;
+      bottom: -18px;
+      width: 0; height: 0;
+      border-top: 18px solid #fff;
+      border-right: 18px solid transparent;
+      filter: drop-shadow(1px 2px 1px rgba(0,0,0,0.08));
+    }
+    .pma-rev-meta {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 6px 10px 4px 16px;
+      min-height: 60px;
+    }
+    .pma-rev-avatar {
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
       flex-shrink: 0;
+      background: #ddd;
     }
-    .review-card .rev-body {
-      color: #3d4f5f; font-size: 14px; line-height: 1.55; flex: 1;
-      margin-bottom: 10px;
+    .pma-rev-avatar-ph { background: #c5cdd6; }
+    .pma-rev-who { overflow: hidden; }
+    .pma-rev-name {
+      color: #002340;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      line-height: 1.3;
     }
-    .review-card .rev-body .more-text { display: none; }
-    .review-card.is-open .rev-body .more-text { display: inline; }
-    .review-card.is-open .rev-body .ellipsis { display: none; }
-    .review-card .read-more {
-      background: none; border: 0; padding: 0; margin: 0 0 12px;
-      font: inherit; font-size: 14px; font-weight: 500;
-      color: #c9a227; cursor: pointer; text-align: left;
-      align-self: flex-start;
+    .pma-rev-date {
+      color: #555;
+      font-size: 13px;
+      margin-top: 2px;
     }
-    .review-card .read-more:hover { color: #a8861a; text-decoration: underline; }
-    .review-card .rev-foot {
-      display: flex; align-items: flex-end; justify-content: space-between;
-      gap: 10px; margin-top: auto; padding-top: 4px;
-    }
-    .review-card .who {
-      font-size: 12px; color: #6b7a88; line-height: 1.35;
-    }
-    .review-card .who strong {
-      color: #2c3e50; font-weight: 600; display: block; margin-bottom: 2px;
-    }
-    .review-card .g-logo {
-      width: 22px; height: 22px; flex-shrink: 0; opacity: 0.95;
-    }
+
     .contact-bar {
-      max-width: 1040px; margin: 0 auto 60px; padding: 0 22px;
+      max-width: 1040px; margin: 0 auto; padding: 40px 22px 60px;
     }
     .contact-inner {
       border: 1px solid var(--line-strong);
@@ -226,7 +298,7 @@
       <span class="brand-agents">Agents</span>
     </a>
     <nav class="nav">
-      <a href="/r/natasha-petroff/n2pfrv7/">Current listing</a>
+      <a href="/r/natasha-petroff/n2pfrv7/?preview=1">Current listing</a>
     </nav>
   </header>
 
@@ -242,7 +314,7 @@
       <div class="actions">
         <a class="btn btn-primary" href="tel:+12168325446">Call / Text (216) 832-5446</a>
         <a class="btn" href="mailto:natashap@thomasriddle.com?subject=Pre%20Market%20Agents%20Inquiry">Email Natasha</a>
-        <a class="btn" href="/r/natasha-petroff/n2pfrv7/">View current Pre Market listing</a>
+        <a class="btn" href="/r/natasha-petroff/n2pfrv7/?preview=1">View current Pre Market listing</a>
       </div>
       <div class="social">
         <a href="https://www.instagram.com/natashapetroff/" target="_blank" rel="noopener">Instagram</a>
@@ -251,8 +323,8 @@
     </div>
   </div>
 
-  <div class="body">
-    <section class="prose">
+  <div class="about-wrap">
+    <section>
       <h2>About Natasha</h2>
       <p>
         Hello! I am Natasha Petroff. I pride myself on providing exceptional customer service,
@@ -273,127 +345,151 @@
         time outdoors with friends and family playing various racquet sports.
       </p>
     </section>
-
-    <section class="reviews-section" aria-label="Client reviews">
-      <div class="reviews-head">
-        <h2 style="margin:0;">What My Client's Say</h2>
-        <div class="reviews-nav">
-          <button type="button" id="revPrev" aria-label="Previous reviews">‹</button>
-          <button type="button" id="revNext" aria-label="Next reviews">›</button>
-        </div>
-      </div>
-      <div class="reviews-track-wrap">
-        <div class="reviews-track" id="reviewsTrack">
-
-          <article class="review-card">
-            <div class="rev-top">
-              <span class="stars" aria-label="5 stars">★★★★★</span>
-              <span class="verified"><span class="check" aria-hidden="true">✓</span> BELATED THANK YOU</span>
-            </div>
-            <div class="rev-body">
-              to realtor Natasha Petroff for a number of things. I was moving over an hour away, and Natasha hooked<span class="ellipsis">…</span><span class="more-text"> me up with such great people that made my home buying process quick and easy, by involving K&amp;J Inspections and Gerber Group. She checked off all boxes in my offer in March 2024 to get me a house in the area I needed in such a tough and limited inventory market in Grove City. She didn't hesitate to jump in to keep things moving when I couldn't physically be there. Also thank you Scott for being there for my final walk through. And thanks for the Thomas the Truck offering which I've used once so far! Even after the purchase I had a need to connect with previous owners with a maintenance issue who got me connected to the right people to avoid a tech repair bill. Grateful to all of the team involved — there is no way I would have had this success as a single mother with a quick close if I didn't have you. I hated the world in my season but you kept everything so positive so that I could work up some Joy again. Your service is stellar — Continued blessings to your group!!</span>
-            </div>
-            <button type="button" class="read-more" aria-expanded="false">read more</button>
-            <div class="rev-foot">
-              <div class="who"><strong>Jason Kim</strong>Mar 2, 2025 · Google</div>
-              <svg class="g-logo" viewBox="0 0 24 24" aria-label="Google" role="img"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-            </div>
-          </article>
-
-          <article class="review-card">
-            <div class="rev-top">
-              <span class="stars" aria-label="5 stars">★★★★★</span>
-              <span class="verified"><span class="check" aria-hidden="true">✓</span> All around very</span>
-            </div>
-            <div class="rev-body">
-              positive experience! Natasha was so professional and hands-on. We only have great things to say with our<span class="ellipsis">…</span><span class="more-text"> experience. Highly recommend.</span>
-            </div>
-            <button type="button" class="read-more" aria-expanded="false">read more</button>
-            <div class="rev-foot">
-              <div class="who"><strong>Jeanine Gault</strong>Sep 29, 2024 · Google</div>
-              <svg class="g-logo" viewBox="0 0 24 24" aria-label="Google" role="img"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-            </div>
-          </article>
-
-          <article class="review-card">
-            <div class="rev-top">
-              <span class="stars" aria-label="5 stars">★★★★★</span>
-              <span class="verified"><span class="check" aria-hidden="true">✓</span> Natasha made our</span>
-            </div>
-            <div class="rev-body">
-              first time buying a home amazing! Her patience, compassion, and diligence truly made a difference in<span class="ellipsis">…</span><span class="more-text"> our home buying experience. She worked day and night to find our perfect home. Thanks Natasha — Cait and Antonio</span>
-            </div>
-            <button type="button" class="read-more" aria-expanded="false">read more</button>
-            <div class="rev-foot">
-              <div class="who"><strong>Suah Hwang</strong>Apr 22, 2024 · Google</div>
-              <svg class="g-logo" viewBox="0 0 24 24" aria-label="Google" role="img"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-            </div>
-          </article>
-
-          <article class="review-card">
-            <div class="rev-top">
-              <span class="stars" aria-label="5 stars">★★★★★</span>
-              <span class="verified"><span class="check" aria-hidden="true">✓</span> Excellent!! Natasha</span>
-            </div>
-            <div class="rev-body">
-              is a rockstar of an agent. If you want a home, I would highly recommend calling &amp; asking for Natasha. (certain they are all great!) We called her and had a house 5 business days later<span class="ellipsis">…</span><span class="more-text">. Selling sunset meets Columbus</span>
-            </div>
-            <button type="button" class="read-more" aria-expanded="false">read more</button>
-            <div class="rev-foot">
-              <div class="who"><strong>Ruchi Vaidya</strong>Jul 21, 2025 · Google</div>
-              <svg class="g-logo" viewBox="0 0 24 24" aria-label="Google" role="img"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-            </div>
-          </article>
-
-          <article class="review-card">
-            <div class="rev-top">
-              <span class="stars" aria-label="5 stars">★★★★★</span>
-              <span class="verified"><span class="check" aria-hidden="true">✓</span> We had the pleasure</span>
-            </div>
-            <div class="rev-body">
-              of working with Natasha Petroff who helped us navigate the process of buying a home. She helped us negotiate the closing costs and expedite moving dates<span class="ellipsis">…</span><span class="more-text">! She is very professional and prompt in her approach that too with a smiling face! We were so happy with her that we also retained her as our selling agent!! We highly recommend Natasha to anyone trying to navigate the real estate market in and around Central Ohio, especially the New Albany neighborhood!!</span>
-            </div>
-            <button type="button" class="read-more" aria-expanded="false">read more</button>
-            <div class="rev-foot">
-              <div class="who"><strong>Google review</strong>Central Ohio / New Albany</div>
-              <svg class="g-logo" viewBox="0 0 24 24" aria-label="Google" role="img"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-            </div>
-          </article>
-
-          <article class="review-card">
-            <div class="rev-top">
-              <span class="stars" aria-label="5 stars">★★★★★</span>
-              <span class="verified"><span class="check" aria-hidden="true">✓</span> The New Albany Realty</span>
-            </div>
-            <div class="rev-body">
-              team of Natasha and Rob was more than worth having on my team. There were 2 major reasons why we are not sure we would have made it through this process without them<span class="ellipsis">…</span><span class="more-text">. First, due to the time of the year and our flexibility the team advised us on a "presale" process which may help us in getting best value for our home. Secondly, the team guided me through the whole process through the sale and really showed their true value when we encountered a few issues along the way that without their assistance not sure we would have been able to sell the home. Thank you Natasha and Rob for all your help in making this possible!!</span>
-            </div>
-            <button type="button" class="read-more" aria-expanded="false">read more</button>
-            <div class="rev-foot">
-              <div class="who"><strong>Bryan Daugherty</strong>Apr 23, 2025 · Google</div>
-              <svg class="g-logo" viewBox="0 0 24 24" aria-label="Google" role="img"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-            </div>
-          </article>
-
-          <article class="review-card">
-            <div class="rev-top">
-              <span class="stars" aria-label="5 stars">★★★★★</span>
-              <span class="verified"><span class="check" aria-hidden="true">✓</span> I was a first time</span>
-            </div>
-            <div class="rev-body">
-              buyer and new to the Columbus area and I had the privilege working with Natasha from New Albany Realty. Luckily I ran into her during an open house I attended and glad I did<span class="ellipsis">…</span><span class="more-text">. Natasha went above and beyond helping me throughout the process from start to end, making my first time buying experience a pleasant one. She was able to accommodate last minute showings, provided honest opinions, and provided me with trustworthy industry professionals. I will definitely reach out to New Albany Realty and Natasha for future needs.</span>
-            </div>
-            <button type="button" class="read-more" aria-expanded="false">read more</button>
-            <div class="rev-foot">
-              <div class="who"><strong>Jong Huhl</strong>Apr 8, 2025 · Google</div>
-              <svg class="g-logo" viewBox="0 0 24 24" aria-label="Google" role="img"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-            </div>
-          </article>
-
-        </div>
-      </div>
-    </section>
   </div>
+
+  <!-- Cloned from Thomas|Riddle company profile (WP Review Slider T1) — no pagination dots -->
+  <section class="reviews-band" aria-label="What clients say">
+    <div class="reviews-inner">
+      <h2>What My Client's Say</h2>
+      <div class="pma-rev-viewport" id="revViewport">
+        <div class="pma-rev-track" id="revTrack">
+
+        <div class="pma-rev-slide">
+          <div class="pma-rev-card">
+            <div class="pma-rev-quote" aria-hidden="true">“</div>
+            <div class="pma-rev-body indrevlineclamp">
+              <span class="pma-rev-stars" aria-label="5 stars"><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-rev-verified" title="Verified on Google">✓</span></span>
+              We had the pleasure of working with Natasha Petroff who helped us navigate the process of buying a home. She helped us negotiate the closing costs and expedite moving dates! She is very professional and prompt in her approach that too with a smiling face! We were so happy with her that we also retained her as our selling agent!! We highly recommend Natasha to anyone trying to navigate the real estate market in and around Central Ohio, especially the New Albany neighborhood!!
+            </div>
+            <button type="button" class="pma-rev-more" hidden>read more</button>
+            <img class="pma-rev-g" src="/images/google-review.svg" alt="Google" width="28" height="28" />
+          </div>
+          <div class="pma-rev-meta">
+            <img class="pma-rev-avatar" src="https://lh3.googleusercontent.com/a/ACg8ocLt3cV4jcDpX6RkROKb6z8fEq81fRk4WiynIQoh0NV8e_gD9A=s120-c-rp-mo-br100" alt="" width="60" height="60" loading="lazy" />
+            <div class="pma-rev-who">
+              <div class="pma-rev-name">Ruchi Vaidya</div>
+              <div class="pma-rev-date">7/21/2025</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pma-rev-slide">
+          <div class="pma-rev-card">
+            <div class="pma-rev-quote" aria-hidden="true">“</div>
+            <div class="pma-rev-body indrevlineclamp">
+              <span class="pma-rev-stars" aria-label="5 stars"><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-rev-verified" title="Verified on Google">✓</span></span>
+              Excellent!! Natasha is a rockstar of an agent. If you want a home, I would highly recommend calling &amp; asking for Natasha. (certain they are all great!) We called her and had a house 5 business days later. Selling sunset meets Columbus
+            </div>
+            <button type="button" class="pma-rev-more" hidden>read more</button>
+            <img class="pma-rev-g" src="/images/google-review.svg" alt="Google" width="28" height="28" />
+          </div>
+          <div class="pma-rev-meta">
+            <img class="pma-rev-avatar" src="https://lh3.googleusercontent.com/a/ACg8ocI01ZMfOSqvzlywuEX9nY3v3zELJVu1IOQQ72_YNdhxKuGpzw=s120-c-rp-mo-ba2-br100" alt="" width="60" height="60" loading="lazy" />
+            <div class="pma-rev-who">
+              <div class="pma-rev-name">Bryan Daugherty</div>
+              <div class="pma-rev-date">4/23/2025</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pma-rev-slide">
+          <div class="pma-rev-card">
+            <div class="pma-rev-quote" aria-hidden="true">“</div>
+            <div class="pma-rev-body indrevlineclamp">
+              <span class="pma-rev-stars" aria-label="5 stars"><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-rev-verified" title="Verified on Google">✓</span></span>
+              Initially we were not sure which realty company and/or agent in helping us to sell our home.  After all that is a lot of commission to pay out living in such a high demand area.  Boy did we learn that the New Albany Realty team of Natasha and Rob was more that worth having on my team.  There were 2 major reasons why we are not sure we would have made it through this process without them.  First, due to the time of the year and our flexibility the team advised us on &quot;presale&quot; process which may help us in getting best value for our home.  Secondly,  the team guided me through the whole process through the sale and really showed their true value when we encountered a few issues along the way that without their assistance not sure we would have been able to sell the home.  Thank you Natasha and Rob for all your help in making this possible !!
+            </div>
+            <button type="button" class="pma-rev-more" hidden>read more</button>
+            <img class="pma-rev-g" src="/images/google-review.svg" alt="Google" width="28" height="28" />
+          </div>
+          <div class="pma-rev-meta">
+            <img class="pma-rev-avatar" src="https://lh3.googleusercontent.com/a/ACg8ocKk9eJYR2BJ4Z39klXQ63Dchl_VgMmNT5ppjqt6VAznqlw2OA=s120-c-rp-mo-br100" alt="" width="60" height="60" loading="lazy" />
+            <div class="pma-rev-who">
+              <div class="pma-rev-name">Jong Huhl</div>
+              <div class="pma-rev-date">4/08/2025</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pma-rev-slide">
+          <div class="pma-rev-card">
+            <div class="pma-rev-quote" aria-hidden="true">“</div>
+            <div class="pma-rev-body indrevlineclamp">
+              <span class="pma-rev-stars" aria-label="5 stars"><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-rev-verified" title="Verified on Google">✓</span></span>
+              I was a first time buyer and new to the Columbus area and I had the privilege working with Natasha from New Albany Realty.  Luckily I ran into her during an open house I attended and glad I did.  Natasha went above and beyond helping me throughout the process from start to end, making my first time buying experience a pleasant one.  She was able to accommodate last minute showings, provided honest opinions, and provided me with trustworthy industry professionals.  I will definitely reach out to New Albany Realty and Natasha for future needs.
+            </div>
+            <button type="button" class="pma-rev-more" hidden>read more</button>
+            <img class="pma-rev-g" src="/images/google-review.svg" alt="Google" width="28" height="28" />
+          </div>
+          <div class="pma-rev-meta">
+            <img class="pma-rev-avatar" src="https://lh3.googleusercontent.com/a/ACg8ocKj2jhssl5AOxE851wW7HISfJ1rENSOQUhhyW8t8beRfC8TKQ=s120-c-rp-mo-br100" alt="" width="60" height="60" loading="lazy" />
+            <div class="pma-rev-who">
+              <div class="pma-rev-name">Jason Kim</div>
+              <div class="pma-rev-date">3/02/2025</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pma-rev-slide">
+          <div class="pma-rev-card">
+            <div class="pma-rev-quote" aria-hidden="true">“</div>
+            <div class="pma-rev-body indrevlineclamp">
+              <span class="pma-rev-stars" aria-label="5 stars"><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-rev-verified" title="Verified on Google">✓</span></span>
+              BELATED THANK YOU to realtor Natasha Petroff for a number of things. I was moving over an hour away, and Natasha hooked me up with such great people that made my home buying process quick and easy, by involving K&amp;J Inspections and Gerber Group. She checked off all boxes in my offer in March 2024 to get me a house in the area I needed in such a tough and limited inventory market in Grove City. She didn&#x27;t hesitate to jump in to keep things moving when I couldn&#x27;t physically be there. Also thank you Scott for being there for my final walk through. And thanks for the Thomas the Truck offering which I&#x27;ve used once so far! Even after the purchase I had a need to connect with previous owners with a maintenance issue who got me connected to the right people to avoid a tech repair bill. Grateful to all of the team involved - there is no way I would have had this success as a single mother with a quick close if I didn&#x27;t have you.  I hated the world in my season but you kept everything so positive so that I could work up some Joy again.  Your service is stellar - Continued blessings to your group!!
+            </div>
+            <button type="button" class="pma-rev-more" hidden>read more</button>
+            <img class="pma-rev-g" src="/images/google-review.svg" alt="Google" width="28" height="28" />
+          </div>
+          <div class="pma-rev-meta">
+            <img class="pma-rev-avatar" src="https://lh3.googleusercontent.com/a/ACg8ocL7uiEHw6bSJbI_MpjI3p6ApeJ-q8qNTa0FxO6NI8dF_vgR3Q=s120-c-rp-mo-br100" alt="" width="60" height="60" loading="lazy" />
+            <div class="pma-rev-who">
+              <div class="pma-rev-name">Jeanine Gault</div>
+              <div class="pma-rev-date">9/29/2024</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pma-rev-slide">
+          <div class="pma-rev-card">
+            <div class="pma-rev-quote" aria-hidden="true">“</div>
+            <div class="pma-rev-body indrevlineclamp">
+              <span class="pma-rev-stars" aria-label="5 stars"><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-rev-verified" title="Verified on Google">✓</span></span>
+              All around very positive experience! Natasha was so professional and hands-on. We only have great things to say with our experience. Highly recommend.
+            </div>
+            <button type="button" class="pma-rev-more" hidden>read more</button>
+            <img class="pma-rev-g" src="/images/google-review.svg" alt="Google" width="28" height="28" />
+          </div>
+          <div class="pma-rev-meta">
+            <img class="pma-rev-avatar" src="https://lh3.googleusercontent.com/a-/ALV-UjU7JhOyPLk8kI7LraZgORdeQQB8hxf_9IcJqE9IOXe6PwPf42Te6w=s240-c-rp-mo-br100" alt="" width="60" height="60" loading="lazy" />
+            <div class="pma-rev-who">
+              <div class="pma-rev-name">Suah Hwang</div>
+              <div class="pma-rev-date">4/22/2024</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pma-rev-slide">
+          <div class="pma-rev-card">
+            <div class="pma-rev-quote" aria-hidden="true">“</div>
+            <div class="pma-rev-body indrevlineclamp">
+              <span class="pma-rev-stars" aria-label="5 stars"><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-star" aria-hidden="true">★</span><span class="pma-rev-verified" title="Verified on Google">✓</span></span>
+              Natasha made our first time buying a home amazing! Her patience, compassion, and diligence truly made a difference in our home buying experience. She worked day and night to find our perfect home. Thanks Natasha -Cait and Antonio
+            </div>
+            <button type="button" class="pma-rev-more" hidden>read more</button>
+            <img class="pma-rev-g" src="/images/google-review.svg" alt="Google" width="28" height="28" />
+          </div>
+          <div class="pma-rev-meta">
+            <img class="pma-rev-avatar" src="https://lh3.googleusercontent.com/a-/ALV-UjXOlSFwBz0npHpIwIg2L75mgNLrE8nz6enQpZc_jVdD7sFXhXQ=s240-c-rp-mo-br100" alt="" width="60" height="60" loading="lazy" />
+            <div class="pma-rev-who">
+              <div class="pma-rev-name">Caitlin Cipriano</div>
+              <div class="pma-rev-date">4/02/2024</div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <div class="contact-bar">
     <div class="contact-inner">
@@ -401,7 +497,7 @@
         <h3>Work with Natasha</h3>
         <p>(216) 832-5446 · natashap@thomasriddle.com · New Albany &amp; Central Ohio</p>
       </div>
-      <a class="btn btn-primary" href="/r/natasha-petroff/n2pfrv7/">Open current listing</a>
+      <a class="btn btn-primary" href="/r/natasha-petroff/n2pfrv7/?preview=1">Open current listing</a>
     </div>
   </div>
 
@@ -412,27 +508,104 @@
 
   <script>
     (function () {
-      var track = document.getElementById("reviewsTrack");
-      var step = function () {
-        var card = track.querySelector(".review-card");
-        return card ? card.getBoundingClientRect().width + 18 : 340;
-      };
-      document.getElementById("revPrev").addEventListener("click", function () {
-        track.scrollBy({ left: -step(), behavior: "smooth" });
-      });
-      document.getElementById("revNext").addEventListener("click", function () {
-        track.scrollBy({ left: step(), behavior: "smooth" });
-      });
-      /* read more / read less — company-site behavior, no pagination dots */
-      track.querySelectorAll(".review-card").forEach(function (card) {
-        var btn = card.querySelector(".read-more");
-        if (!btn) return;
-        btn.addEventListener("click", function () {
-          var open = card.classList.toggle("is-open");
-          btn.textContent = open ? "read less" : "read more";
-          btn.setAttribute("aria-expanded", open ? "true" : "false");
+      var track = document.getElementById("revTrack");
+      var slides = Array.prototype.slice.call(track.querySelectorAll(".pma-rev-slide"));
+      var n = slides.length;
+      var page = 0;
+      var timer = null;
+
+      function perView() {
+        var w = window.innerWidth;
+        if (w <= 600) return 1;
+        if (w <= 900) return 2;
+        return 3;
+      }
+
+      function maxPage() {
+        return Math.max(0, Math.ceil(n / perView()) - 1);
+      }
+
+      function go(p) {
+        var pv = perView();
+        var mp = maxPage();
+        page = ((p % (mp + 1)) + (mp + 1)) % (mp + 1);
+        var pct = (100 / pv) * page * pv;
+        // move by whole pages of perView slides
+        var offset = page * pv * (100 / pv);
+        track.style.transform = "translateX(-" + offset + "%)";
+      }
+
+      function next() {
+        var mp = maxPage();
+        if (page >= mp) go(0);
+        else go(page + 1);
+      }
+
+      function equalize() {
+        // same-height cards within viewport page (company revsameheight=yes)
+        var cards = track.querySelectorAll(".pma-rev-card");
+        cards.forEach(function (c) { c.style.minHeight = ""; });
+        var maxH = 0;
+        cards.forEach(function (c) { maxH = Math.max(maxH, c.offsetHeight); });
+        if (maxH > 0) cards.forEach(function (c) { c.style.minHeight = maxH + "px"; });
+      }
+
+      function wireReadMore() {
+        track.querySelectorAll(".pma-rev-slide").forEach(function (slide) {
+          var body = slide.querySelector(".pma-rev-body");
+          var btn = slide.querySelector(".pma-rev-more");
+          if (!body || !btn) return;
+          // show read more only if clamped
+          body.classList.remove("is-open");
+          var overflowing = body.scrollHeight > body.clientHeight + 2;
+          btn.hidden = !overflowing;
+          btn.textContent = "read more";
+          btn.onclick = function () {
+            var open = body.classList.toggle("is-open");
+            btn.textContent = open ? "read less" : "read more";
+            equalize();
+          };
         });
+      }
+
+      function restart() {
+        go(0);
+        wireReadMore();
+        equalize();
+        if (timer) clearInterval(timer);
+        // company: autoplay 3000ms, slidesToScroll = slidesToShow
+        timer = setInterval(next, 3000);
+      }
+
+      window.addEventListener("resize", function () {
+        restart();
       });
+      // pause on hover like many sliders
+      var vp = document.getElementById("revViewport");
+      vp.addEventListener("mouseenter", function () { if (timer) clearInterval(timer); });
+      vp.addEventListener("mouseleave", function () {
+        timer = setInterval(next, 3000);
+      });
+
+      // touch swipe
+      var sx = null;
+      vp.addEventListener("touchstart", function (e) { sx = e.changedTouches[0].screenX; }, { passive: true });
+      vp.addEventListener("touchend", function (e) {
+        if (sx == null) return;
+        var dx = e.changedTouches[0].screenX - sx;
+        if (Math.abs(dx) > 40) {
+          if (dx < 0) next();
+          else go(page - 1);
+        }
+        sx = null;
+      }, { passive: true });
+
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(restart);
+      } else {
+        restart();
+      }
+      setTimeout(restart, 200);
     })();
   </script>
 </body>

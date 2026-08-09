@@ -3,20 +3,181 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pre Market Agents | Private Home Previews &amp; Smarter Real Estate Decisions</title>
-  <meta name="description" content="Learn how private pre-market home previews work, explore neighborhood education, and understand exclusive listings shared by invitation from your realtor." />
+  <title>Pre Market Agents | Your private look, before the market</title>
+  <meta name="description" content="Your private look, before the market. Pre Market Agents — exclusive pre-market home previews shared by invitation from your realtor." />
   <meta name="robots" content="index, follow, max-image-preview:large" />
   <link rel="canonical" href="https://premarketagents.com/" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://premarketagents.com/" />
-  <meta property="og:title" content="Pre Market Agents | Private Home Previews" />
-  <meta property="og:description" content="pre-market opportunities, neighborhood context, and a calmer path to the right home—shared by realtors when the moment is right." />
-  <meta property="og:image" content="https://premarketagents.com/images/marketing/hero-estate-dusk.jpg" />
+  <meta property="og:title" content="Pre Market Agents | Your private look, before the market" />
+  <meta property="og:description" content="Exclusive pre-market home previews — shared by invitation from your realtor." />
+  <meta property="og:image" content="https://premarketagents.com/images/og/home-private-look.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
   <meta property="og:site_name" content="Pre Market Agents" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://premarketagents.com/images/og/home-private-look.jpg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/site.css" />
+  <style>
+    /* Landing-only: full-bleed night estate */
+    body.landing-home {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #050506;
+    }
+    body.landing-home .site-header {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      background: transparent;
+      border-bottom: none;
+      backdrop-filter: none;
+    }
+    body.landing-home .site-header .brand-pre,
+    body.landing-home .site-header .nav a {
+      text-shadow: 0 1px 12px rgba(0,0,0,0.55);
+    }
+    body.landing-home main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .landing-hero {
+      position: relative;
+      flex: 1;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .landing-hero-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      display: block;
+    }
+    /* Soft edge vignette so header/footer read cleanly */
+    .landing-hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(5,5,6,0.45) 0%, transparent 18%, transparent 78%, rgba(5,5,6,0.72) 100%),
+        linear-gradient(90deg, rgba(5,5,6,0.35) 0%, transparent 28%, transparent 72%, rgba(5,5,6,0.25) 100%);
+    }
+    /* Accessible HTML copy — sits over the same zone as the baked-in art text.
+       Visually subtle so the photo leads; screen readers + SEO still get the words. */
+    .landing-copy {
+      position: relative;
+      z-index: 1;
+      max-width: 22ch;
+      padding: 0 28px;
+      text-align: left;
+      margin-right: auto;
+      margin-left: clamp(4vw, 8vw, 12vw);
+      margin-top: -4vh;
+    }
+    .landing-copy .brand-mark {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 22px;
+    }
+    .landing-copy .brand-mark .pre {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-weight: 500;
+      font-size: clamp(18px, 2.4vw, 26px);
+      letter-spacing: 0.42em;
+      text-transform: uppercase;
+      color: #f5f2eb;
+      text-shadow: 0 2px 28px rgba(0,0,0,0.65);
+    }
+    .landing-copy .brand-mark .agents {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.48em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-shadow: 0 1px 16px rgba(0,0,0,0.55);
+    }
+    .landing-copy h1 {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-weight: 500;
+      font-size: clamp(34px, 5.2vw, 54px);
+      line-height: 1.12;
+      color: #faf7f0;
+      letter-spacing: 0.01em;
+      text-shadow: 0 2px 32px rgba(0,0,0,0.7);
+      max-width: 14ch;
+    }
+    /* When art already paints the words, keep HTML for a11y but avoid double-read */
+    .landing-copy.is-over-art .brand-mark,
+    .landing-copy.is-over-art h1 {
+      /* Image already includes brand + headline — hide visual double, keep in DOM for a11y/SEO */
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    .landing-foot {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 2;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px 24px;
+      padding: 20px 24px 28px;
+    }
+    .landing-foot p {
+      font-size: 12px;
+      color: rgba(245,242,235,0.72);
+      letter-spacing: 0.04em;
+      max-width: 42ch;
+      line-height: 1.5;
+      text-shadow: 0 1px 10px rgba(0,0,0,0.6);
+    }
+    .landing-foot-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .landing-foot .btn-ghost {
+      border-color: rgba(255,255,255,0.28);
+      color: #f5f2eb !important;
+      background: rgba(12,12,13,0.35);
+      backdrop-filter: blur(8px);
+    }
+    .landing-foot .btn-ghost:hover {
+      border-color: var(--gold);
+      color: var(--gold-soft) !important;
+    }
+    @media (max-width: 640px) {
+      .landing-foot {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      body.landing-home .site-header .nav .hide-sm { display: none; }
+    }
+  </style>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -26,7 +187,7 @@
         "@id": "https://premarketagents.com/#organization",
         "name": "Pre Market Agents",
         "url": "https://premarketagents.com/",
-        "description": "Private pre-market home previews and homeowner education."
+        "description": "Private pre-market home previews shared by realtor invitation."
       },
       {
         "@type": "WebSite",
@@ -39,226 +200,46 @@
   }
   </script>
 </head>
-<body>
+<body class="landing-home">
   <header class="site-header">
-    <a class="brand" href="/">
+    <a class="brand" href="/" aria-label="Pre Market Agents home">
       <span class="brand-pre">Pre Market</span>
       <span class="brand-agents">Agents</span>
     </a>
     <nav class="nav" aria-label="Primary">
-      <a class="hide-sm" href="#life">The feeling</a>
-      <a class="hide-sm" href="#how-it-works">How it works</a>
-      <a class="hide-sm" href="#explore">Explore</a>
       <a class="hide-sm" href="/learn/">Learn</a>
+      <a class="hide-sm" href="/explore/">Explore</a>
       <a class="btn btn-ghost" href="/login/">Realtor login</a>
     </nav>
   </header>
 
   <main>
-    <section class="hero hero-photo" style="--hero-img: url('/images/marketing/hero-estate-dusk.jpg')">
-      <div class="hero-scrim"></div>
-      <div class="hero-inner">
-        <p class="eyebrow">For homeowners &amp; buyers</p>
-        <h1 class="hero-title">
-          See homes before the open market.
-        </h1>
-        <p class="hero-lead">
-          Connected agents share pre-market opportunities with clients first—so you can look
-          seriously before a listing hits the portals and turns into a free-for-all. Calm, invited,
-          on your time—not a public open house.
-        </p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="/learn/">Start with the guides</a>
-          <a class="btn btn-ghost" href="#life">See the lifestyle</a>
+    <section class="landing-hero" aria-label="Pre Market Agents">
+      <img
+        class="landing-hero-img"
+        src="/images/marketing/hero-private-look.jpg"
+        srcset="/images/marketing/hero-private-look.jpg 1200w, /images/marketing/hero-private-look.png 1200w"
+        sizes="100vw"
+        width="1200"
+        height="630"
+        alt="Night view of a lit estate home — Pre Market Agents: Your private look, before the market."
+        fetchpriority="high"
+      />
+      <div class="landing-copy is-over-art">
+        <div class="brand-mark">
+          <span class="pre">Pre Market</span>
+          <span class="agents">Agents</span>
         </div>
-        <p class="hero-note">
-          Already have a private link from your realtor? Open it directly—those pages are personal.
-        </p>
+        <h1>Your private look, before the market.</h1>
       </div>
-    </section>
-
-    <section class="mood-strip" id="life" aria-label="Life around the home">
-      <div class="mood-track">
-        <figure class="mood-card wide">
-          <img src="/images/marketing/mood-lake.jpg" alt="Quiet lake at golden hour with a dock and chairs" width="1280" height="720" loading="eager" />
-          <figcaption>Water nearby. Evenings that breathe.</figcaption>
-        </figure>
-        <figure class="mood-card">
-          <img src="/images/marketing/mood-kids.jpg" alt="Children laughing on a green lawn in front of a home" width="1152" height="864" loading="lazy" />
-          <figcaption>Room to run. Room to grow.</figcaption>
-        </figure>
-        <figure class="mood-card">
-          <img src="/images/marketing/mood-couple.jpg" alt="Happy couple on a stone patio at sunset" width="1152" height="864" loading="lazy" />
-          <figcaption>The look you give each other when it finally feels right.</figcaption>
-        </figure>
-        <figure class="mood-card wide">
-          <img src="/images/marketing/mood-boats.jpg" alt="Classic wooden boats at a private dock at dusk" width="1280" height="720" loading="lazy" />
-          <figcaption>Boats, docks, and unhurried weekends.</figcaption>
-        </figure>
-        <figure class="mood-card">
-          <img src="/images/marketing/interior-great-room.jpg" alt="Warm luxury living room with fireplace at dusk" width="1152" height="864" loading="lazy" />
-          <figcaption>Come home to warmth, not a showroom.</figcaption>
-        </figure>
-        <figure class="mood-card">
-          <img src="/images/marketing/mood-pool-couple.jpg" alt="Couple by a pool overlooking water at twilight" width="1280" height="720" loading="lazy" />
-          <figcaption>Quiet celebration. No performance.</figcaption>
-        </figure>
-      </div>
-    </section>
-
-    <section class="section" id="how-it-works">
-      <div class="section-head">
-        <h2>How pre-market access works</h2>
-        <p>Access you wouldn’t get from public portals alone—and a calmer way to look once you’re invited.</p>
-      </div>
-      <div class="steps-visual">
-        <article class="step-card">
-          <div class="step-img">
-            <img src="/images/marketing/mood-couple.jpg" alt="" width="600" height="450" loading="lazy" />
-          </div>
-          <div class="step-body">
-            <span class="step-num">01</span>
-            <h3>Work with a connected agent</h3>
-            <p>Experienced agents hear about homes before the open market—through relationships and deal flow, not a public search grid.</p>
-          </div>
-        </article>
-        <article class="step-card">
-          <div class="step-img">
-            <img src="/images/marketing/interior-kitchen.jpg" alt="" width="600" height="450" loading="lazy" />
-          </div>
-          <div class="step-body">
-            <span class="step-num">02</span>
-            <h3>Get a personal invite</h3>
-            <p>Your realtor sends a private link when an opportunity fits—not a portal anyone can scroll.</p>
-          </div>
-        </article>
-        <article class="step-card">
-          <div class="step-img">
-            <img src="/images/marketing/interior-wine-lounge.jpg" alt="" width="600" height="450" loading="lazy" />
-          </div>
-          <div class="step-body">
-            <span class="step-num">03</span>
-            <h3>Look on your time</h3>
-            <p>Photos, facts, and neighborhood context—without the rush of a public open house or bidding free-for-all.</p>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section class="band band-photo" id="explore" style="--band-img: url('/images/marketing/exterior-estate.jpg')">
-      <div class="band-scrim"></div>
-      <div class="section band-inner">
-        <div class="section-head">
-          <h2>Get a feel for the neighborhood</h2>
-          <p>
-            School districts, tax areas, and how the streets sit together—so a pre-market opportunity
-            already feels familiar when your realtor sends one.
-          </p>
-        </div>
-        <div class="map-teaser map-teaser-on-photo">
-          <div class="map-teaser-inner">
-            <span class="pill">New Albany sample</span>
-            <h3>Orient yourself before the showing</h3>
-            <p>
-              Open the map around Ebrington / New Albany: parcel outlines, schools, and tax districts.
-            </p>
-            <a class="btn btn-primary" href="/explore/">Open the map</a>
-            <a class="btn btn-ghost" href="/learn/what-is-a-pre-market-listing/" style="margin-left:8px;">What is pre-market?</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="section-head">
-        <h2>Guides for homeowners</h2>
-        <p>Clear education—written to help you ask better questions of any realtor you trust.</p>
-      </div>
-      <div class="article-grid">
-        <a class="article-card" href="/learn/what-is-a-pre-market-listing/">
-          <div class="article-thumb">
-            <img src="/images/marketing/hero-estate-dusk.jpg" alt="" width="640" height="360" loading="lazy" />
-          </div>
-          <div class="article-body">
-            <div class="article-meta">Basics</div>
-            <h3>What is a pre-market listing?</h3>
-            <p>How pre-market opportunities differ from a full MLS launch—and what to ask your agent.</p>
-          </div>
-        </a>
-        <a class="article-card" href="/learn/questions-to-ask-before-a-private-showing/">
-          <div class="article-thumb">
-            <img src="/images/marketing/interior-bedroom.jpg" alt="" width="640" height="480" loading="lazy" />
-          </div>
-          <div class="article-body">
-            <div class="article-meta">Buying</div>
-            <h3>Questions to ask before a private showing</h3>
-            <p>Stay clear-headed when access feels special.</p>
-          </div>
-        </a>
-        <a class="article-card" href="/learn/how-neighborhood-research-helps-sellers/">
-          <div class="article-thumb">
-            <img src="/images/marketing/mood-lake.jpg" alt="" width="640" height="360" loading="lazy" />
-          </div>
-          <div class="article-body">
-            <div class="article-meta">Selling</div>
-            <h3>How neighborhood research helps sellers</h3>
-            <p>Schools, comps context, and what “area knowledge” really means.</p>
-          </div>
-        </a>
-        <a class="article-card" href="/learn/pre-market-vs-mls/">
-          <div class="article-thumb">
-            <img src="/images/marketing/mood-boats.jpg" alt="" width="640" height="360" loading="lazy" />
-          </div>
-          <div class="article-body">
-            <div class="article-meta">Basics</div>
-            <h3>Pre-market vs MLS</h3>
-            <p>How pre-market opportunities fit with public listings—and how buyers use both.</p>
-          </div>
-        </a>
-      </div>
-      <p style="margin-top:22px;"><a href="/learn/">All guides →</a></p>
-    </section>
-
-    <section class="section split-cta">
-      <div class="split-card">
-        <div class="split-img">
-          <img src="/images/marketing/mood-kids.jpg" alt="" width="800" height="600" loading="lazy" />
-        </div>
-        <div class="split-body">
-          <h3>If you’re a homeowner or buyer</h3>
-          <p>Use the guides, learn the process, and work with a licensed realtor you trust. pre-market opportunities arrive when they invite you.</p>
-          <a class="btn btn-primary" href="/learn/">Start learning</a>
-        </div>
-      </div>
-      <div class="split-card">
-        <div class="split-img">
-          <img src="/images/marketing/interior-great-room.jpg" alt="" width="800" height="600" loading="lazy" />
-        </div>
-        <div class="split-body">
-          <h3>If you’re a licensed realtor</h3>
-          <p>Agent materials are behind a professional verification gate—license details only. No phone or email required at the door.</p>
-          <a class="btn btn-ghost" href="/login/">Realtor login →</a>
+      <div class="landing-foot">
+        <p>Private pre-market previews — by invitation from your realtor.</p>
+        <div class="landing-foot-actions">
+          <a class="btn btn-primary" href="/login/">Realtor login</a>
+          <a class="btn btn-ghost" href="/learn/">Learn more</a>
         </div>
       </div>
     </section>
   </main>
-
-  <footer class="site-footer">
-    <div class="footer-brand">
-      <span class="pm">Pre Market</span>
-      <span class="ag">Agents</span>
-    </div>
-    <p>pre-market opportunities by realtor invitation. Public pages help you learn and get oriented.</p>
-    <p>© <span id="y"></span> Pre Market Agents</p>
-    <nav class="footer-links">
-      <a href="/">Home</a>
-      <a href="/learn/">Learn</a>
-      <a href="/explore/">Explore</a>
-      <a href="/login/">Realtor login</a>
-      <a href="/realtors/">Realtor access</a>
-      <a href="/privacy/">Privacy</a>
-    </nav>
-  </footer>
-  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
 </body>
 </html>

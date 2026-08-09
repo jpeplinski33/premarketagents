@@ -10,19 +10,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/site.css" />
   <style>
-    .dash { max-width: 920px; margin: 0 auto; padding: 40px 22px 80px; }
+    .dash { max-width: 960px; margin: 0 auto; padding: 40px 22px 80px; }
     .dash h1 {
       font-family: "Cormorant Garamond", Georgia, serif;
       font-weight: 500; font-size: clamp(28px, 4vw, 40px); margin-bottom: 8px;
     }
-    .dash .sub { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
-    .panel { margin-bottom: 20px; }
+    .dash .sub { color: var(--muted); font-size: 14px; margin-bottom: 24px; max-width: 62ch; line-height: 1.55; }
+    .panel { margin-bottom: 22px; }
     .panel h3 { margin-bottom: 12px; }
     .gate-box { max-width: 420px; margin: 48px auto; }
     .muted { color: var(--muted); font-size: 13px; }
     .ok { color: var(--gold-soft); }
     code { color: var(--gold-soft); font-size: 12px; word-break: break-all; }
     #lock-view[hidden], #dash-view[hidden] { display: none !important; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; align-items: center; }
+    .toolbar button, .toolbar a.btn { font-size: 11px; padding: 10px 14px; }
     label.field {
       display: block; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
       color: var(--muted); margin: 0 0 6px;
@@ -33,6 +35,14 @@
     }
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+    .listing-card {
+      border: 1px solid var(--line); background: var(--bg-elev); padding: 18px; margin-bottom: 12px;
+    }
+    .listing-card h3 {
+      font-family: "Cormorant Garamond", Georgia, serif; font-size: 22px; font-weight: 500; margin-bottom: 6px;
+    }
+    .listing-card .meta { font-size: 13px; color: var(--muted); margin-bottom: 12px; line-height: 1.45; }
+    .listing-card.active { border-color: rgba(196,165,116,0.45); }
     .invite-row {
       border: 1px solid var(--line); background: var(--bg-elev); padding: 16px; margin-bottom: 12px;
     }
@@ -62,6 +72,18 @@
       background: rgba(196,165,116,0.06); font-size: 13px; color: #c8c3b8; display: none;
     }
     .detail-box.open { display: block; }
+    .agent-strip {
+      display: flex; gap: 16px; align-items: center; margin-bottom: 22px;
+      padding: 16px; border: 1px solid var(--line); background: var(--bg-elev);
+    }
+    .agent-strip img {
+      width: 64px; height: 64px; border-radius: 50%; object-fit: cover;
+      border: 1px solid rgba(196,165,116,0.4);
+    }
+    .agent-strip .name {
+      font-family: "Cormorant Garamond", Georgia, serif; font-size: 22px; font-weight: 500;
+    }
+    .agent-strip .co { font-size: 13px; color: var(--muted); margin-top: 2px; }
   </style>
 </head>
 <body>
@@ -71,7 +93,8 @@
       <span class="brand-agents">Agents</span>
     </a>
     <nav class="nav">
-      <a href="/r/natasha-petroff/profile/">Profile</a>
+      <a href="/r/natasha-petroff/profile/">Agent profile</a>
+      <a href="/r/natasha-petroff/n2pfrv7/?preview=1">Yantis listing</a>
     </nav>
   </header>
 
@@ -80,7 +103,7 @@
       <p class="eyebrow">Agent sign-in · pilot</p>
       <h1 style="font-size:28px;margin-bottom:12px;">Natasha Petroff</h1>
       <p class="muted" style="margin-bottom:16px;">
-        Sign in to create trackable homeowner invites and see each person’s activity.
+        Sign in to manage your Pre Market listings and create trackable homeowner invites.
       </p>
       <form id="login-form">
         <label class="field" for="email">Email</label>
@@ -95,21 +118,40 @@
   </div>
 
   <div id="dash-view" class="dash" hidden>
-    <p class="eyebrow">Natasha Petroff · Thomas|Riddle · New Albany Realty</p>
-    <h1>Homeowner invites</h1>
+    <p class="eyebrow">Agent workspace</p>
+    <h1>Your dashboard</h1>
     <p class="sub">
-      Create a personal, trackable link for each homeowner. Activity is stored per person — not as one shared listing feed.
+      Manage your Pre Market listings and send each homeowner a personal, trackable invite.
+      Activity is shown per person you invite — not as one shared listing feed.
     </p>
 
+    <div class="agent-strip">
+      <img src="/images/agent/natasha-petroff.jpg" alt="Natasha Petroff" width="64" height="64" />
+      <div>
+        <div class="name">Natasha Petroff</div>
+        <div class="co">Thomas|Riddle Real Estate Group · New Albany Realty</div>
+        <div class="co" style="margin-top:4px;">(216) 832-5446 · natashap@thomasriddle.com</div>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <a class="btn btn-primary" href="/r/natasha-petroff/profile/" target="_blank" rel="noopener">View agent profile</a>
+      <a class="btn btn-ghost" id="open-listing-preview" href="/r/natasha-petroff/n2pfrv7/?preview=1" target="_blank" rel="noopener">Preview selected listing</a>
+      <button type="button" class="btn btn-ghost" id="reload">Refresh invite activity</button>
+      <button type="button" class="btn btn-ghost" id="signout">Sign out</button>
+    </div>
+
     <div class="panel">
-      <h3>Listing</h3>
-      <select class="field" id="listing-select"></select>
+      <h3>Your listings</h3>
+      <p class="muted" style="margin-bottom:12px;">Select a listing, then create trackable invites for that property below.</p>
+      <div id="listings"></div>
     </div>
 
     <div class="panel">
       <h3>Create a trackable invite link</h3>
       <p class="muted" style="margin-bottom:14px;">
-        Enter the homeowner’s details and an invite password. You’ll get a unique link only they should use.
+        For <strong id="create-for" style="color:var(--ink)">—</strong>. Enter the homeowner’s details and an invite password.
+        Each person gets their own link so you can see their activity separately.
       </p>
       <form id="create-form">
         <div class="grid-2">
@@ -135,14 +177,18 @@
     </div>
 
     <div class="panel">
-      <h3>Trackable invites</h3>
+      <h3>Trackable invites · homeowner activity</h3>
       <p class="muted" id="invite-empty" style="display:none;">No invites yet for this listing. Create one above.</p>
       <div id="invite-list"></div>
     </div>
 
-    <p class="muted" style="margin-top:20px;">
-      <button type="button" class="btn btn-ghost" id="signout">Sign out</button>
-    </p>
+    <div class="panel">
+      <h3>Disclosure</h3>
+      <p class="muted">
+        Each homeowner’s personal invite shows a plain-language notice that you can view engagement
+        on that link (time, photos, map, links). Activity is invite-scoped to that person only.
+      </p>
+    </div>
   </div>
 
   <script src="/js/invite-registry.js"></script>
@@ -157,15 +203,17 @@
           code: "n2pfrv7",
           address: "4879 Yantis Dr, New Albany, OH 43054",
           price: "$2,795,000",
-          path: "/r/natasha-petroff/n2pfrv7/"
+          facts: "5 bd · 5 full + 2 half ba · 7,891 sqft",
+          path: "/r/natasha-petroff/n2pfrv7/",
+          previewPath: "/r/natasha-petroff/n2pfrv7/?preview=1"
         }
       ];
       var agentName = "Natasha Petroff, Thomas|Riddle Real Estate Group";
+      var selectedCode = LISTINGS[0].code;
 
       var lock = document.getElementById("lock-view");
       var dash = document.getElementById("dash-view");
       var err = document.getElementById("err");
-      var sel = document.getElementById("listing-select");
 
       function unlocked() {
         try { return sessionStorage.getItem("pma_dash_" + AGENT) === "1"; } catch (e) { return false; }
@@ -178,8 +226,7 @@
       }
 
       function currentListing() {
-        var code = sel.value;
-        return LISTINGS.find(function (L) { return L.code === code; }) || LISTINGS[0];
+        return LISTINGS.find(function (L) { return L.code === selectedCode; }) || LISTINGS[0];
       }
 
       function fmtTime(t) {
@@ -192,15 +239,52 @@
         if (s < 60) return s + "s";
         return Math.floor(s / 60) + "m " + (s % 60) + "s";
       }
-
-      function activityFor(rec) {
-        var id = rec.id;
-        var events = PMAInviteAnalytics.loadEvents(id);
-        var sum = PMAInviteAnalytics.summarize(events);
-        return { events: events, sum: sum };
+      function escapeHtml(s) {
+        return String(s || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
       }
 
-      function renderList() {
+      function activityFor(rec) {
+        var events = PMAInviteAnalytics.loadEvents(rec.id);
+        return PMAInviteAnalytics.summarize(events);
+      }
+
+      function renderListings() {
+        var host = document.getElementById("listings");
+        host.innerHTML = "";
+        LISTINGS.forEach(function (L) {
+          var invites = PMAInviteRegistry.listForListing(AGENT, L.code);
+          var card = document.createElement("div");
+          card.className = "listing-card" + (L.code === selectedCode ? " active" : "");
+          card.innerHTML =
+            "<h3>" + escapeHtml(L.address) + "</h3>" +
+            '<p class="meta">' + escapeHtml(L.price) + " · " + escapeHtml(L.facts || "") +
+            "<br />" + invites.length + " trackable invite" + (invites.length === 1 ? "" : "s") +
+            " · <code>/r/" + AGENT + "/" + L.code + "/</code></p>" +
+            '<div class="row-actions">' +
+            '<button type="button" class="btn ' + (L.code === selectedCode ? "btn-primary" : "btn-ghost") + '" data-act="select">Work with this listing</button>' +
+            '<a class="btn btn-ghost" href="' + L.previewPath + '" target="_blank" rel="noopener">Preview listing</a>' +
+            "</div>";
+          host.appendChild(card);
+          card.querySelector('[data-act="select"]').addEventListener("click", function () {
+            selectedCode = L.code;
+            syncSelected();
+          });
+        });
+      }
+
+      function syncSelected() {
+        var L = currentListing();
+        document.getElementById("create-for").textContent = L.address;
+        document.getElementById("open-listing-preview").href = L.previewPath;
+        renderListings();
+        renderInvites();
+      }
+
+      function renderInvites() {
         var L = currentListing();
         var list = PMAInviteRegistry.listForListing(AGENT, L.code);
         var host = document.getElementById("invite-list");
@@ -212,8 +296,7 @@
         }
         empty.style.display = "none";
         list.forEach(function (rec) {
-          var act = activityFor(rec);
-          var sum = act.sum;
+          var sum = activityFor(rec);
           var url = PMAInviteRegistry.inviteUrl(rec);
           var row = document.createElement("div");
           row.className = "invite-row";
@@ -278,7 +361,8 @@
               } else if (act === "remove") {
                 if (confirm("Remove invite for " + rec.firstName + " " + rec.lastName + "?")) {
                   PMAInviteRegistry.remove(rec.id);
-                  renderList();
+                  renderInvites();
+                  renderListings();
                 }
               }
             });
@@ -286,29 +370,10 @@
         });
       }
 
-      function escapeHtml(s) {
-        return String(s || "")
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;");
-      }
-
-      function fillListings() {
-        sel.innerHTML = "";
-        LISTINGS.forEach(function (L) {
-          var o = document.createElement("option");
-          o.value = L.code;
-          o.textContent = L.address + " · " + L.price;
-          sel.appendChild(o);
-        });
-      }
-
       function showDash() {
         lock.hidden = true;
         dash.hidden = false;
-        fillListings();
-        renderList();
+        syncSelected();
       }
 
       document.getElementById("login-form").addEventListener("submit", function (e) {
@@ -346,8 +411,8 @@
             cok.style.display = "block";
             cok.textContent = "Invite created for " + rec.firstName + " " + rec.lastName + ".";
             document.getElementById("create-form").reset();
-            renderList();
-            // auto-copy message
+            renderInvites();
+            renderListings();
             return navigator.clipboard.writeText(PMAInviteRegistry.inviteMessage(rec, agentName)).then(function () {
               cok.textContent += " Link + password text copied to clipboard.";
             }).catch(function () {});
@@ -358,7 +423,10 @@
           });
       });
 
-      sel.addEventListener("change", renderList);
+      document.getElementById("reload").addEventListener("click", function () {
+        renderInvites();
+        renderListings();
+      });
       document.getElementById("signout").addEventListener("click", function () {
         clearUnlocked();
         lock.hidden = false;

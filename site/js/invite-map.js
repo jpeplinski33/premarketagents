@@ -253,9 +253,109 @@
 
     if (this._subjectLayer && this._subjectLayer.feature) {
       this.selectFeature(this._subjectLayer.feature, this._subjectLayer);
+      this._placeSubjectBadge();
     }
 
     this._refreshLabels();
+  };
+
+  /**
+   * Branded Pre Market marker on the listed parcel so buyers can spot it
+   * without greying out aerial imagery.
+   */
+  InviteMap.prototype._placeSubjectBadge = function () {
+    if (!this.map || !this._subjectLayer || !global.L) return;
+    if (this._subjectBadge) {
+      try {
+        this.map.removeLayer(this._subjectBadge);
+      } catch (e) {}
+      this._subjectBadge = null;
+    }
+
+    var center;
+    try {
+      var b = this._subjectLayer.getBounds();
+      if (b && b.isValid()) center = b.getCenter();
+    } catch (e2) {}
+    if (!center && this.opts.center) {
+      center = L.latLng(this.opts.center[0], this.opts.center[1]);
+    }
+    if (!center) return;
+
+    var label =
+      this.opts.subjectBadgeLabel ||
+      this.opts.subjectLabel ||
+      "This listing";
+    // Keep short for pin: prefer street number/name if long
+    if (label.length > 28) {
+      label = (this.opts.subjectLabel || "Pre Market listing").slice(0, 28);
+    }
+
+    if (!document.getElementById("pma-subject-badge-css")) {
+      var style = document.createElement("style");
+      style.id = "pma-subject-badge-css";
+      style.textContent =
+        ".pma-subject-badge{background:transparent!important;border:none!important;}" +
+        ".pma-subject-badge .pma-sb-inner{" +
+        "display:flex;flex-direction:column;align-items:center;gap:0;" +
+        "transform:translateY(-8px);pointer-events:none;user-select:none;}" +
+        ".pma-subject-badge .pma-sb-pill{" +
+        "display:flex;flex-direction:column;align-items:center;justify-content:center;" +
+        "min-width:92px;padding:8px 12px 7px;" +
+        "background:rgba(12,12,13,0.92);border:1px solid rgba(196,165,116,0.55);" +
+        "box-shadow:0 4px 18px rgba(0,0,0,0.45);backdrop-filter:blur(8px);}" +
+        ".pma-subject-badge .pma-sb-pre{" +
+        "font-family:Cormorant Garamond,Georgia,serif;font-weight:600;" +
+        "font-size:13px;letter-spacing:0.2em;text-transform:uppercase;" +
+        "color:#f5f2eb;line-height:1.05;}" +
+        ".pma-subject-badge .pma-sb-agents{" +
+        "font-family:Inter,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;" +
+        "font-size:8px;font-weight:700;letter-spacing:0.34em;text-transform:uppercase;" +
+        "color:#c4a574;margin-top:3px;line-height:1;}" +
+        ".pma-subject-badge .pma-sb-sub{" +
+        "font-family:Inter,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;" +
+        "font-size:9px;font-weight:600;letter-spacing:0.06em;" +
+        "color:rgba(245,242,235,0.78);margin-top:5px;max-width:120px;" +
+        "text-align:center;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}" +
+        ".pma-subject-badge .pma-sb-pin{" +
+        "width:0;height:0;margin-top:-1px;" +
+        "border-left:8px solid transparent;border-right:8px solid transparent;" +
+        "border-top:10px solid rgba(196,165,116,0.9);" +
+        "filter:drop-shadow(0 2px 2px rgba(0,0,0,0.35));}";
+      document.head.appendChild(style);
+    }
+
+    var html =
+      '<div class="pma-sb-inner">' +
+      '<div class="pma-sb-pill">' +
+      '<span class="pma-sb-pre">Pre Market</span>' +
+      '<span class="pma-sb-agents">Agents</span>' +
+      (label
+        ? '<span class="pma-sb-sub">' +
+          String(label)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;") +
+          "</span>"
+        : "") +
+      "</div>" +
+      '<div class="pma-sb-pin" aria-hidden="true"></div>' +
+      "</div>";
+
+    var icon = L.divIcon({
+      className: "pma-subject-badge",
+      html: html,
+      iconSize: [120, 72],
+      iconAnchor: [60, 72]
+    });
+
+    this._subjectBadge = L.marker(center, {
+      icon: icon,
+      interactive: false,
+      keyboard: false,
+      zIndexOffset: 800
+    }).addTo(this.map);
   };
 
   InviteMap.prototype.selectFeature = function (feature, layer) {

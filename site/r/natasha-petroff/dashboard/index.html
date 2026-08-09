@@ -181,24 +181,30 @@
     <div class="panel" id="send-panel" hidden style="border-color:rgba(196,165,116,0.45);">
       <h3>Send to buyer</h3>
       <p class="muted" style="margin-bottom:12px;">
-        This is exactly what they get — text + link. The preview image under the link is what
-        iMessage shows when they receive it.
+        Texting goes out as <strong style="color:var(--ink)">two messages</strong> — details first,
+        then the link by itself. iMessage only builds the big property card when the link is the
+        whole message. Put the details and the link together, or type anything after the link, and
+        the buyer just gets a plain blue URL.
       </p>
       <div style="display:grid;grid-template-columns:minmax(160px,220px) 1fr;gap:16px;align-items:start;">
         <div>
-          <p class="muted" style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Link preview</p>
+          <p class="muted" style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Card the buyer sees</p>
           <img id="send-og-img" alt="Invite link preview" width="1200" height="630"
             style="width:100%;height:auto;border:1px solid var(--line);display:block;background:#111;" />
         </div>
         <div>
-          <p class="muted" style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Message</p>
-          <textarea id="send-body" rows="12" style="width:100%;padding:12px;border:1px solid var(--line-strong);background:#0f0f11;color:var(--ink);font-size:14px;line-height:1.45;font-family:inherit;resize:vertical;"></textarea>
+          <p class="muted" style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Message 1 · details</p>
+          <textarea id="send-body" rows="10" style="width:100%;padding:12px;border:1px solid var(--line-strong);background:#0f0f11;color:var(--ink);font-size:14px;line-height:1.45;font-family:inherit;resize:vertical;"></textarea>
+          <p class="muted" style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;margin:14px 0 8px;">Message 2 · link only</p>
+          <input id="send-link" type="text" readonly
+            style="width:100%;padding:10px 12px;border:1px solid var(--line-strong);background:#0f0f11;color:var(--gold-soft);font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;" />
           <p class="muted" id="send-meta" style="margin:8px 0 12px;font-size:12px;"></p>
           <div style="display:flex;flex-wrap:wrap;gap:10px;">
-            <button type="button" class="btn btn-primary" id="send-text">Text buyer</button>
-            <button type="button" class="btn btn-primary" id="send-email">Email buyer</button>
-            <button type="button" class="btn btn-ghost" id="send-both">Text + email</button>
-            <button type="button" class="btn btn-ghost" id="send-copy">Copy message</button>
+            <button type="button" class="btn btn-primary" id="send-text">1 · Text details</button>
+            <button type="button" class="btn btn-primary" id="send-link-btn">2 · Text link</button>
+            <button type="button" class="btn btn-ghost" id="send-email">Email buyer</button>
+            <button type="button" class="btn btn-ghost" id="send-copy">Copy details</button>
+            <button type="button" class="btn btn-ghost" id="send-copy-link">Copy link</button>
           </div>
           <p class="form-ok" id="send-status" style="display:none;margin-top:10px;"></p>
         </div>
@@ -220,7 +226,7 @@
     </div>
   </div>
 
-  <script src="/js/invite-registry.js?v=14"></script>
+  <script src="/js/invite-registry.js?v=15"></script>
   <script src="/js/invite-analytics.js"></script>
   <script>
     (function () {
@@ -365,9 +371,9 @@
             '<div class="stat"><div class="n">' + sum.mapEvents + '</div><div class="l">Map events</div></div>' +
             "</div>" +
             '<div class="row-actions">' +
-            '<button type="button" class="btn btn-primary" data-act="text">Text invite</button>' +
-            '<button type="button" class="btn btn-primary" data-act="email">Email invite</button>' +
-            '<button type="button" class="btn btn-primary" data-act="both">Text + email</button>' +
+            '<button type="button" class="btn btn-primary" data-act="text">1 · Text details</button>' +
+            '<button type="button" class="btn btn-primary" data-act="link">2 · Text link</button>' +
+            '<button type="button" class="btn btn-ghost" data-act="email">Email invite</button>' +
             '<button type="button" class="btn btn-ghost" data-act="copy-link">Copy link</button>' +
             '<button type="button" class="btn btn-ghost" data-act="copy-msg">Copy full message</button>' +
             '<button type="button" class="btn btn-ghost" data-act="toggle">Activity detail</button>' +
@@ -387,15 +393,15 @@
               if (act === "text") {
                 status.textContent = "Opening Messages…";
                 showSendPanel(rec);
-                sendFromPanel("text");
+                sendFromPanel("details");
+              } else if (act === "link") {
+                status.textContent = "Opening Messages…";
+                showSendPanel(rec);
+                sendFromPanel("link");
               } else if (act === "email") {
                 status.textContent = "Opening email…";
                 showSendPanel(rec);
                 sendFromPanel("email");
-              } else if (act === "both") {
-                status.textContent = "Opening text + email…";
-                showSendPanel(rec);
-                sendFromPanel("both");
               } else if (act === "copy-link") {
                 navigator.clipboard.writeText(url).then(function () {
                   status.textContent = "Link copied.";
@@ -461,13 +467,15 @@
         lastSendRec = rec;
         var L = currentListing();
         var panel = document.getElementById("send-panel");
-        var body = PMAInviteRegistry.inviteMessage(rec, agentName);
+        var body = PMAInviteRegistry.inviteIntro(rec, agentName);
         var ta = document.getElementById("send-body");
+        var link = document.getElementById("send-link");
         var img = document.getElementById("send-og-img");
         var meta = document.getElementById("send-meta");
         var st = document.getElementById("send-status");
         panel.hidden = false;
         ta.value = body;
+        link.value = PMAInviteRegistry.inviteLink(rec);
         img.src = (L && L.ogImage) || "https://premarketagents.com/images/og/yantis-natasha-exclusive-v5.jpg";
         img.alt = "Link preview for " + (rec.listingLabel || "listing");
         meta.innerHTML =
@@ -490,56 +498,67 @@
         } catch (e2) {}
       }
 
-      function bodyFromPanel(rec) {
+      /** Details message — realtor edits are honored, but the link never joins it. */
+      function detailsFromPanel(rec) {
         var ta = document.getElementById("send-body");
         var custom = ta && ta.value ? ta.value.trim() : "";
-        return custom || PMAInviteRegistry.inviteMessage(rec, agentName);
+        return custom || PMAInviteRegistry.inviteIntro(rec, agentName);
       }
 
+      function sendStatus(msg) {
+        var st = document.getElementById("send-status");
+        st.style.display = "block";
+        st.textContent = msg;
+      }
+
+      function copyText(text) {
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).catch(function () {});
+          }
+        } catch (e) {}
+      }
+
+      /** mode: "details" | "link" | "email" */
       function sendFromPanel(mode) {
         if (!lastSendRec) return;
         var rec = lastSendRec;
-        var body = bodyFromPanel(rec);
-        var st = document.getElementById("send-status");
-        try {
-          navigator.clipboard.writeText(body).catch(function () {});
-        } catch (e) {}
-        // Temporarily override message for this open
-        var orig = PMAInviteRegistry.inviteMessage;
-        PMAInviteRegistry.inviteMessage = function () {
-          return body;
-        };
-        try {
-          PMAInviteRegistry.openSend(rec, mode, agentName);
-        } finally {
-          PMAInviteRegistry.inviteMessage = orig;
+        if (mode === "email") {
+          PMAInviteRegistry.openSend(rec, "email", agentName);
+          sendStatus("Mail opened with the full invite. Hit Send.");
+          return;
         }
-        st.style.display = "block";
-        st.textContent =
-          mode === "email"
-            ? "Mail opened with the invite. Hit Send."
-            : mode === "both"
-              ? "Messages + Mail opening. Hit Send in each. Message also on clipboard."
-              : "Messages opened with the invite. Hit Send. (Message also on clipboard if body is empty.)";
+        if (mode === "link") {
+          // Bare URL only — anything added here kills the preview card.
+          copyText(PMAInviteRegistry.inviteLink(rec));
+          PMAInviteRegistry.openSend(rec, "text", agentName, null, { part: "link" });
+          sendStatus("Messages opened with just the link. Send it as-is — do not type anything after it.");
+          return;
+        }
+        var body = detailsFromPanel(rec);
+        copyText(body);
+        PMAInviteRegistry.openSend(rec, "text", agentName, null, { body: body });
+        sendStatus("Messages opened with the details. Hit Send, then come back and tap “2 · Text link”.");
       }
 
       document.getElementById("send-text").addEventListener("click", function () {
-        sendFromPanel("text");
+        sendFromPanel("details");
+      });
+      document.getElementById("send-link-btn").addEventListener("click", function () {
+        sendFromPanel("link");
       });
       document.getElementById("send-email").addEventListener("click", function () {
         sendFromPanel("email");
       });
-      document.getElementById("send-both").addEventListener("click", function () {
-        sendFromPanel("both");
-      });
       document.getElementById("send-copy").addEventListener("click", function () {
         if (!lastSendRec) return;
-        var body = bodyFromPanel(lastSendRec);
-        navigator.clipboard.writeText(body).then(function () {
-          var st = document.getElementById("send-status");
-          st.style.display = "block";
-          st.textContent = "Full message copied — paste into Messages if needed.";
-        });
+        copyText(detailsFromPanel(lastSendRec));
+        sendStatus("Details copied — paste as the first message.");
+      });
+      document.getElementById("send-copy-link").addEventListener("click", function () {
+        if (!lastSendRec) return;
+        copyText(PMAInviteRegistry.inviteLink(lastSendRec));
+        sendStatus("Link copied — paste it as its own message, with nothing after it.");
       });
 
       document.getElementById("create-form").addEventListener("submit", function (e) {
@@ -571,9 +590,9 @@
             renderInvites();
             renderListings();
             showSendPanel(rec);
-            // Auto-open Messages so send is one step after create
+            // Auto-open Messages with step 1; realtor taps "2 · Text link" after sending
             setTimeout(function () {
-              sendFromPanel("text");
+              sendFromPanel("details");
             }, 250);
           })
           .catch(function (ex) {

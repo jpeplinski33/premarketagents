@@ -163,13 +163,8 @@
     return origin + "/r/" + rec.agentSlug + "/" + rec.listingCode + "/" + q + hash;
   }
 
-  /**
-   * Full SMS/email body for the buyer.
-   * Order: greeting → listing → password → sign-off → blank → URL alone last
-   * so the link preview card sits under the text when iMessage unfurls.
-   */
-  function inviteMessage(rec, agentName, origin) {
-    var url = inviteUrl(rec, origin);
+  /** Greeting → listing → password → sign-off. No URL. */
+  function introLines(rec, agentName) {
     var who = rec.firstName || "there";
     var where = rec.listingLabel || "a private listing";
     var price = rec.listingPrice ? " · " + rec.listingPrice : "";
@@ -183,10 +178,48 @@
       "Password: " + pw,
       "(Enter it on the page after you open the link.)",
       "",
-      "— " + agent,
-      "",
-      url
-    ].join("\n");
+      "— " + agent
+    ];
+  }
+
+  /**
+   * Message 1 of 2 for texting — details only, no link.
+   * The link follows in its own message (see inviteLink).
+   */
+  function inviteIntro(rec, agentName) {
+    return introLines(rec, agentName)
+      .concat(["", "Your private link is in the next message."])
+      .join("\n");
+  }
+
+  /**
+   * Message 2 of 2 for texting — the URL and NOTHING else.
+   *
+   * iMessage renders the large branded preview card only for a message whose
+   * body is the bare link. Text after the link suppresses the card, and so
+   * does a second detectable link in the same message — a street address
+   * counts, and every invite body names one. Sending the URL alone is the
+   * only shape that reliably produces the card.
+   */
+  function inviteLink(rec, origin) {
+    return inviteUrl(rec, origin);
+  }
+
+  /**
+   * Single combined body — details with the URL last.
+   * Used for email, where clients do not unfurl the way iMessage does.
+   */
+  function inviteMessage(rec, agentName, origin) {
+    return introLines(rec, agentName)
+      .concat(["", inviteUrl(rec, origin)])
+      .join("\n");
+  }
+
+  /** part: "intro" | "link" | "full" (default) */
+  function smsBody(rec, agentName, origin, part) {
+    if (part === "intro") return inviteIntro(rec, agentName);
+    if (part === "link") return inviteLink(rec, origin);
+    return inviteMessage(rec, agentName, origin);
   }
 
   /** Digits-only for sms: links */
@@ -196,15 +229,19 @@
     return d;
   }
 
-  /** Open device Messages with invite pre-filled */
-  function smsHref(rec, agentName, origin) {
-    var body = inviteMessage(rec, agentName, origin);
+  /** sms: href for an already-built body */
+  function smsHrefForBody(rec, body) {
     var to = phoneDigits(rec.phone);
     // iOS/macOS Messages: sms:number?&body= works most reliably with long bodies
     if (to) {
       return "sms:" + to + "?&body=" + encodeURIComponent(body);
     }
     return "sms:?&body=" + encodeURIComponent(body);
+  }
+
+  /** Open device Messages with invite pre-filled */
+  function smsHref(rec, agentName, origin, part) {
+    return smsHrefForBody(rec, smsBody(rec, agentName, origin, part));
   }
 
   /** Open email client with invite pre-filled */
@@ -248,16 +285,18 @@
    * Send invite to buyer: copies full message, then opens Messages and/or Mail
    * with body pre-filled. Realtor hits Send in the native app.
    */
-  function openSend(rec, mode, agentName, origin) {
+  function openSend(rec, mode, agentName, origin, opts) {
     mode = mode || "text";
-    var body = inviteMessage(rec, agentName, origin);
+    opts = opts || {};
+    var part = opts.part || "full";
+    var body = opts.body || smsBody(rec, agentName, origin, part);
     try {
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(body).catch(function () {});
       }
     } catch (e) {}
     if (mode === "text" || mode === "both") {
-      openHref(smsHref(rec, agentName, origin));
+      openHref(smsHrefForBody(rec, body));
     }
     if (mode === "email" || mode === "both") {
       var href = emailHref(rec, agentName, origin);
@@ -295,8 +334,12 @@
     remove: remove,
     inviteUrl: inviteUrl,
     inviteMessage: inviteMessage,
+    inviteIntro: inviteIntro,
+    inviteLink: inviteLink,
+    smsBody: smsBody,
     phoneDigits: phoneDigits,
     smsHref: smsHref,
+    smsHrefForBody: smsHrefForBody,
     emailHref: emailHref,
     openSend: openSend,
     tokenFromLocation: tokenFromLocation

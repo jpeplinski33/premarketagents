@@ -36,9 +36,34 @@
       border-bottom: none;
       backdrop-filter: none;
     }
-    body.landing-home .site-header .brand-pre,
-    body.landing-home .site-header .nav a {
+    body.landing-home .site-header .brand-pre {
       text-shadow: 0 1px 12px rgba(0,0,0,0.55);
+    }
+    body.landing-home .site-header .nav {
+      gap: 8px;
+    }
+    /* Compact header CTAs */
+    body.landing-home .site-header .nav .btn {
+      padding: 6px 11px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      line-height: 1.2;
+    }
+    body.landing-home .site-header .nav .btn-ghost {
+      border-color: rgba(255,255,255,0.28);
+      color: #f5f2eb !important;
+      background: rgba(12,12,13,0.28);
+      backdrop-filter: blur(8px);
+      text-shadow: none;
+    }
+    body.landing-home .site-header .nav .btn-ghost:hover {
+      border-color: var(--gold);
+      color: var(--gold-soft) !important;
+    }
+    body.landing-home .site-header .nav .btn-primary {
+      padding: 6px 11px;
+      font-size: 10px;
     }
     body.landing-home main {
       flex: 1;
@@ -140,11 +165,6 @@
       left: 0;
       right: 0;
       z-index: 2;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px 24px;
       padding: 20px 24px 28px;
     }
     .landing-foot p {
@@ -154,28 +174,6 @@
       max-width: 42ch;
       line-height: 1.5;
       text-shadow: 0 1px 10px rgba(0,0,0,0.6);
-    }
-    .landing-foot-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .landing-foot .btn-ghost {
-      border-color: rgba(255,255,255,0.28);
-      color: #f5f2eb !important;
-      background: rgba(12,12,13,0.35);
-      backdrop-filter: blur(8px);
-    }
-    .landing-foot .btn-ghost:hover {
-      border-color: var(--gold);
-      color: var(--gold-soft) !important;
-    }
-    @media (max-width: 640px) {
-      .landing-foot {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      body.landing-home .site-header .nav .hide-sm { display: none; }
     }
   </style>
   <script type="application/ld+json">
@@ -207,6 +205,7 @@
       <span class="brand-agents">Agents</span>
     </a>
     <nav class="nav" aria-label="Primary">
+      <a class="btn btn-primary" href="/realtors/">Request access</a>
       <a class="btn btn-ghost" href="/login/">Realtor login</a>
     </nav>
   </header>
@@ -232,9 +231,6 @@
       </div>
       <div class="landing-foot">
         <p>Private pre-market previews — by invitation from your realtor.</p>
-        <div class="landing-foot-actions">
-          <a class="btn btn-primary" href="/realtors/">Request access</a>
-        </div>
       </div>
     </section>
   </main>

@@ -1,13 +1,14 @@
 # Invite link preview images (Open Graph)
 
-**Prototype (locked 2026-08-08):** the branded share card design used on Alan’s
-Yantis listing — dark overlay, **PRE MARKET / AGENTS** mark, gold **EXCLUSIVE INVITE**
-badge, “Private pre-market showing”, address, price, agent line, gold bottom edge.
+**Prototype of record (2026-08-08 v4):** stronger exclusive-invite card used on
+listings — heavy brand plate, gold EXCLUSIVE INVITE badge, private showing line,
+address/price/agent, gold edges. Generator: `scripts/make-og-image.py` (refresh
+to match latest card when design changes).
 
-- Generator: `scripts/make-og-image.py` (do not freestyle a new layout)
-- Canonical sample: `prototype-exclusive-invite.jpg` and `yantis-alan-premarket.jpg`
-- Per-listing files: `{listing}-premarket.jpg` with correct agent line
-- Meta: absolute `https://premarketagents.com/images/og/...` on each invite page
-  (`og:image` + `twitter:image`, 1200×630)
+Current shipping files use unique names (e.g. `*-exclusive-v4.jpg`) so messaging
+apps cannot serve a cached older preview URL.
 
-Every new listing invite **must** generate an OG image with this script before ship.
+Every new listing must:
+1. Generate a new `site/images/og/{slug}-exclusive-vN.jpg`
+2. Set absolute `og:image` + `twitter:image` on the invite HTML
+3. Never reuse a previously shipped OG filename after a visual redesign

@@ -111,19 +111,14 @@
       background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 42%);
     }
     .gallery-badge {
-      position: absolute; top: 18px; left: 18px; z-index: 5;
-      display: inline-flex; flex-direction: column; align-items: flex-start; gap: 2px;
-      padding: 10px 14px 11px; background: rgba(12,12,13,0.78);
-      border: 1px solid var(--gold-dim); backdrop-filter: blur(10px);
+      position: absolute; top: 16px; left: 16px; z-index: 5;
+      padding: 6px 10px; background: rgba(12,12,13,0.55);
+      border: 1px solid rgba(255,255,255,0.12); backdrop-filter: blur(8px);
+      font-size: 11px; font-weight: 600; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(255,255,255,0.9);
     }
-    .gallery-badge .pm {
-      font-family: "Cormorant Garamond", Georgia, serif; font-size: 18px; font-weight: 600;
-      letter-spacing: 0.22em; text-transform: uppercase; color: #fff; line-height: 1;
-    }
-    .gallery-badge .ag {
-      font-size: 9px; font-weight: 600; letter-spacing: 0.38em;
-      text-transform: uppercase; color: var(--gold);
-    }
+    .gallery-badge .pm { display: none; }
+    .gallery-badge .ag { color: inherit; letter-spacing: inherit; font-size: inherit; font-weight: inherit; }
     .nav-btn {
       position: absolute; top: 50%; transform: translateY(-50%);
       width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2);
@@ -158,37 +153,22 @@
     .thumb.active { opacity: 1; border-color: var(--gold); }
     .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .exclusive-banner {
-      width: 100%; margin: 4px 0 14px; padding: 14px 16px;
-      border: 1px solid rgba(196,165,116,0.35);
-      background: linear-gradient(135deg, rgba(196,165,116,0.12), rgba(196,165,116,0.04));
+      width: 100%; margin: 0 0 18px; padding: 0 0 16px;
+      border: none; border-bottom: 1px solid var(--line);
+      background: transparent;
     }
-    .exclusive-banner-kicker {
-      font-size: 10px; font-weight: 700; letter-spacing: 0.28em;
-      text-transform: uppercase; color: var(--gold); margin-bottom: 6px;
-    }
+    .exclusive-banner-kicker { display: none; }
     .exclusive-banner p {
-      font-size: 14px; color: #c8c3b8; line-height: 1.55; max-width: 62ch; margin: 0;
+      font-size: 14px; color: var(--muted); line-height: 1.55; max-width: 56ch; margin: 0;
     }
-    .exclusive-banner strong { color: var(--ink); font-weight: 600; }
+    .exclusive-banner strong { color: var(--ink); font-weight: 500; }
     .wrap { max-width: 1120px; margin: 0 auto; padding: 28px 22px 80px; }
-    .status-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 10px; }
-    .badge-pre {
-      display: inline-flex; flex-direction: column; align-items: flex-start;
-      padding: 7px 12px 8px; background: var(--gold-dim);
-      border: 1px solid rgba(196,165,116,0.35); line-height: 1; gap: 3px;
-    }
-    .badge-pre .pm {
-      font-family: "Cormorant Garamond", Georgia, serif; font-size: 15px; font-weight: 600;
-      letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-soft);
-    }
-    .badge-pre .ag {
-      font-size: 8px; font-weight: 700; letter-spacing: 0.36em;
-      text-transform: uppercase; color: var(--muted);
-    }
+    .status-row { margin-bottom: 4px; }
+    .badge-pre { display: none; }
     .price {
       font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: clamp(36px, 5vw, 48px); font-weight: 500;
-      letter-spacing: 0.02em; line-height: 1.1; margin: 6px 0 4px;
+      font-size: clamp(34px, 4.5vw, 44px); font-weight: 500;
+      letter-spacing: 0.02em; line-height: 1.1; margin: 4px 0 4px;
     }
     .facts-line { font-size: 15px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
     .facts-line span { color: var(--muted); font-weight: 400; margin: 0 8px; }
@@ -222,25 +202,25 @@
     }
     .facts-table td { font-weight: 500; color: var(--ink); }
     .side-card {
-      border: 1px solid var(--line-strong);
-      background: linear-gradient(165deg, #17171a 0%, #101012 100%);
-      padding: 22px; position: sticky; top: 84px;
+      border: 1px solid var(--line);
+      background: var(--bg-elev);
+      padding: 20px; position: sticky; top: 84px;
     }
     @media (max-width: 900px) { .side-card { position: static; } }
     .side-label {
-      font-size: 10px; font-weight: 700; letter-spacing: 0.28em;
-      text-transform: uppercase; color: var(--gold); margin-bottom: 14px;
+      font-size: 11px; font-weight: 500; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
     }
-    .agent-row { display: flex; gap: 14px; align-items: center; margin-bottom: 16px; }
+    .agent-row { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; }
     .agent-photo {
-      width: 72px; height: 72px; border-radius: 50%; object-fit: cover;
-      border: 1px solid rgba(196,165,116,0.4); flex-shrink: 0; background: #222;
+      width: 64px; height: 64px; border-radius: 50%; object-fit: cover;
+      border: 1px solid var(--line); flex-shrink: 0; background: #222;
     }
     .agent-name {
-      font-family: "Cormorant Garamond", Georgia, serif; font-size: 22px; font-weight: 600; line-height: 1.15;
+      font-family: "Cormorant Garamond", Georgia, serif; font-size: 20px; font-weight: 500; line-height: 1.15;
     }
-    .agent-co { font-size: 12px; color: var(--muted); margin-top: 3px; letter-spacing: 0.04em; }
-    .agent-bio { font-size: 13px; color: #a8a39a; line-height: 1.55; margin-bottom: 16px; }
+    .agent-co { font-size: 12px; color: var(--muted); margin-top: 3px; letter-spacing: 0.02em; }
+    .agent-bio { font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 14px; }
     .btn-primary {
       display: block; width: 100%; text-align: center; background: var(--gold);
       color: #0c0c0d !important; text-decoration: none !important; font-weight: 700;
@@ -413,7 +393,7 @@
     <div class="gallery-overlay"></div>
     <div class="gallery-badge" aria-label="Pre Market listing">
       <span class="pm">Pre Market</span>
-      <span class="ag">Agents</span>
+      <span class="ag">Pre Market</span>
     </div>
     <button type="button" class="nav-btn prev" id="prevBtn" aria-label="Previous photo">‹</button>
     <button type="button" class="nav-btn next" id="nextBtn" aria-label="Next photo">›</button>
@@ -429,16 +409,9 @@
   <main class="wrap">
     <div class="status-row">
       <div class="exclusive-banner" role="note">
-        <div class="exclusive-banner-kicker">Exclusive access</div>
         <p>
-          You’re viewing this <strong>Pre Market</strong> listing by invitation from
-          <strong>Natasha Petroff</strong>.
-          This link is password-protected and personal — not a public MLS page.
+          Private invite from <strong>Natasha Petroff</strong> · Pre Market preview — not a public listing.
         </p>
-      </div>
-      <div class="badge-pre">
-        <span class="pm">Pre Market</span>
-        <span class="ag">Exclusive</span>
       </div>
     </div>
     <h1 class="price">$2,795,000</h1>
@@ -453,8 +426,7 @@
           <p>A grand foyer opens to a den with French doors and custom built-ins, plus a formal dining room. The living room features a fireplace, custom built-ins, and large windows. The gourmet kitchen includes stone counters, custom backsplash, a 6-burner Bertazoni cooktop, double ovens, KitchenAid refrigeration, and Restoration Hardware fixtures. A spacious family room with fireplace and laundry complete the main level.</p>
           <p>The owner suite is on the main level with plush carpeting, a fireplace, walk-in closet, and a remodeled spa bath with heated floors, dual vanities, and freestanding soaker tub. Upstairs includes an incredible carriage suite. The finished lower level adds a wet bar, large recreation room, guest room, and full bath. Outdoors: a private brick patio and professional landscaping.</p>
           <p>
-            Offered as a private Pre Market preview so qualified buyers can see it before broad public marketing.
-            Verify all details, pricing, and measurements with Natasha.
+            Private Pre Market preview. Confirm details, pricing, and measurements with Natasha.
           </p>
         </section>
 
@@ -502,16 +474,13 @@
           </div>
         </div>
         <p class="agent-bio">
-          Exceptional service, attentive communication, and detail-focused representation for buyers and sellers
-          across New Albany and Central Ohio.
+          New Albany &amp; Central Ohio.
         </p>
         <a class="btn-primary" href="tel:+12168325446">Call (216) 832-5446</a>
         <a class="btn-secondary" href="mailto:natashap@thomasriddle.com?subject=Pre%20Market%20%C2%B7%204879%20Yantis%20Dr">Email Natasha</a>
         <a class="btn-secondary" href="/r/natasha-petroff/profile/" target="_blank" rel="noopener" style="margin-top:8px;">View agent profile</a>
         <p class="side-meta">
-          Pre Market Agents · Exclusive agent preview<br />
-          Not a public MLS listing page. Information deemed reliable but not guaranteed.
-          Verify all details with the listing agent.
+          Details deemed reliable but not guaranteed. Confirm with Natasha.
         </p>
       </aside>
     </div>

@@ -84,13 +84,18 @@ async function main() {
   const login = path.join(__dirname, "..", "site", "login", "index.html");
   if (fs.existsSync(login)) {
     let lh = fs.readFileSync(login, "utf8");
+    // An agent can have several email aliases (alan@ and alanh@). Replace
+    // EVERY entry for the slug — missing one leaves an alias still accepting
+    // the old password, which looks rotated but is not.
     const lre = new RegExp(
-      "(slug: \"" + slug + "\"[\\s\\S]{0,200}?verifier: )\\{[^}]*\\}"
+      "(slug: \"" + slug + "\"[\\s\\S]{0,200}?verifier: )\\{[^}]*\\}",
+      "g"
     );
-    if (lre.test(lh)) {
+    const hits = (lh.match(lre) || []).length;
+    if (hits) {
       lh = lh.replace(lre, "$1" + verifier);
       fs.writeFileSync(login, lh, "utf8");
-      console.log("updated " + login);
+      console.log("updated " + login + " (" + hits + " entr(y/ies))");
     } else {
       console.warn("WARNING: no verifier entry for " + slug + " in /login/");
     }

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Brand a listing photo as a Pre Market Agents Open Graph share image (1200x630).
 
-Use a NEW unique filename every visual redesign (e.g. *-exclusive-v4.jpg) so
+Use a NEW unique filename every visual redesign/cache bust (e.g. *-exclusive-v5.jpg) so
 messaging apps cannot serve a cached older preview URL.
 """
 import argparse

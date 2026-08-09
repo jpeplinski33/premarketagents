@@ -156,28 +156,32 @@
   }
 
   /**
-   * Body first, password, sign-off — then the URL alone on the last lines
-   * so iMessage/SMS place the preview card under the message text.
+   * All copy first — password + sign-off — then the invite URL alone as the
+   * final line(s). iMessage/SMS attach the link preview at the URL position;
+   * if anything follows the URL, the preview sits mid-message.
    */
   function inviteMessage(rec, agentName, origin) {
     var url = inviteUrl(rec, origin);
-    var line =
-      "Here's your private Pre Market exclusive invite" +
-      (rec.listingLabel ? " for " + rec.listingLabel : "") +
-      (rec.listingPrice ? " · " + rec.listingPrice : "") +
-      ".";
+    var who = rec.firstName || "there";
+    var where = rec.listingLabel || "a private listing";
+    var price = rec.listingPrice ? " · " + rec.listingPrice : "";
+    var pw = rec.passwordPlain || "(ask your agent)";
+    var agent = agentName || "Your realtor";
+    // Keep every non-URL line above the link. URL must be the last non-empty line.
     return (
       "Hi " +
-      (rec.firstName || "there") +
+      who +
       ",\n\n" +
-      line +
-      "\n\n" +
+      "You have a private Pre Market exclusive invite for " +
+      where +
+      price +
+      ".\n\n" +
       "Access password: " +
-      (rec.passwordPlain || "(ask your agent)") +
+      pw +
       "\n" +
-      "(You'll enter this password after you open the link.)\n\n" +
+      "Enter that password after you open the link.\n\n" +
       "— " +
-      (agentName || "Your realtor") +
+      agent +
       "\n\n" +
       url
     );

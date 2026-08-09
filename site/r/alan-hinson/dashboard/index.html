@@ -442,17 +442,31 @@
         dash.hidden = true;
       });
 
-      // Internal preview: skip login with ?preview=1
+      // Internal preview: skip login with ?preview=1 or ?key=dash-preview-2026
+      function tryShowDash() {
+        try {
+          setUnlocked();
+          showDash();
+          return true;
+        } catch (err) {
+          console.error("dashboard showDash failed", err);
+          // Still reveal dash shell even if invites fail to render
+          try {
+            lock.hidden = true;
+            dash.hidden = false;
+          } catch (e2) {}
+          return false;
+        }
+      }
       try {
         var params = new URLSearchParams(location.search);
         if (params.get("preview") === "1" || params.get("key") === "dash-preview-2026") {
-          setUnlocked();
-          showDash();
+          tryShowDash();
         } else if (unlocked()) {
-          showDash();
+          tryShowDash();
         }
       } catch (e) {
-        if (unlocked()) showDash();
+        if (unlocked()) tryShowDash();
       }
     })();
   </script>

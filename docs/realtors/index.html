@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Realtor Entrance | Pre Market Agents</title>
-  <meta name="description" content="Licensed real estate professionals: verify with your state license number to access Pre Market Agents realtor materials. No email or phone required at the gate." />
+  <title>For Realtors | Pre Market Agents</title>
+  <meta name="description" content="Licensed real estate professionals: private pre-market invite pages, trackable homeowner links, and a clean presentation for coming-soon homes—before public MLS marketing." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://premarketagents.com/realtors/" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -27,17 +27,17 @@
   <main class="section" style="padding-top:40px;">
     <div id="gate-view">
       <div class="section-head" style="margin:0 auto 28px; text-align:center;">
-        <p class="eyebrow">Professionals only</p>
-        <h1>Realtor verification gate</h1>
-        <p>
-          This area is for licensed real estate professionals. We ask for <strong style="color:var(--ink)">name + state license number</strong> only—
-          not your phone, email, or brokerage—so marketing here can speak to agents without opening the door to general consumer traffic.
+        <p class="eyebrow">Licensed realtors only</p>
+        <h1>Sign in with your license</h1>
+        <p style="max-width:36rem;margin:0 auto;">
+          Name and state license number only. No email or phone at the door—this page is for agents,
+          not homeowners hunting for a free listing search.
         </p>
       </div>
 
       <div class="gate-box">
         <form id="realtor-gate" novalidate>
-          <label for="fullName">Legal name on license</label>
+          <label for="fullName">Name on your license</label>
           <input id="fullName" name="fullName" autocomplete="name" required placeholder="First Last" />
 
           <label for="state">Licensing state</label>
@@ -48,9 +48,9 @@
           </select>
 
           <label for="license">State real estate license number</label>
-          <input id="license" name="license" required placeholder="e.g. Ohio license number" inputmode="text" autocomplete="off" />
+          <input id="license" name="license" required placeholder="e.g. SAL.12345 or digits" inputmode="text" autocomplete="off" />
 
-          <label for="licenseType">Credential type</label>
+          <label for="licenseType">License type</label>
           <select id="licenseType" name="licenseType" required>
             <option value="salesperson">Salesperson / Broker associate</option>
             <option value="broker">Broker</option>
@@ -60,60 +60,91 @@
           <div class="check">
             <input type="checkbox" id="attest" required />
             <label for="attest" style="text-transform:none;letter-spacing:0;font-weight:400;margin:0;">
-              I certify I am currently licensed to practice real estate in the state selected, that the information is accurate,
-              and that I am not entering this area as a consumer. I understand Pre Market Agents may verify licenses against public state records.
+              I’m currently licensed in the state above, this information is accurate, and I’m not entering as a consumer.
             </label>
           </div>
 
           <p class="form-error" id="err"></p>
-          <button type="submit" class="btn btn-primary" style="width:100%;margin-top:18px;">Continue to realtor materials</button>
+          <button type="submit" class="btn btn-primary" style="width:100%;margin-top:18px;">Continue</button>
           <p class="form-note">
-            We do <strong style="color:var(--ink)">not</strong> collect email, phone, or brokerage at this gate.
-            Verification is designed to keep homeowners out—not to build a contact list. Later, optional lead tools can be opt-in.
-          </p>
-          <p class="form-note">
-            Ohio: look up a license at the official
-            <a href="https://elicense.lpi.ohio.gov/s/licenseshome" target="_blank" rel="noopener">LPI License Lookup</a>
-            (format often looks like <code style="color:var(--gold-soft)">SAL.12345</code> or <code style="color:var(--gold-soft)">BRK.…</code>).
-            Daily public file notice:
-            <a href="https://com.ohio.gov/divisions-and-programs/real-estate-and-professional-licensing/real-estate/resources/notice-license-lookup" target="_blank" rel="noopener">REPL notice</a>.
+            Ohio license lookup:
+            <a href="https://elicense.lpi.ohio.gov/s/licenseshome" target="_blank" rel="noopener">LPI</a>
+            (often <code style="color:var(--gold-soft)">SAL.…</code> or <code style="color:var(--gold-soft)">BRK.…</code>).
           </p>
         </form>
       </div>
     </div>
 
     <div id="agent-view" hidden>
-      <div class="section-head">
-        <p class="eyebrow">Realtor materials</p>
-        <h1>Present exclusivity. Control the invite.</h1>
+      <div class="section-head" style="max-width:40rem;">
+        <p class="eyebrow">For listing agents</p>
+        <h1>Show a home before it’s on the open market—without looking like a half-built portal.</h1>
         <p>
-          A refined private-preview experience that makes the listing agent look exceptional—
-          with invite links branded to your name and analytics that help you follow up intelligently.
+          Pre Market Agents is a private invite page for a single home. You control who sees it.
+          Buyers don’t get a public “off-market MLS” to scroll. You get a clean presentation that
+          looks intentional—and a way to know who actually looked.
         </p>
       </div>
-      <div class="grid-2">
+
+      <div class="grid-2" style="margin-bottom:28px;">
         <article class="panel">
-          <h3>Why agents use Pre Market</h3>
-          <ul>
-            <li>Private links: <code style="color:var(--gold-soft)">/r/your-name/listing-code</code></li>
-            <li>Invite-only full galleries, map depth, and owner-aware context</li>
-            <li>Activity intel: who engaged, photos, time, map interest (disclosed to viewers)</li>
-            <li>Homeowners never browse a public off-market catalog here</li>
-            <li>Pilot agent dashboard: <a href="/r/alan-hinson/dashboard/">Alan Hinson invite analytics</a></li>
+          <h3>What you get</h3>
+          <ul style="margin:0;padding-left:1.15rem;color:var(--muted);line-height:1.65;font-size:15px;">
+            <li style="margin-bottom:10px;"><strong style="color:var(--ink);font-weight:600;">One link per homeowner</strong> — not a shared group text that everyone reuses. Each person has their own invite and password.</li>
+            <li style="margin-bottom:10px;"><strong style="color:var(--ink);font-weight:600;">A full listing page</strong> — photos, price, facts, write-up, map—password-gated so it stays off the public site.</li>
+            <li style="margin-bottom:10px;"><strong style="color:var(--ink);font-weight:600;">Trackable engagement</strong> — sessions, how far they scrolled, photo interest, map use. Useful for follow-up; disclosed on the invite so it’s not sneaky.</li>
+            <li style="margin-bottom:0;"><strong style="color:var(--ink);font-weight:600;">Your name on the invite</strong> — the buyer sees you as the agent who shared it, not a marketplace brand.</li>
           </ul>
         </article>
         <article class="panel">
-          <h3>Next steps</h3>
-          <ul>
-            <li>Request early access for your next pre-market presentation</li>
-            <li>Use educational guides to warm clients before an invite</li>
-            <li>Keep full map + tracking reserved for invited clients</li>
-            <li>Public <a href="/explore/">neighborhood map</a> for area orientation</li>
+          <h3>How it works in practice</h3>
+          <ol style="margin:0;padding-left:1.15rem;color:var(--muted);line-height:1.65;font-size:15px;">
+            <li style="margin-bottom:10px;">You (or we) set up the home with photos and details.</li>
+            <li style="margin-bottom:10px;">From your agent dashboard, you create a trackable invite for a specific buyer—name, phone, email. Password is generated for you.</li>
+            <li style="margin-bottom:10px;">You text or email the link + password the same way you already send a listing.</li>
+            <li style="margin-bottom:0;">They open it, enter the password, and browse. You see activity on that invite only—not a dump of every visitor to every listing.</li>
+          </ol>
+        </article>
+      </div>
+
+      <article class="panel" style="margin-bottom:28px;">
+        <h3>Why this exists</h3>
+        <p style="color:var(--muted);font-size:15px;line-height:1.65;margin:0 0 12px;max-width:48rem;">
+          Coming-soon and pre-market are awkward on regular tools. Zillow and the MLS are built for public inventory.
+          Text threads and Dropbox folders work until the photos look sloppy, nobody knows who opened what, and the
+          buyer doesn’t feel like they got something exclusive. Pre Market is the middle ground: private, presentable,
+          and measurable—for agents who already have relationships and want a better way to share the first look.
+        </p>
+        <p style="color:var(--muted);font-size:15px;line-height:1.65;margin:0;max-width:48rem;">
+          It’s not a lead marketplace. Homeowners can’t search a catalog of off-market homes here. If they don’t
+          have an invite, they see education only. That’s intentional.
+        </p>
+      </article>
+
+      <div class="grid-2" style="margin-bottom:28px;">
+        <article class="panel">
+          <h3>What’s live in pilot</h3>
+          <ul style="margin:0;padding-left:1.15rem;color:var(--muted);line-height:1.65;font-size:15px;">
+            <li style="margin-bottom:8px;">Password-protected listing pages under <code style="color:var(--gold-soft)">/r/your-name/…</code></li>
+            <li style="margin-bottom:8px;">Per-homeowner trackable invites + text/email from the dashboard</li>
+            <li style="margin-bottom:8px;">Activity by invite (sessions, photos, map, scroll)</li>
+            <li style="margin-bottom:8px;">Agent profile page you can link from the listing</li>
+            <li style="margin-bottom:0;">Example dashboards: <a href="/r/natasha-petroff/dashboard/">Natasha Petroff</a> · <a href="/r/alan-hinson/dashboard/">Alan Hinson</a></li>
           </ul>
-          <p style="margin-top:18px;">
-            <a class="btn btn-primary" href="mailto:hello@premarketagents.com?subject=Realtor%20early%20access">Request early access</a>
+        </article>
+        <article class="panel">
+          <h3>If you want in</h3>
+          <p style="color:var(--muted);font-size:15px;line-height:1.65;margin:0 0 16px;">
+            We’re onboarding agents carefully—usually around a real pre-market home, not a sandbox full of demo junk.
+            Send a short note with your market and what you’re working on. No pitch deck required.
           </p>
-          <p class="form-note" id="session-meta"></p>
+          <p style="margin:0 0 12px;">
+            <a class="btn btn-primary" href="mailto:hello@premarketagents.com?subject=Realtor%20access%20%E2%80%94%20Pre%20Market%20Agents">Email us</a>
+          </p>
+          <p class="form-note" style="margin:0 0 8px;">
+            Public site for clients: <a href="/learn/">guides</a> · <a href="/explore/">neighborhood map</a> (orientation only—not private listings).
+          </p>
+          <p class="form-note" id="session-meta" style="margin:0;"></p>
         </article>
       </div>
     </div>
@@ -167,19 +198,13 @@
         agentView.hidden = false;
         var meta = document.getElementById("session-meta");
         if (meta && data) {
-          var tier =
-            data.method === "server_elicense_v1"
-              ? "Server-matched to public license records"
-              : "Attestation + format checks (hard eLicense match when server is connected)";
           meta.textContent =
-            "Professional session (this browser): " +
+            "Signed in this browser as " +
             data.fullName +
             " · " +
             data.state +
-            " · " +
+            " " +
             data.license +
-            " · " +
-            tier +
             ".";
         }
       }
@@ -291,7 +316,7 @@
             })
             .finally(function () {
               submitBtn.disabled = false;
-              submitBtn.textContent = "Continue to realtor materials";
+              submitBtn.textContent = "Continue";
             });
           return;
         }

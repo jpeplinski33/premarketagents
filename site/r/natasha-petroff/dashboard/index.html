@@ -217,14 +217,34 @@
       var dash = document.getElementById("dash-view");
       var err = document.getElementById("err");
 
+      function storageGet(key) {
+        try { if (sessionStorage.getItem(key) === "1") return true; } catch (e) {}
+        try { if (localStorage.getItem(key) === "1") return true; } catch (e) {}
+        return false;
+      }
       function unlocked() {
-        try { return sessionStorage.getItem("pma_dash_" + AGENT) === "1"; } catch (e) { return false; }
+        var key = "pma_dash_" + AGENT;
+        if (storageGet(key)) return true;
+        try {
+          if (localStorage.getItem("pma_agent_authed") === AGENT) return true;
+        } catch (e) {}
+        return false;
       }
       function setUnlocked() {
-        try { sessionStorage.setItem("pma_dash_" + AGENT, "1"); } catch (e) {}
+        var key = "pma_dash_" + AGENT;
+        try { sessionStorage.setItem(key, "1"); } catch (e) {}
+        try { localStorage.setItem(key, "1"); } catch (e) {}
+        try { localStorage.setItem("pma_agent_authed", AGENT); } catch (e) {}
       }
       function clearUnlocked() {
-        try { sessionStorage.removeItem("pma_dash_" + AGENT); } catch (e) {}
+        var key = "pma_dash_" + AGENT;
+        try { sessionStorage.removeItem(key); } catch (e) {}
+        try { localStorage.removeItem(key); } catch (e) {}
+        try {
+          if (localStorage.getItem("pma_agent_authed") === AGENT) {
+            localStorage.removeItem("pma_agent_authed");
+          }
+        } catch (e) {}
       }
 
       function currentListing() {
@@ -468,10 +488,15 @@
       }
       try {
         var params = new URLSearchParams(location.search);
-        if (params.get("preview") === "1" || params.get("key") === "dash-preview-2026") {
+        var fromLogin = params.get("authed") === "1" || params.get("preview") === "1" || params.get("key") === "dash-preview-2026";
+        if (fromLogin || unlocked()) {
           tryShowDash();
-        } else if (unlocked()) {
-          tryShowDash();
+          // Clean authed flag from URL without reload
+          if (params.get("authed") === "1" && window.history && history.replaceState) {
+            params.delete("authed");
+            var q = params.toString();
+            history.replaceState({}, "", location.pathname + (q ? "?" + q : "") + location.hash);
+          }
         }
       } catch (e) {
         if (unlocked()) tryShowDash();

@@ -65,6 +65,15 @@
       line-height: 1.55;
     }
     .alt-links a { color: var(--gold-soft); }
+    .hint {
+      margin-top: 16px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .hint code { color: var(--gold-soft); font-size: 11px; }
   </style>
 </head>
 <body>
@@ -83,21 +92,26 @@
     <p class="eyebrow">Agents</p>
     <h1>Realtor login</h1>
     <p class="sub">
-      Sign in to your agent dashboard to manage listings and send trackable homeowner invites.
-      This is not the public realtor materials gate.
+      Sign in to your <strong style="color:var(--ink)">agent dashboard</strong>
+      (listings + trackable invites). Not the public realtor materials page.
     </p>
 
     <div class="login-box">
-      <form id="login-form">
+      <form id="login-form" action="#" method="post">
         <label class="field" for="email">Email</label>
-        <input class="field" id="email" type="email" autocomplete="username" required placeholder="you@brokerage.com" />
+        <input class="field" id="email" name="email" type="email" autocomplete="username" required placeholder="you@brokerage.com" />
 
         <label class="field" for="password">Password</label>
-        <input class="field" id="password" type="password" autocomplete="current-password" required />
+        <input class="field" id="password" name="password" type="password" autocomplete="current-password" required />
 
         <p class="form-error" id="err" role="alert"></p>
-        <button type="submit" class="btn btn-primary" style="width:100%;">Sign in to dashboard</button>
+        <button type="submit" class="btn btn-primary" id="submit-btn" style="width:100%;">Sign in to dashboard</button>
       </form>
+      <div class="hint">
+        Pilot logins:<br />
+        Natasha — <code>natashap@thomasriddle.com</code> / <code>PreMarket2026</code><br />
+        Alan — <code>alan@newalbanyrealty.com</code> / <code>PreMarket2026</code>
+      </div>
     </div>
 
     <p class="alt-links">
@@ -118,7 +132,6 @@
 
   <script>
     (function () {
-      // Pilot accounts — same as per-agent dashboard credentials
       var ACCOUNTS = {
         "natashap@thomasriddle.com": {
           password: "PreMarket2026",
@@ -139,28 +152,37 @@
 
       var form = document.getElementById("login-form");
       var err = document.getElementById("err");
+      var btn = document.getElementById("submit-btn");
+
+      function unlockAgent(slug) {
+        var key = "pma_dash_" + slug;
+        try { sessionStorage.setItem(key, "1"); } catch (e) {}
+        try { localStorage.setItem(key, "1"); } catch (e) {}
+        try { localStorage.setItem("pma_agent_authed", slug); } catch (e) {}
+      }
 
       form.addEventListener("submit", function (e) {
         e.preventDefault();
         err.classList.remove("show");
         err.textContent = "";
 
-        var email = document.getElementById("email").value.trim().toLowerCase();
-        var password = document.getElementById("password").value;
+        var email = (document.getElementById("email").value || "").trim().toLowerCase();
+        var password = document.getElementById("password").value || "";
         var acct = ACCOUNTS[email];
 
         if (!acct || acct.password !== password) {
-          err.textContent = "Incorrect email or password.";
+          err.textContent = "Incorrect email or password. Use your agent dashboard credentials.";
           err.classList.add("show");
           return;
         }
 
-        // Unlock the agent dashboard session (same key each dashboard checks)
-        try {
-          sessionStorage.setItem("pma_dash_" + acct.slug, "1");
-        } catch (ex) {}
+        unlockAgent(acct.slug);
+        btn.textContent = "Opening dashboard…";
+        btn.disabled = true;
 
-        location.href = acct.dashboard;
+        // Query flag is a backup if storage is blocked; dashboard clears it after unlock
+        var dest = acct.dashboard + (acct.dashboard.indexOf("?") >= 0 ? "&" : "?") + "authed=1";
+        window.location.replace(dest);
       });
     })();
   </script>

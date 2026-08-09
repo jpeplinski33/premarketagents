@@ -163,18 +163,19 @@
       (rec.listingLabel ? " of " + rec.listingLabel : "") +
       (rec.listingPrice ? " · " + rec.listingPrice : "") +
       ".";
+    // Put the URL on its own line near the top so iMessage can unfurl a preview image.
     return (
       "Hi " +
       (rec.firstName || "there") +
       ",\n\n" +
       line +
       "\n\n" +
-      "Open this link (you'll be asked for the password):\n" +
       url +
       "\n\n" +
       "Password: " +
       (rec.passwordPlain || "(ask your agent)") +
       "\n\n" +
+      "(You'll enter the password after you open the link.)\n\n" +
       "— " +
       (agentName || "Your realtor")
     );

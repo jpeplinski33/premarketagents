@@ -4,7 +4,8 @@ Allow: /learn/
 Allow: /realtors/
 Allow: /privacy/
 Allow: /explore/
-Disallow: /r/
+# Allow /r/ HTML fetch so iMessage/link previews can load Open Graph images.
+# Private listings stay out of Google via <meta name="robots" content="noindex"> on each page.
 Disallow: /agent/
 Disallow: /invite/
 

@@ -1,12 +1,11 @@
 {
   "version": 1,
-  "note": "Pilot agent registry \u2014 client-side only. Not production auth.",
+  "note": "Pilot agent registry \u2014 client-side only. Passwords are NOT stored here; sign-in uses a PBKDF2 verifier in each dashboard page.",
   "agents": {
     "alan-hinson": {
       "slug": "alan-hinson",
       "name": "Alan D. Hinson",
       "email": "alan@newalbanyrealty.com",
-      "password": "PreMarket2026",
       "phone": "(614) 348-8000",
       "brokerage": "New Albany Realty",
       "photo": "/images/agent/alan-hinson.jpg",
@@ -44,7 +43,6 @@
       "slug": "natasha-petroff",
       "name": "Natasha Petroff",
       "email": "natashap@thomasriddle.com",
-      "password": "PreMarket2026",
       "phone": "(216) 832-5446",
       "brokerage": "Thomas|Riddle Real Estate Group \u00b7 New Albany Realty",
       "photo": "/images/agent/natasha-petroff.jpg",

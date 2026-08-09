@@ -116,23 +116,27 @@
     </nav>
   </footer>
 
+  <script src="/js/invite-crypto.js?v=1"></script>
   <script>
     (function () {
+      // Verifiers only — no password is stored here. Rotate with
+      // scripts/set-dashboard-password.js, which keeps this in step with the
+      // agent's own dashboard page.
       var ACCOUNTS = {
         "natashap@thomasriddle.com": {
-          password: "PreMarket2026",
           slug: "natasha-petroff",
-          dashboard: "/r/natasha-petroff/dashboard/"
+          dashboard: "/r/natasha-petroff/dashboard/",
+          verifier: { salt: "jziunSYGEa5LAohVSYcpjg", iterations: 210000, hash: "z6FO9aFacBGueKEirNz7KZP3UEfaFzCA91rc7MIgq30" }
         },
         "alan@newalbanyrealty.com": {
-          password: "PreMarket2026",
           slug: "alan-hinson",
-          dashboard: "/r/alan-hinson/dashboard/"
+          dashboard: "/r/alan-hinson/dashboard/",
+          verifier: { salt: "jziunSYGEa5LAohVSYcpjg", iterations: 210000, hash: "z6FO9aFacBGueKEirNz7KZP3UEfaFzCA91rc7MIgq30" }
         },
         "alanh@newalbanyrealty.com": {
-          password: "PreMarket2026",
           slug: "alan-hinson",
-          dashboard: "/r/alan-hinson/dashboard/"
+          dashboard: "/r/alan-hinson/dashboard/",
+          verifier: { salt: "jziunSYGEa5LAohVSYcpjg", iterations: 210000, hash: "z6FO9aFacBGueKEirNz7KZP3UEfaFzCA91rc7MIgq30" }
         }
       };
 
@@ -140,11 +144,14 @@
       var err = document.getElementById("err");
       var btn = document.getElementById("submit-btn");
 
-      function unlockAgent(slug) {
-        var key = "pma_dash_" + slug;
-        try { sessionStorage.setItem(key, "1"); } catch (e) {}
-        try { localStorage.setItem(key, "1"); } catch (e) {}
-        try { localStorage.setItem("pma_agent_authed", slug); } catch (e) {}
+      // Tab-scoped only. The dashboard needs the password in this session to
+      // unwrap the stored listing key, so it rides in sessionStorage rather
+      // than a URL parameter anyone could type.
+      function unlockAgent(slug, password) {
+        try {
+          sessionStorage.setItem("pma_dash_" + slug, "1");
+          sessionStorage.setItem("pma_dash_pw_" + slug, password);
+        } catch (e) {}
       }
 
       form.addEventListener("submit", function (e) {
@@ -155,20 +162,23 @@
         var email = (document.getElementById("email").value || "").trim().toLowerCase();
         var password = document.getElementById("password").value || "";
         var acct = ACCOUNTS[email];
-
-        if (!acct || acct.password !== password) {
-          err.textContent = "Incorrect email or password. Use your agent dashboard credentials.";
-          err.classList.add("show");
-          return;
-        }
-
-        unlockAgent(acct.slug);
-        btn.textContent = "Opening dashboard…";
         btn.disabled = true;
 
-        // Query flag is a backup if storage is blocked; dashboard clears it after unlock
-        var dest = acct.dashboard + (acct.dashboard.indexOf("?") >= 0 ? "&" : "?") + "authed=1";
-        window.location.replace(dest);
+        var check = acct
+          ? PMAInviteCrypto.verifyPassword(password, acct.verifier)
+          : Promise.resolve(false);
+
+        check.then(function (ok) {
+          if (!ok) {
+            btn.disabled = false;
+            err.textContent = "Incorrect email or password. Use your agent dashboard credentials.";
+            err.classList.add("show");
+            return;
+          }
+          unlockAgent(acct.slug, password);
+          btn.textContent = "Opening dashboard…";
+          window.location.replace(acct.dashboard);
+        });
       });
     })();
   </script>

@@ -35,6 +35,13 @@
     }
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+    .send-grid {
+      display: grid; grid-template-columns: minmax(160px, 220px) 1fr;
+      gap: 16px; align-items: start;
+    }
+    /* Realtors send from their phone — never squeeze the message column. */
+    @media (max-width: 720px) { .send-grid { grid-template-columns: 1fr; } }
+    .send-grid img { max-width: 320px; }
     .listing-card {
       border: 1px solid var(--line); background: var(--bg-elev); padding: 18px; margin-bottom: 12px;
     }
@@ -148,6 +155,41 @@
       <div id="listings"></div>
     </div>
 
+    <div class="panel" id="key-panel" style="border-color:rgba(196,165,116,0.35);">
+      <h3>Listing key</h3>
+      <p class="muted" style="margin-bottom:12px;">
+        Listings are encrypted, so nobody can read a property without an invite. Paste the key for
+        the selected listing once on each device you send from. It is stored only in this browser
+        and is never uploaded. Without it you cannot create invites or preview the listing.
+      </p>
+      <input class="field" id="listing-key" type="password" autocomplete="off" spellcheck="false" placeholder="Paste listing key" />
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
+        <button type="button" class="btn btn-primary" id="save-key">Save key</button>
+        <button type="button" class="btn btn-ghost" id="clear-key">Forget key</button>
+        <span class="ok" id="key-status"></span>
+      </div>
+    </div>
+
+    <div class="panel" id="transfer-panel">
+      <h3>Move invites to another device</h3>
+      <p class="muted" style="margin-bottom:12px;">
+        Invites live in this browser only. To carry them to your phone, create a transfer link and
+        open it there. The link is encrypted — it is useless without the one-time code, which you
+        type on the other device. Send the link and the code separately.
+      </p>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;">
+        <button type="button" class="btn btn-primary" id="make-transfer">Create transfer link</button>
+        <button type="button" class="btn btn-ghost" id="copy-transfer" hidden>Copy link</button>
+      </div>
+      <div id="transfer-out" hidden style="margin-top:12px;">
+        <p class="muted" style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">One-time code</p>
+        <p style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:22px;color:var(--gold-soft);letter-spacing:0.12em;margin-bottom:10px;" id="transfer-code"></p>
+        <p class="muted" style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">Transfer link</p>
+        <textarea id="transfer-link" rows="3" readonly style="width:100%;padding:10px 12px;border:1px solid var(--line-strong);background:#0f0f11;color:var(--gold-soft);font-size:11px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;resize:vertical;"></textarea>
+      </div>
+      <p class="form-ok" id="transfer-status" style="display:none;margin-top:10px;"></p>
+    </div>
+
     <div class="panel">
       <h3>Create a trackable invite link</h3>
       <p class="muted" style="margin-bottom:14px;">
@@ -188,7 +230,7 @@
         whole message. Put the details and the link together, or type anything after the link, and
         the buyer just gets a plain blue URL.
       </p>
-      <div style="display:grid;grid-template-columns:minmax(160px,220px) 1fr;gap:16px;align-items:start;">
+      <div class="send-grid">
         <div>
           <p class="muted" style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Card the buyer sees</p>
           <img id="send-og-img" alt="Invite link preview" width="1200" height="630"
@@ -229,13 +271,18 @@
     </div>
   </div>
 
+  <script src="/js/invite-crypto.js?v=1"></script>
   <script src="/js/invite-registry.js?v=15"></script>
   <script src="/js/invite-analytics.js"></script>
   <script>
     (function () {
       var AGENT = "alan-hinson";
       var DEMO_EMAIL = "alan@newalbanyrealty.com";
-      var DEMO_PASSWORD = "PreMarket2026";
+      // Password verifier (PBKDF2). Public by necessity on a static host:
+      // it keeps the password out of view-source, but can be attacked
+      // offline — so it must be long and random. Rotate with
+      // scripts/set-dashboard-password.js.
+      var DASH_AUTH = { salt: "jziunSYGEa5LAohVSYcpjg", iterations: 210000, hash: "z6FO9aFacBGueKEirNz7KZP3UEfaFzCA91rc7MIgq30" };
       var LISTINGS = [
         {
           code: "3czjbv9",
@@ -269,28 +316,31 @@
         try { if (localStorage.getItem(key) === "1") return true; } catch (e) {}
         return false;
       }
+      // Auth is tab-scoped. Nothing about being signed in survives a closed
+      // tab, and the password is never written to disk.
       function unlocked() {
-        var key = "pma_dash_" + AGENT;
-        if (storageGet(key)) return true;
-        try {
-          if (localStorage.getItem("pma_agent_authed") === AGENT) return true;
-        } catch (e) {}
-        return false;
+        try { return sessionStorage.getItem("pma_dash_" + AGENT) === "1"; }
+        catch (e) { return false; }
       }
-      function setUnlocked() {
-        var key = "pma_dash_" + AGENT;
-        try { sessionStorage.setItem(key, "1"); } catch (e) {}
-        try { localStorage.setItem(key, "1"); } catch (e) {}
-        try { localStorage.setItem("pma_agent_authed", AGENT); } catch (e) {}
+      function setUnlocked(password) {
+        try {
+          sessionStorage.setItem("pma_dash_" + AGENT, "1");
+          if (password) sessionStorage.setItem("pma_dash_pw_" + AGENT, password);
+        } catch (e) {}
+      }
+      function sessionPassword() {
+        try { return sessionStorage.getItem("pma_dash_pw_" + AGENT) || ""; }
+        catch (e) { return ""; }
       }
       function clearUnlocked() {
-        var key = "pma_dash_" + AGENT;
-        try { sessionStorage.removeItem(key); } catch (e) {}
-        try { localStorage.removeItem(key); } catch (e) {}
         try {
-          if (localStorage.getItem("pma_agent_authed") === AGENT) {
-            localStorage.removeItem("pma_agent_authed");
-          }
+          sessionStorage.removeItem("pma_dash_" + AGENT);
+          sessionStorage.removeItem("pma_dash_pw_" + AGENT);
+          Object.keys(sessionStorage).filter(function (k) {
+            return k.indexOf("pma_lk_open:") === 0;
+          }).forEach(function (k) { sessionStorage.removeItem(k); });
+          localStorage.removeItem("pma_agent_authed");
+          localStorage.removeItem("pma_dash_" + AGENT);
         } catch (e) {}
       }
 
@@ -348,7 +398,7 @@
       function syncSelected() {
         var L = currentListing();
         document.getElementById("create-for").textContent = L.address;
-        document.getElementById("open-listing-preview").href = L.previewPath;
+        refreshKeyUI();
         renderListings();
         renderInvites();
       }
@@ -459,20 +509,26 @@
         lock.hidden = true;
         dash.hidden = false;
         syncSelected();
+        maybeImportTransfer();
       }
 
       document.getElementById("login-form").addEventListener("submit", function (e) {
         e.preventDefault();
         var email = document.getElementById("email").value.trim().toLowerCase();
         var password = document.getElementById("password").value;
-        if (email !== DEMO_EMAIL || password !== DEMO_PASSWORD) {
-          err.style.display = "block";
-          err.textContent = "Incorrect email or password.";
-          return;
-        }
-        err.style.display = "none";
-        setUnlocked();
-        showDash();
+        var btn = e.target.querySelector('button[type="submit"]');
+        if (btn) btn.disabled = true;
+        PMAInviteCrypto.verifyPassword(password, DASH_AUTH).then(function (ok) {
+          if (btn) btn.disabled = false;
+          if (email !== DEMO_EMAIL || !ok) {
+            err.style.display = "block";
+            err.textContent = "Incorrect email or password.";
+            return;
+          }
+          err.style.display = "none";
+          setUnlocked(password);
+          hydrateListingKeys().then(showDash);
+        });
       });
 
 
@@ -564,6 +620,208 @@
         sendStatus("Link copied — paste it as its own message, with nothing after it.");
       });
 
+
+      // ---- Listing key ----
+      // At rest the key is wrapped with the dashboard password, so a stolen
+      // laptop does not hand over the listings. The unwrapped copy lives in
+      // sessionStorage for this tab only.
+      function keyStoreKey(code) { return "pma_listing_key_enc_v2:" + AGENT + "/" + code; }
+      function openKeyName(code) { return "pma_lk_open:" + AGENT + "/" + code; }
+
+      function loadListingKey(code) {
+        try { return sessionStorage.getItem(openKeyName(code)) || ""; }
+        catch (e) { return ""; }
+      }
+
+      function saveListingKey(code, val) {
+        if (!val) {
+          try {
+            localStorage.removeItem(keyStoreKey(code));
+            sessionStorage.removeItem(openKeyName(code));
+          } catch (e) {}
+          return Promise.resolve();
+        }
+        var pw = sessionPassword();
+        if (!pw) return Promise.reject(new Error("sign in again to save a key"));
+        return PMAInviteCrypto.wrapKey(PMAInviteCrypto.keyFromString(val), pw)
+          .then(function (blob) {
+            try {
+              localStorage.setItem(keyStoreKey(code), blob);
+              sessionStorage.setItem(openKeyName(code), val);
+            } catch (e) {}
+          });
+      }
+
+      /** Unwrap every stored listing key into this tab after sign-in. */
+      function hydrateListingKeys() {
+        var pw = sessionPassword();
+        if (!pw) return Promise.resolve();
+        return Promise.all(LISTINGS.map(function (L) {
+          var blob;
+          try { blob = localStorage.getItem(keyStoreKey(L.code)); } catch (e) {}
+          if (!blob) return Promise.resolve();
+          return PMAInviteCrypto.unwrapKey(blob, pw)
+            .then(function (raw) {
+              try {
+                sessionStorage.setItem(openKeyName(L.code),
+                  PMAInviteCrypto.keyToString(raw));
+              } catch (e) {}
+            })
+            .catch(function () {
+              // Password changed since the key was saved — drop the stale blob
+              // rather than leaving a key that can never be opened.
+              try { localStorage.removeItem(keyStoreKey(L.code)); } catch (e) {}
+            });
+        }));
+      }
+
+      function currentKey() { return loadListingKey(currentListing().code); }
+
+      function refreshKeyUI() {
+        var L = currentListing();
+        var k = loadListingKey(L.code);
+        var f = document.getElementById("listing-key");
+        var st = document.getElementById("key-status");
+        if (f) f.value = k;
+        if (st) st.textContent = k
+          ? "Key saved on this device."
+          : "No key for this listing — invites and preview are blocked.";
+        // Preview carries the raw key so the realtor can open the listing itself.
+        var prev = document.getElementById("open-listing-preview");
+        if (prev) prev.href = L.previewPath + (k ? "#lk=" + encodeURIComponent(k) : "");
+      }
+
+      document.getElementById("save-key").addEventListener("click", function () {
+        var f = document.getElementById("listing-key");
+        var val = (f.value || "").trim();
+        var st = document.getElementById("key-status");
+        if (val) {
+          try { PMAInviteCrypto.keyFromString(val); }
+          catch (e) { st.textContent = "That does not look like a listing key."; return; }
+        }
+        saveListingKey(currentListing().code, val).then(function () {
+          refreshKeyUI();
+          st.textContent = val ? "Key saved on this device." : "Key removed.";
+        }).catch(function (e) {
+          st.textContent = e.message || "Could not save the key.";
+        });
+      });
+
+      document.getElementById("clear-key").addEventListener("click", function () {
+        saveListingKey(currentListing().code, "").then(refreshKeyUI);
+      });
+
+      // ---- Device transfer: encrypted, code delivered out of band ----
+      function shareOriginForTransfer() {
+        var o = location.origin;
+        return o.indexOf("premarketagents.com") !== -1 ? o : "https://premarketagents.com";
+      }
+
+      function transferPayload() {
+        var store = PMAInviteRegistry.loadAll();
+        var mine = {};
+        Object.keys(store).forEach(function (k) {
+          if (k.indexOf(AGENT + "/") === 0) mine[k] = store[k];
+        });
+        var keys = {};
+        LISTINGS.forEach(function (L) {
+          var v = loadListingKey(L.code);
+          if (v) keys[L.code] = v;
+        });
+        return JSON.stringify({ v: 1, agent: AGENT, invites: mine, listingKeys: keys });
+      }
+
+      function genTransferCode() {
+        var alpha = "ABCDEFGHJKMNPQRSTUVWXYZ23456789", out = "";
+        var b = new Uint8Array(6);
+        crypto.getRandomValues(b);
+        for (var i = 0; i < 6; i++) out += alpha[b[i] % alpha.length];
+        return out;
+      }
+
+      document.getElementById("make-transfer").addEventListener("click", function () {
+        var st = document.getElementById("transfer-status");
+        var code = genTransferCode();
+        var K = PMAInviteCrypto.generateContentKey();
+        Promise.all([
+          PMAInviteCrypto.encryptContent(transferPayload(), K),
+          PMAInviteCrypto.wrapKey(K, code)
+        ]).then(function (out) {
+          var url = shareOriginForTransfer() + "/r/" + AGENT + "/dashboard/#t=" +
+            out[0] + "&tk=" + out[1];
+          document.getElementById("transfer-code").textContent = code;
+          document.getElementById("transfer-link").value = url;
+          document.getElementById("transfer-out").hidden = false;
+          document.getElementById("copy-transfer").hidden = false;
+          st.style.display = "block";
+          st.textContent = "Open the link on your phone, then type the code. Send them separately.";
+        }).catch(function () {
+          st.style.display = "block";
+          st.textContent = "Could not build the transfer link.";
+        });
+      });
+
+      document.getElementById("copy-transfer").addEventListener("click", function () {
+        var v = document.getElementById("transfer-link").value;
+        try { navigator.clipboard.writeText(v); } catch (e) {}
+        var st = document.getElementById("transfer-status");
+        st.style.display = "block";
+        st.textContent = "Link copied. The code is not in the link — send it separately.";
+      });
+
+      /** Incoming transfer: #t=<ciphertext>&tk=<code-wrapped key> */
+      function maybeImportTransfer() {
+        var frag = {};
+        String(location.hash || "").replace(/^#/, "").split("&").forEach(function (p) {
+          var i = p.indexOf("=");
+          if (i > 0) frag[p.slice(0, i)] = decodeURIComponent(p.slice(i + 1));
+        });
+        if (!frag.t || !frag.tk) return;
+
+        var panel = document.getElementById("transfer-panel");
+        var box = document.createElement("div");
+        box.style.marginTop = "14px";
+        box.innerHTML =
+          '<p class="muted" style="margin-bottom:8px;">A transfer is waiting. Enter the one-time code shown on your other device.</p>' +
+          '<input class="field" id="import-code" autocomplete="off" spellcheck="false" placeholder="6-character code" />' +
+          '<button type="button" class="btn btn-primary" id="do-import">Import invites</button>' +
+          '<p class="form-ok" id="import-status" style="display:none;margin-top:10px;"></p>';
+        panel.appendChild(box);
+
+        document.getElementById("do-import").addEventListener("click", function () {
+          var st = document.getElementById("import-status");
+          var code = (document.getElementById("import-code").value || "").trim().toUpperCase();
+          st.style.display = "block";
+          st.textContent = "Importing…";
+          PMAInviteCrypto.unwrapKey(frag.tk, code)
+            .then(function (K) { return PMAInviteCrypto.decryptContent(frag.t, K); })
+            .then(function (json) {
+              var data = JSON.parse(json);
+              if (data.agent !== AGENT) throw new Error("wrong agent");
+              var store = PMAInviteRegistry.loadAll();
+              var n = 0;
+              Object.keys(data.invites || {}).forEach(function (k) {
+                store[k] = data.invites[k];
+                n++;
+              });
+              localStorage.setItem(PMAInviteRegistry.STORE_KEY, JSON.stringify(store));
+              return Promise.all(Object.keys(data.listingKeys || {}).map(function (code2) {
+                return saveListingKey(code2, data.listingKeys[code2]);
+              })).then(function () { return n; });
+            })
+            .then(function (n) {
+              // Strip the ciphertext from the URL so it does not sit in history.
+              try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
+              refreshKeyUI();
+              renderInvites();
+              st.textContent = "Imported " + n + " invite" + (n === 1 ? "" : "s") + " and your listing keys.";
+            })
+            .catch(function () {
+              st.textContent = "That code did not work. Check it and try again.";
+            });
+        });
+      }
+
       document.getElementById("create-form").addEventListener("submit", function (e) {
         e.preventDefault();
         var L = currentListing();
@@ -574,6 +832,7 @@
         PMAInviteRegistry.create({
           agentSlug: AGENT,
           listingCode: L.code,
+          listingKey: currentKey(),
           listingLabel: L.address,
           firstName: document.getElementById("fn").value,
           lastName: document.getElementById("ln").value,
@@ -612,36 +871,21 @@
         dash.hidden = true;
       });
 
-      // Internal preview: skip login with ?preview=1 or ?key=dash-preview-2026
+      // No URL parameter grants access. ?authed=1 / ?preview=1 /
+      // ?key=dash-preview-2026 used to skip the password entirely, which made
+      // the sign-in decorative — anyone who knew the dashboard URL was in.
       function tryShowDash() {
         try {
-          setUnlocked();
-          showDash();
+          hydrateListingKeys().then(showDash);
           return true;
-        } catch (err) {
-          console.error("dashboard showDash failed", err);
-          // Still reveal dash shell even if invites fail to render
-          try {
-            lock.hidden = true;
-            dash.hidden = false;
-          } catch (e2) {}
+        } catch (e) {
+          console.error("dashboard showDash failed", e);
           return false;
         }
       }
       try {
-        var params = new URLSearchParams(location.search);
-        var fromLogin = params.get("authed") === "1" || params.get("preview") === "1" || params.get("key") === "dash-preview-2026";
-        if (fromLogin || unlocked()) {
-          tryShowDash();
-          // Clean authed flag from URL without reload
-          if (params.get("authed") === "1" && window.history && history.replaceState) {
-            params.delete("authed");
-            var q = params.toString();
-            history.replaceState({}, "", location.pathname + (q ? "?" + q : "") + location.hash);
-          }
-        }
-      } catch (e) {
         if (unlocked()) tryShowDash();
+      } catch (e) {
       }
     })();
   </script>

@@ -1,4 +1,5 @@
 .ai-session-notes
+.claude/settings.local.json
 .DS_Store
 AGENTS.md
 deliverables/node_modules/
@@ -8,3 +9,19 @@ ROUTE.md
 SESSION-SNAPSHOT.md
 source/zip-photos/
 STATUS.md
+
+# Private-image filename salt — NEVER commit. Knowing it lets anyone
+# recompute every /images/p/<hash>.jpg URL from the original filenames.
+# The docs/ copy is created by `rsync -a --delete site/ docs/`; it is ignored
+# here so it can never reach the GitHub Pages deploy.
+site/images/.private-salt
+docs/images/.private-salt
+.agent-runs/private-images-20260809/SALT.txt
+
+# Listing content keys — NEVER commit. These decrypt the private listings.
+.agent-runs/private-images-20260809/LISTING-KEYS.txt
+
+# Agent run records: mapping.json/tsv reverse the private-image hashing.
+.agent-runs/
+
+logs/

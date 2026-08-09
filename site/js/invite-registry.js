@@ -117,8 +117,30 @@
     // collision check
     while (store[fullId(agentSlug, listingCode, token)]) token = genToken(8);
 
-    return sha256(password).then(function (hash) {
+    // The listing key unlocks the encrypted page content. Without it the
+    // invite would open to a permanently undecryptable listing, so refuse
+    // to create one rather than hand the buyer a dead link.
+    var listingKey = opts.listingKey;
+    if (!listingKey) {
+      return Promise.reject(
+        new Error("listing key required — add it in Listing key above")
+      );
+    }
+    var rawKey;
+    try {
+      rawKey = global.PMAInviteCrypto.keyFromString(listingKey);
+    } catch (e) {
+      return Promise.reject(new Error("listing key looks wrong — re-copy it"));
+    }
+
+    return Promise.all([
+      sha256(password),
+      global.PMAInviteCrypto.wrapKey(rawKey, password)
+    ]).then(function (out) {
+      var hash = out[0];
+      var wrappedKey = out[1];
       var rec = {
+        wrappedKey: wrappedKey,
         token: token,
         agentSlug: agentSlug,
         listingCode: listingCode,
@@ -156,10 +178,11 @@
 
   function inviteUrl(rec, origin) {
     origin = shareOrigin(origin);
-    // Token in query. Password hash in # fragment so iMessage unfurlers fetch
-    // the page without the fragment and still get branded og:image. Gate reads #ph=.
+    // Token in query for analytics. The password-wrapped listing key rides in
+    // the # fragment: fragments are never sent to the server, and unfurlers
+    // fetch without it — so the branded og:image still resolves.
     var q = "?i=" + encodeURIComponent(rec.token);
-    var hash = rec.passwordHash ? "#ph=" + encodeURIComponent(rec.passwordHash) : "";
+    var hash = rec.wrappedKey ? "#k=" + encodeURIComponent(rec.wrappedKey) : "";
     return origin + "/r/" + rec.agentSlug + "/" + rec.listingCode + "/" + q + hash;
   }
 

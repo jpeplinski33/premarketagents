@@ -168,3 +168,18 @@ On-site blog supports keywords; **external mentions** raise domain authority. Bo
 | Neutral "public portals" wording if needed | Competitor-name comparisons in product UI |
 
 Internal research notes may name third parties; **anything under `site/` / live domain must not.**
+
+
+## 8. Trackable homeowner invites (2026-08-08)
+
+Realtor dashboards create **per-homeowner** invite links (first, last, phone, email + password).
+
+| Piece | Shape |
+|-------|--------|
+| URL | `/r/{agent}/{listing}/?i={token}&ph={sha256}` |
+| Analytics id | `{agent}/{listing}/{token}` |
+| Registry | `localStorage pma_client_invites_v1` (realtor browser + PII) |
+| Password verify | `ph` query hash works on any device; registry used when present |
+
+Bare listing URLs without `?i=` are blocked (except `?preview=1` internal bypass).
+No general listing activity feed — only per-homeowner stats. No Export JSON on dashboard.

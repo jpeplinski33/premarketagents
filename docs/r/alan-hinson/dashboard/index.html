@@ -10,61 +10,58 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/site.css" />
   <style>
-    .dash { max-width: 960px; margin: 0 auto; padding: 40px 22px 80px; }
+    .dash { max-width: 920px; margin: 0 auto; padding: 40px 22px 80px; }
     .dash h1 {
       font-family: "Cormorant Garamond", Georgia, serif;
       font-weight: 500; font-size: clamp(28px, 4vw, 40px); margin-bottom: 8px;
     }
-    .dash .sub { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
-    .stat-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px;
-    }
-    @media (max-width: 720px) { .stat-grid { grid-template-columns: 1fr 1fr; } }
-    .stat {
-      border: 1px solid var(--line); background: var(--bg-elev); padding: 16px 14px;
-    }
-    .stat .n {
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: 32px; color: var(--gold-soft); line-height: 1.1;
-    }
-    .stat .l { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
-    .panel { margin-bottom: 18px; }
+    .dash .sub { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+    .panel { margin-bottom: 20px; }
     .panel h3 { margin-bottom: 12px; }
-    table.simple { width: 100%; border-collapse: collapse; font-size: 13px; }
-    table.simple th, table.simple td {
-      text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); color: #c8c3b8;
-    }
-    table.simple th { color: var(--muted); font-weight: 600; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
     .gate-box { max-width: 420px; margin: 48px auto; }
     .muted { color: var(--muted); font-size: 13px; }
     .ok { color: var(--gold-soft); }
-    code { color: var(--gold-soft); font-size: 12px; }
-    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; align-items: center; }
-    .toolbar button, .toolbar a.btn { font-size: 11px; padding: 10px 14px; }
+    code { color: var(--gold-soft); font-size: 12px; word-break: break-all; }
     #lock-view[hidden], #dash-view[hidden] { display: none !important; }
-    .listing-card {
-      border: 1px solid var(--line); background: var(--bg-elev); padding: 18px; margin-bottom: 14px;
-    }
-    .listing-card h3 {
-      font-family: "Cormorant Garamond", Georgia, serif; font-size: 22px; font-weight: 500; margin-bottom: 6px;
-    }
-    .listing-card .meta { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
-    .listing-card label {
+    label.field {
       display: block; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--muted); margin-bottom: 6px;
+      color: var(--muted); margin: 0 0 6px;
     }
-    .listing-card input[type="password"], .listing-card input[type="text"] {
-      width: 100%; max-width: 320px; padding: 10px 12px; background: var(--bg);
-      border: 1px solid var(--line-strong); color: var(--ink); margin-bottom: 10px;
+    input.field, select.field {
+      width: 100%; padding: 11px 12px; background: var(--bg);
+      border: 1px solid var(--line-strong); color: var(--ink); margin-bottom: 12px; font-size: 14px;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+    .invite-row {
+      border: 1px solid var(--line); background: var(--bg-elev); padding: 16px; margin-bottom: 12px;
+    }
+    .invite-row h4 {
+      font-family: "Cormorant Garamond", Georgia, serif; font-size: 20px; font-weight: 500; margin: 0 0 4px;
+    }
+    .invite-row .meta { font-size: 13px; color: var(--muted); margin-bottom: 10px; line-height: 1.45; }
+    .invite-row .stats {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 12px 0;
+    }
+    @media (max-width: 640px) { .invite-row .stats { grid-template-columns: 1fr 1fr; } }
+    .invite-row .stat {
+      border: 1px solid var(--line); padding: 10px 8px; background: var(--bg);
+    }
+    .invite-row .stat .n {
+      font-family: "Cormorant Garamond", Georgia, serif; font-size: 22px; color: var(--gold-soft); line-height: 1.1;
+    }
+    .invite-row .stat .l {
+      font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-top: 4px;
     }
     .row-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
     .row-actions button, .row-actions a.btn { font-size: 11px; padding: 9px 12px; }
-    .copy-ok { color: var(--gold-soft); font-size: 12px; margin-left: 6px; }
-    .invite-box {
-      margin-top: 12px; padding: 12px; border: 1px solid rgba(196,165,116,0.25);
-      background: rgba(196,165,116,0.06); font-size: 13px; color: #c8c3b8; line-height: 1.5;
+    .form-error { color: #b85c4a; font-size: 13px; display: none; margin-bottom: 10px; }
+    .form-ok { color: var(--gold-soft); font-size: 13px; display: none; margin-bottom: 10px; }
+    .detail-box {
+      margin-top: 10px; padding: 12px; border: 1px solid rgba(196,165,116,0.25);
+      background: rgba(196,165,116,0.06); font-size: 13px; color: #c8c3b8; display: none;
     }
-    .invite-box strong { color: var(--ink); }
+    .detail-box.open { display: block; }
   </style>
 </head>
 <body>
@@ -74,7 +71,7 @@
       <span class="brand-agents">Agents</span>
     </a>
     <nav class="nav">
-      <a href="/r/alan-hinson/y5q3szn/">Open listings</a>
+      <a href="/r/alan-hinson/3czjbv9/">Listings</a>
     </nav>
   </header>
 
@@ -83,18 +80,15 @@
       <p class="eyebrow">Agent sign-in · pilot</p>
       <h1 style="font-size:28px;margin-bottom:12px;">Alan D. Hinson</h1>
       <p class="muted" style="margin-bottom:16px;">
-        Sign in to manage Hanbys + Yantis invites, set passwords, and view client engagement.
-        Pilot accounts are client-side only — not production auth.
+        Sign in to create trackable homeowner invites and see each person’s activity.
       </p>
       <form id="login-form">
-        <label for="email" style="display:block;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Email</label>
-        <input id="email" type="email" autocomplete="username" placeholder="you@brokerage.com" required
-          style="width:100%;padding:12px;background:var(--bg);border:1px solid var(--line-strong);color:var(--ink);margin-bottom:14px;" />
-        <label for="password" style="display:block;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Password</label>
-        <input id="password" type="password" autocomplete="current-password" placeholder="Password" required
-          style="width:100%;padding:12px;background:var(--bg);border:1px solid var(--line-strong);color:var(--ink);margin-bottom:12px;" />
-        <p class="form-error" id="err" style="color:#b85c4a;font-size:13px;display:none;margin-bottom:10px;"></p>
-        <button type="submit" class="btn btn-primary" id="unlock" style="width:100%;">Sign in</button>
+        <label class="field" for="email">Email</label>
+        <input class="field" id="email" type="email" autocomplete="username" required placeholder="you@brokerage.com" />
+        <label class="field" for="password">Password</label>
+        <input class="field" id="password" type="password" autocomplete="current-password" required />
+        <p class="form-error" id="err"></p>
+        <button type="submit" class="btn btn-primary" style="width:100%;">Sign in</button>
       </form>
       <p class="muted" style="margin-top:14px;">Pilot only — not production auth.</p>
     </div>
@@ -102,96 +96,82 @@
 
   <div id="dash-view" class="dash" hidden>
     <p class="eyebrow">Alan D. Hinson · New Albany Realty</p>
-    <h1>Your dashboard</h1>
+    <h1>Homeowner invites</h1>
     <p class="sub">
-      Manage private listings, set <strong style="color:var(--ink)">invite passwords</strong>, and track client engagement.
-      <span id="asof" class="ok"></span>
+      Create a personal, trackable link for each homeowner. Activity is stored per person — not as one shared listing feed.
     </p>
 
-    <div class="toolbar">
-      <button type="button" class="btn btn-ghost" id="reload">Refresh activity</button>
-      <button type="button" class="btn btn-ghost" id="seed">Load demo session</button>
-      <button type="button" class="btn btn-ghost" id="export">Export JSON</button>
-      <button type="button" class="btn btn-ghost" id="signout">Sign out</button>
+    <div class="panel">
+      <h3>Listing</h3>
+      <select class="field" id="listing-select"></select>
     </div>
 
     <div class="panel">
-      <h3>Your listings</h3>
+      <h3>Create a trackable invite link</h3>
       <p class="muted" style="margin-bottom:14px;">
-        Every invite link is password-protected. Set the password buyers must enter, then copy the link + password to text or email.
+        Enter the homeowner’s details and an invite password. You’ll get a unique link only they should use.
       </p>
-      <div id="listings"></div>
-    </div>
-
-    <div class="stat-grid">
-      <div class="stat"><div class="n" id="s-events">0</div><div class="l">Events</div></div>
-      <div class="stat"><div class="n" id="s-sessions">0</div><div class="l">Sessions</div></div>
-      <div class="stat"><div class="n" id="s-map">0</div><div class="l">Map events</div></div>
-      <div class="stat"><div class="n" id="s-scroll">0%</div><div class="l">Max scroll</div></div>
-    </div>
-
-    <div class="panel">
-      <h3>Top photos · selected listing</h3>
-      <table class="simple" id="photo-table">
-        <thead><tr><th>#</th><th>Views</th><th>Dwell</th></tr></thead>
-        <tbody></tbody>
-      </table>
-      <p class="muted" id="photo-empty" style="display:none;margin-top:8px;">No photo events yet.</p>
-    </div>
-
-    <div class="panel">
-      <h3>Sessions</h3>
-      <table class="simple" id="session-table">
-        <thead><tr><th>Started</th><th>Duration</th><th>Events</th></tr></thead>
-        <tbody></tbody>
-      </table>
+      <form id="create-form">
+        <div class="grid-2">
+          <div>
+            <label class="field" for="fn">First name</label>
+            <input class="field" id="fn" required autocomplete="given-name" />
+          </div>
+          <div>
+            <label class="field" for="ln">Last name</label>
+            <input class="field" id="ln" required autocomplete="family-name" />
+          </div>
+        </div>
+        <label class="field" for="phone">Phone</label>
+        <input class="field" id="phone" type="tel" required autocomplete="tel" placeholder="(614) 555-0100" />
+        <label class="field" for="em">Email</label>
+        <input class="field" id="em" type="email" required autocomplete="email" placeholder="homeowner@email.com" />
+        <label class="field" for="inv-pw">Invite password (they enter this)</label>
+        <input class="field" id="inv-pw" type="text" required minlength="4" placeholder="e.g. Byers2026" autocomplete="off" />
+        <p class="form-error" id="create-err"></p>
+        <p class="form-ok" id="create-ok"></p>
+        <button type="submit" class="btn btn-primary">Create trackable invite</button>
+      </form>
     </div>
 
     <div class="panel">
-      <h3>CTAs &amp; external links</h3>
-      <p class="muted" id="cta-summary">—</p>
+      <h3>Trackable invites</h3>
+      <p class="muted" id="invite-empty" style="display:none;">No invites yet for this listing. Create one above.</p>
+      <div id="invite-list"></div>
     </div>
 
-    <div class="panel">
-      <h3>Disclosure</h3>
-      <p class="muted">
-        Clients see a plain-language notice that you can view engagement on this pre-market opportunity
-        (time, photos, map, links). Activity is invite-scoped.
-      </p>
-    </div>
+    <p class="muted" style="margin-top:20px;">
+      <button type="button" class="btn btn-ghost" id="signout">Sign out</button>
+    </p>
   </div>
 
-  <script src="/js/invite-gate.js"></script>
+  <script src="/js/invite-registry.js"></script>
   <script src="/js/invite-analytics.js"></script>
   <script>
     (function () {
       var AGENT = "alan-hinson";
       var DEMO_EMAIL = "alan@newalbanyrealty.com";
       var DEMO_PASSWORD = "PreMarket2026";
-      var DEMO_KEY = "alan-hanbys-2026";
       var LISTINGS = [
         {
           code: "3czjbv9",
           address: "7013 Hanbys Loop, New Albany, OH 43054",
           price: "$2,315,000",
-          path: "/r/alan-hinson/3czjbv9/",
-          seedPassword: "Hanbys2026",
-          seedHash: "c87f0deba776e21dfc9fbce9a713b2ed329663bd3cb4cd84536d425e37a1ad08"
+          path: "/r/alan-hinson/3czjbv9/"
         },
         {
           code: "y5q3szn",
           address: "4879 Yantis Dr, New Albany, OH 43054",
           price: "$2,795,000",
-          path: "/r/alan-hinson/y5q3szn/",
-          seedPassword: "YantisAlan2026",
-          seedHash: "d92492c6f8336ac13e272ae80a3fe626695ab4db673438168e325d3f7643c2c5"
+          path: "/r/alan-hinson/y5q3szn/"
         }
       ];
-      var activeInvite = AGENT + "/" + LISTINGS[0].code;
+      var agentName = "Alan D. Hinson, New Albany Realty";
 
       var lock = document.getElementById("lock-view");
       var dash = document.getElementById("dash-view");
       var err = document.getElementById("err");
+      var sel = document.getElementById("listing-select");
 
       function unlocked() {
         try { return sessionStorage.getItem("pma_dash_" + AGENT) === "1"; } catch (e) { return false; }
@@ -203,154 +183,138 @@
         try { sessionStorage.removeItem("pma_dash_" + AGENT); } catch (e) {}
       }
 
+      function currentListing() {
+        var code = sel.value;
+        return LISTINGS.find(function (L) { return L.code === code; }) || LISTINGS[0];
+      }
+
+      function fmtTime(t) {
+        if (!t) return "—";
+        return new Date(t).toLocaleString();
+      }
       function fmtDur(ms) {
         if (ms == null || ms < 0) return "—";
         var s = Math.round(ms / 1000);
         if (s < 60) return s + "s";
         return Math.floor(s / 60) + "m " + (s % 60) + "s";
       }
-      function fmtTime(t) {
-        if (!t) return "—";
-        return new Date(t).toLocaleString();
-      }
 
-      function absoluteUrl(path) {
-        return location.origin + path;
-      }
-
-      function ensureSeedPasswords() {
-        LISTINGS.forEach(function (L) {
-          var id = AGENT + "/" + L.code;
-          var cfg = PMAInviteGate.getConfig(id);
-          if (!cfg.hash && L.seedHash) {
-            // Seed into localStorage so dashboard edits work immediately
-            var store = PMAInviteGate.loadStore();
-            store[id] = { hash: L.seedHash, required: true, label: L.address, updatedAt: Date.now() };
-            try { localStorage.setItem(PMAInviteGate.STORE_KEY, JSON.stringify(store)); } catch (e) {}
-          }
-        });
-      }
-
-      function renderListings() {
-        var host = document.getElementById("listings");
-        host.innerHTML = "";
-        LISTINGS.forEach(function (L) {
-          var id = AGENT + "/" + L.code;
-          var cfg = PMAInviteGate.getConfig(id);
-          var card = document.createElement("div");
-          card.className = "listing-card";
-          card.innerHTML =
-            "<h3>" + L.address + "</h3>" +
-            '<p class="meta">' + L.price + " · Invite <code>" + id + "</code>" +
-            (cfg.updatedAt ? " · Password set " + fmtTime(cfg.updatedAt) : " · Using seed password") +
-            "</p>" +
-            '<label for="pw-' + L.code + '">Invite password (buyers enter this)</label>' +
-            '<input type="password" id="pw-' + L.code + '" placeholder="Set or change password" autocomplete="new-password" />' +
-            '<div class="row-actions">' +
-            '<button type="button" class="btn btn-primary" data-act="save" data-code="' + L.code + '">Save password</button>' +
-            '<button type="button" class="btn btn-ghost" data-act="copy-link" data-code="' + L.code + '">Copy invite link</button>' +
-            '<button type="button" class="btn btn-ghost" data-act="copy-msg" data-code="' + L.code + '">Copy link + password text</button>' +
-            '<a class="btn btn-ghost" href="' + L.path + '" target="_blank" rel="noopener">Open as client</a>' +
-            '<button type="button" class="btn btn-ghost" data-act="select" data-code="' + L.code + '">View activity</button>' +
-            '<span class="copy-ok" id="ok-' + L.code + '"></span>' +
-            "</div>" +
-            '<div class="invite-box" id="box-' + L.code + '">' +
-            "<strong>Share with buyers:</strong><br />" +
-            "1. Link: <code>" + absoluteUrl(L.path) + "</code><br />" +
-            "2. Password: the one you set above (seed default was <code>" + L.seedPassword + "</code> until you change it)" +
-            "</div>";
-          host.appendChild(card);
-        });
-
-        host.querySelectorAll("button[data-act]").forEach(function (btn) {
-          btn.addEventListener("click", function () {
-            var code = btn.getAttribute("data-code");
-            var L = LISTINGS.find(function (x) { return x.code === code; });
-            if (!L) return;
-            var id = AGENT + "/" + code;
-            var okEl = document.getElementById("ok-" + code);
-            var act = btn.getAttribute("data-act");
-
-            if (act === "save") {
-              var pw = document.getElementById("pw-" + code).value;
-              if (!pw || pw.length < 4) {
-                okEl.textContent = "Use at least 4 characters.";
-                return;
-              }
-              PMAInviteGate.setPassword(id, pw, { label: L.address }).then(function () {
-                okEl.textContent = "Password saved for this invite.";
-                L._lastPlain = pw;
-                renderListings();
-              });
-            } else if (act === "copy-link") {
-              navigator.clipboard.writeText(absoluteUrl(L.path)).then(function () {
-                okEl.textContent = "Link copied.";
-              });
-            } else if (act === "copy-msg") {
-              var plain = L._lastPlain || L.seedPassword;
-              var msg =
-                "Here's a private Pre Market preview of " + L.address + ":\n\n" +
-                absoluteUrl(L.path) + "\n\n" +
-                "Password: " + plain + "\n\n" +
-                "— Alan D. Hinson, New Albany Realty";
-              navigator.clipboard.writeText(msg).then(function () {
-                okEl.textContent = "Message copied (uses last saved or seed password).";
-              });
-            } else if (act === "select") {
-              activeInvite = id;
-              renderActivity();
-              okEl.textContent = "Showing activity for this listing.";
-            }
-          });
-        });
-      }
-
-      function renderActivity() {
-        var events = PMAInviteAnalytics.loadEvents(activeInvite);
+      function activityFor(rec) {
+        var id = rec.id;
+        var events = PMAInviteAnalytics.loadEvents(id);
         var sum = PMAInviteAnalytics.summarize(events);
-        document.getElementById("s-events").textContent = sum.eventCount;
-        document.getElementById("s-sessions").textContent = sum.sessionCount;
-        document.getElementById("s-map").textContent = sum.mapEvents;
-        document.getElementById("s-scroll").textContent = (sum.scrollMax || 0) + "%";
-        document.getElementById("asof").textContent = sum.last
-          ? " · Last activity " + fmtTime(sum.last)
-          : " · No activity yet";
+        return { events: events, sum: sum };
+      }
 
-        var pt = document.querySelector("#photo-table tbody");
-        pt.innerHTML = "";
-        if (!sum.photoViews.length) {
-          document.getElementById("photo-empty").style.display = "block";
-        } else {
-          document.getElementById("photo-empty").style.display = "none";
-          sum.photoViews.forEach(function (p) {
-            var tr = document.createElement("tr");
-            tr.innerHTML = "<td>Photo " + (p.index + 1) + "</td><td>" + p.views + "</td><td>" + fmtDur(p.dwell_ms) + "</td>";
-            pt.appendChild(tr);
-          });
+      function renderList() {
+        var L = currentListing();
+        var list = PMAInviteRegistry.listForListing(AGENT, L.code);
+        var host = document.getElementById("invite-list");
+        var empty = document.getElementById("invite-empty");
+        host.innerHTML = "";
+        if (!list.length) {
+          empty.style.display = "block";
+          return;
         }
+        empty.style.display = "none";
+        list.forEach(function (rec) {
+          var act = activityFor(rec);
+          var sum = act.sum;
+          var url = PMAInviteRegistry.inviteUrl(rec);
+          var row = document.createElement("div");
+          row.className = "invite-row";
+          row.innerHTML =
+            "<h4>" + escapeHtml(rec.firstName + " " + rec.lastName) + "</h4>" +
+            '<p class="meta">' +
+            escapeHtml(rec.phone) + " · " + escapeHtml(rec.email) + "<br />" +
+            "Created " + fmtTime(rec.createdAt) +
+            (sum.last ? " · Last activity " + fmtTime(sum.last) : " · No activity yet") +
+            "</p>" +
+            '<div class="stats">' +
+            '<div class="stat"><div class="n">' + sum.sessionCount + '</div><div class="l">Sessions</div></div>' +
+            '<div class="stat"><div class="n">' + sum.eventCount + '</div><div class="l">Events</div></div>' +
+            '<div class="stat"><div class="n">' + (sum.scrollMax || 0) + '%</div><div class="l">Max scroll</div></div>' +
+            '<div class="stat"><div class="n">' + sum.mapEvents + '</div><div class="l">Map events</div></div>' +
+            "</div>" +
+            '<div class="row-actions">' +
+            '<button type="button" class="btn btn-primary" data-act="copy-link">Copy invite link</button>' +
+            '<button type="button" class="btn btn-ghost" data-act="copy-msg">Copy text + password</button>' +
+            '<button type="button" class="btn btn-ghost" data-act="toggle">Activity detail</button>' +
+            '<a class="btn btn-ghost" href="' + url + '" target="_blank" rel="noopener">Open their link</a>' +
+            '<button type="button" class="btn btn-ghost" data-act="remove">Remove</button>' +
+            '<span class="ok" data-status></span>' +
+            "</div>" +
+            '<div class="detail-box" data-detail></div>';
+          host.appendChild(row);
 
-        var st = document.querySelector("#session-table tbody");
-        st.innerHTML = "";
-        sum.sessions
-          .sort(function (a, b) { return b.start - a.start; })
-          .forEach(function (s) {
-            var tr = document.createElement("tr");
-            tr.innerHTML = "<td>" + fmtTime(s.start) + "</td><td>" + fmtDur(s.end - s.start) + "</td><td>" + s.events + "</td>";
-            st.appendChild(tr);
+          var status = row.querySelector("[data-status]");
+          var detail = row.querySelector("[data-detail]");
+          row.querySelectorAll("button[data-act]").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+              var act = btn.getAttribute("data-act");
+              if (act === "copy-link") {
+                navigator.clipboard.writeText(url).then(function () {
+                  status.textContent = "Link copied.";
+                });
+              } else if (act === "copy-msg") {
+                navigator.clipboard.writeText(PMAInviteRegistry.inviteMessage(rec, agentName)).then(function () {
+                  status.textContent = "Message copied.";
+                });
+              } else if (act === "toggle") {
+                detail.classList.toggle("open");
+                if (detail.classList.contains("open")) {
+                  var lines = [];
+                  lines.push("<strong style='color:var(--ink)'>Invite id</strong> <code>" + escapeHtml(rec.id) + "</code>");
+                  lines.push("<br /><strong style='color:var(--ink)'>Top photos</strong>");
+                  if (!sum.photoViews.length) lines.push("<br />No photo events yet.");
+                  else {
+                    sum.photoViews.slice(0, 8).forEach(function (p) {
+                      lines.push("<br />Photo " + (p.index + 1) + " · " + p.views + " views · dwell " + fmtDur(p.dwell_ms));
+                    });
+                  }
+                  lines.push("<br /><strong style='color:var(--ink)'>Sessions</strong>");
+                  if (!sum.sessions.length) lines.push("<br />None yet.");
+                  else {
+                    sum.sessions.sort(function (a, b) { return b.start - a.start; }).slice(0, 8).forEach(function (s) {
+                      lines.push("<br />" + fmtTime(s.start) + " · " + fmtDur(s.end - s.start) + " · " + s.events + " events");
+                    });
+                  }
+                  detail.innerHTML = lines.join("");
+                }
+              } else if (act === "remove") {
+                if (confirm("Remove invite for " + rec.firstName + " " + rec.lastName + "?")) {
+                  PMAInviteRegistry.remove(rec.id);
+                  renderList();
+                }
+              }
+            });
           });
+        });
+      }
 
-        var bits = [];
-        Object.keys(sum.ctas).forEach(function (k) { bits.push(k + ": " + sum.ctas[k]); });
-        Object.keys(sum.externals).forEach(function (k) { bits.push(k + " links: " + sum.externals[k]); });
-        document.getElementById("cta-summary").textContent = bits.length ? bits.join(" · ") : "No CTA or external clicks yet.";
+      function escapeHtml(s) {
+        return String(s || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function fillListings() {
+        sel.innerHTML = "";
+        LISTINGS.forEach(function (L) {
+          var o = document.createElement("option");
+          o.value = L.code;
+          o.textContent = L.address + " · " + L.price;
+          sel.appendChild(o);
+        });
       }
 
       function showDash() {
         lock.hidden = true;
         dash.hidden = false;
-        ensureSeedPasswords();
-        renderListings();
-        renderActivity();
+        fillListings();
+        renderList();
       }
 
       document.getElementById("login-form").addEventListener("submit", function (e) {
@@ -367,45 +331,47 @@
         showDash();
       });
 
-      document.getElementById("reload").addEventListener("click", renderActivity);
+      document.getElementById("create-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var L = currentListing();
+        var cerr = document.getElementById("create-err");
+        var cok = document.getElementById("create-ok");
+        cerr.style.display = "none";
+        cok.style.display = "none";
+        PMAInviteRegistry.create({
+          agentSlug: AGENT,
+          listingCode: L.code,
+          listingLabel: L.address,
+          firstName: document.getElementById("fn").value,
+          lastName: document.getElementById("ln").value,
+          phone: document.getElementById("phone").value,
+          email: document.getElementById("em").value,
+          password: document.getElementById("inv-pw").value
+        })
+          .then(function (rec) {
+            cok.style.display = "block";
+            cok.textContent = "Invite created for " + rec.firstName + " " + rec.lastName + ".";
+            document.getElementById("create-form").reset();
+            renderList();
+            // auto-copy message
+            return navigator.clipboard.writeText(PMAInviteRegistry.inviteMessage(rec, agentName)).then(function () {
+              cok.textContent += " Link + password text copied to clipboard.";
+            }).catch(function () {});
+          })
+          .catch(function (ex) {
+            cerr.style.display = "block";
+            cerr.textContent = ex.message || "Could not create invite.";
+          });
+      });
+
+      sel.addEventListener("change", renderList);
       document.getElementById("signout").addEventListener("click", function () {
         clearUnlocked();
         lock.hidden = false;
         dash.hidden = true;
       });
-      document.getElementById("seed").addEventListener("click", function () {
-        var sid = "demo-" + Date.now().toString(36);
-        var base = Date.now() - 12 * 60 * 1000;
-        var demo = [
-          { t: base, type: "page_view", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: {} },
-          { t: base + 2000, type: "disclosure_ack", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: {} },
-          { t: base + 5000, type: "photo_view", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: { index: 0, total: 68 } },
-          { t: base + 12000, type: "photo_dwell", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: { index: 0, dwell_ms: 7000 } },
-          { t: base + 40000, type: "scroll_depth", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: { pct: 80 } },
-          { t: base + 55000, type: "map_view", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: { zoom: 17 } },
-          { t: base + 70000, type: "open_external_link", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: { provider: "county" } },
-          { t: base + 90000, type: "cta_call", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: {} },
-          { t: base + 95000, type: "session_end", inviteId: activeInvite, agentSlug: AGENT, listingCode: LISTINGS[0].code, sessionId: sid, props: { duration_ms: 95000, scroll_max: 80 } }
-        ];
-        var all = PMAInviteAnalytics.loadEvents(activeInvite).concat(demo);
-        PMAInviteAnalytics.saveEvents(activeInvite, all);
-        renderActivity();
-      });
 
-      document.getElementById("export").addEventListener("click", function () {
-        var events = PMAInviteAnalytics.loadEvents(activeInvite);
-        var blob = new Blob([JSON.stringify(events, null, 2)], { type: "application/json" });
-        var a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = "pma-" + activeInvite.replace("/", "-") + "-events.json";
-        a.click();
-      });
-
-      var params = new URLSearchParams(location.search);
-      if (params.get("key") === DEMO_KEY || unlocked()) {
-        setUnlocked();
-        showDash();
-      }
+      if (unlocked()) showDash();
     })();
   </script>
 </body>

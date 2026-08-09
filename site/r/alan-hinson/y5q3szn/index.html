@@ -557,8 +557,9 @@
     };
   </script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="/js/invite-gate.js"></script>
-  <script src="/js/invite-analytics.js"></script>
+  <script src="/js/invite-registry.js"></script>
+  <script src="/js/invite-gate.js?v=6"></script>
+  <script src="/js/invite-analytics.js?v=6"></script>
   <script src="/js/invite-map.js?v=4"></script>
   <script>
     (function () {
@@ -578,9 +579,11 @@
         if (mapStarted) return;
         mapStarted = true;
 
+        var CLIENT_TOKEN = (window.PMAInviteRegistry && PMAInviteRegistry.tokenFromLocation()) || "";
         analytics = new PMAInviteAnalytics({
           agentSlug: AGENT,
           listingCode: CODE,
+          clientToken: CLIENT_TOKEN,
           endpoint: ""
         });
         analytics.mountDisclosure({ agentName: "Alan D. Hinson" });
@@ -712,11 +715,7 @@
         });
       }
 
-      var gateResult = PMAInviteGate.mount({
-        agentSlug: AGENT,
-        listingCode: CODE,
-        agentName: "Alan D. Hinson",
-        onUnlock: startListing
+      var gateResult = PMAInviteGate.mount({ agentSlug: AGENT, listingCode: CODE, agentName: "Alan D. Hinson", requireClientToken: true, onUnlock: startListing
       });
       if (gateResult.unlocked) startListing();
     })();

@@ -1,6 +1,6 @@
 /**
  * Pre Market Agents — invite-scoped analytics (client MVP)
- * Events are keyed by invite token (agentSlug + listingCode).
+ * Events are keyed by invite id (agentSlug + listingCode [+ clientToken for homeowner]).
  * Storage: localStorage (this browser) + optional remote beacon endpoint.
  * Agent dashboard reads the same store when opened with ?key=…
  */
@@ -69,7 +69,11 @@
     opts = opts || {};
     this.agentSlug = opts.agentSlug || "";
     this.listingCode = opts.listingCode || "";
-    this.inviteId = this.agentSlug + "/" + this.listingCode;
+    this.clientToken = opts.clientToken || "";
+    // Per-homeowner tracking when clientToken present
+    this.inviteId = this.clientToken
+      ? this.agentSlug + "/" + this.listingCode + "/" + this.clientToken
+      : this.agentSlug + "/" + this.listingCode;
     this.endpoint = opts.endpoint || ""; // optional POST URL for multi-device later
     this.agentKey = opts.agentKey || "";
     this.disclosed = false;
@@ -97,6 +101,7 @@
       inviteId: this.inviteId,
       agentSlug: this.agentSlug,
       listingCode: this.listingCode,
+      clientToken: this.clientToken || "",
       sessionId: this.session.sessionId,
       props: props || {}
     };

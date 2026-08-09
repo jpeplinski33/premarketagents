@@ -174,8 +174,35 @@
         </p>
         <p class="form-error" id="create-err"></p>
         <p class="form-ok" id="create-ok"></p>
-        <button type="submit" class="btn btn-primary">Create trackable invite</button>
+        <button type="submit" class="btn btn-primary">Create &amp; prepare send</button>
       </form>
+    </div>
+
+    <div class="panel" id="send-panel" hidden style="border-color:rgba(196,165,116,0.45);">
+      <h3>Send to buyer</h3>
+      <p class="muted" style="margin-bottom:12px;">
+        This is exactly what they get — text + link. The preview image under the link is what
+        iMessage shows when they receive it.
+      </p>
+      <div style="display:grid;grid-template-columns:minmax(160px,220px) 1fr;gap:16px;align-items:start;">
+        <div>
+          <p class="muted" style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Link preview</p>
+          <img id="send-og-img" alt="Invite link preview" width="1200" height="630"
+            style="width:100%;height:auto;border:1px solid var(--line);display:block;background:#111;" />
+        </div>
+        <div>
+          <p class="muted" style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Message</p>
+          <textarea id="send-body" rows="12" style="width:100%;padding:12px;border:1px solid var(--line-strong);background:#0f0f11;color:var(--ink);font-size:14px;line-height:1.45;font-family:inherit;resize:vertical;"></textarea>
+          <p class="muted" id="send-meta" style="margin:8px 0 12px;font-size:12px;"></p>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;">
+            <button type="button" class="btn btn-primary" id="send-text">Text buyer</button>
+            <button type="button" class="btn btn-primary" id="send-email">Email buyer</button>
+            <button type="button" class="btn btn-ghost" id="send-both">Text + email</button>
+            <button type="button" class="btn btn-ghost" id="send-copy">Copy message</button>
+          </div>
+          <p class="form-ok" id="send-status" style="display:none;margin-top:10px;"></p>
+        </div>
+      </div>
     </div>
 
     <div class="panel">
@@ -193,7 +220,7 @@
     </div>
   </div>
 
-  <script src="/js/invite-registry.js?v=11"></script>
+  <script src="/js/invite-registry.js?v=14"></script>
   <script src="/js/invite-analytics.js"></script>
   <script>
     (function () {
@@ -207,11 +234,13 @@
           price: "$2,795,000",
           facts: "5 bd · 5 full + 2 half ba · 7,891 sqft",
           path: "/r/natasha-petroff/n2pfrv7/",
-          previewPath: "/r/natasha-petroff/n2pfrv7/?preview=1"
+          previewPath: "/r/natasha-petroff/n2pfrv7/?preview=1",
+          ogImage: "https://premarketagents.com/images/og/yantis-natasha-exclusive-v5.jpg"
         }
       ];
       var agentName = "Natasha Petroff";
       var selectedCode = LISTINGS[0].code;
+      var lastSendRec = null;
 
       var lock = document.getElementById("lock-view");
       var dash = document.getElementById("dash-view");
@@ -357,13 +386,16 @@
               var act = btn.getAttribute("data-act");
               if (act === "text") {
                 status.textContent = "Opening Messages…";
-                PMAInviteRegistry.openSend(rec, "text", agentName);
+                showSendPanel(rec);
+                sendFromPanel("text");
               } else if (act === "email") {
                 status.textContent = "Opening email…";
-                PMAInviteRegistry.openSend(rec, "email", agentName);
+                showSendPanel(rec);
+                sendFromPanel("email");
               } else if (act === "both") {
                 status.textContent = "Opening text + email…";
-                PMAInviteRegistry.openSend(rec, "both", agentName);
+                showSendPanel(rec);
+                sendFromPanel("both");
               } else if (act === "copy-link") {
                 navigator.clipboard.writeText(url).then(function () {
                   status.textContent = "Link copied.";
@@ -425,6 +457,91 @@
         showDash();
       });
 
+      function showSendPanel(rec) {
+        lastSendRec = rec;
+        var L = currentListing();
+        var panel = document.getElementById("send-panel");
+        var body = PMAInviteRegistry.inviteMessage(rec, agentName);
+        var ta = document.getElementById("send-body");
+        var img = document.getElementById("send-og-img");
+        var meta = document.getElementById("send-meta");
+        var st = document.getElementById("send-status");
+        panel.hidden = false;
+        ta.value = body;
+        img.src = (L && L.ogImage) || "https://premarketagents.com/images/og/yantis-natasha-exclusive-v5.jpg";
+        img.alt = "Link preview for " + (rec.listingLabel || "listing");
+        meta.innerHTML =
+          "To: <strong style='color:var(--ink)'>" +
+          escapeHtml(rec.firstName + " " + rec.lastName) +
+          "</strong> · " +
+          escapeHtml(rec.phone) +
+          " · " +
+          escapeHtml(rec.email) +
+          "<br />Password: <code>" +
+          escapeHtml(rec.passwordPlain || "—") +
+          "</code>";
+        st.style.display = "none";
+        st.textContent = "";
+        try {
+          panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        } catch (e) {}
+        try {
+          navigator.clipboard.writeText(body).catch(function () {});
+        } catch (e2) {}
+      }
+
+      function bodyFromPanel(rec) {
+        var ta = document.getElementById("send-body");
+        var custom = ta && ta.value ? ta.value.trim() : "";
+        return custom || PMAInviteRegistry.inviteMessage(rec, agentName);
+      }
+
+      function sendFromPanel(mode) {
+        if (!lastSendRec) return;
+        var rec = lastSendRec;
+        var body = bodyFromPanel(rec);
+        var st = document.getElementById("send-status");
+        try {
+          navigator.clipboard.writeText(body).catch(function () {});
+        } catch (e) {}
+        // Temporarily override message for this open
+        var orig = PMAInviteRegistry.inviteMessage;
+        PMAInviteRegistry.inviteMessage = function () {
+          return body;
+        };
+        try {
+          PMAInviteRegistry.openSend(rec, mode, agentName);
+        } finally {
+          PMAInviteRegistry.inviteMessage = orig;
+        }
+        st.style.display = "block";
+        st.textContent =
+          mode === "email"
+            ? "Mail opened with the invite. Hit Send."
+            : mode === "both"
+              ? "Messages + Mail opening. Hit Send in each. Message also on clipboard."
+              : "Messages opened with the invite. Hit Send. (Message also on clipboard if body is empty.)";
+      }
+
+      document.getElementById("send-text").addEventListener("click", function () {
+        sendFromPanel("text");
+      });
+      document.getElementById("send-email").addEventListener("click", function () {
+        sendFromPanel("email");
+      });
+      document.getElementById("send-both").addEventListener("click", function () {
+        sendFromPanel("both");
+      });
+      document.getElementById("send-copy").addEventListener("click", function () {
+        if (!lastSendRec) return;
+        var body = bodyFromPanel(lastSendRec);
+        navigator.clipboard.writeText(body).then(function () {
+          var st = document.getElementById("send-status");
+          st.style.display = "block";
+          st.textContent = "Full message copied — paste into Messages if needed.";
+        });
+      });
+
       document.getElementById("create-form").addEventListener("submit", function (e) {
         e.preventDefault();
         var L = currentListing();
@@ -445,14 +562,19 @@
           .then(function (rec) {
             cok.style.display = "block";
             cok.innerHTML =
-              "Invite created for <strong style='color:var(--ink)'>" +
+              "Invite ready for <strong style='color:var(--ink)'>" +
               rec.firstName + " " + rec.lastName +
-              "</strong>. Password: <code>" + rec.passwordPlain + "</code>";
-            document.getElementById("create-form").reset();
+              "</strong>. Password: <code>" + rec.passwordPlain +
+              "</code> — send below.";
             lastCreatedId = rec.id;
+            document.getElementById("create-form").reset();
             renderInvites();
             renderListings();
-            return navigator.clipboard.writeText(PMAInviteRegistry.inviteMessage(rec, agentName)).catch(function () {});
+            showSendPanel(rec);
+            // Auto-open Messages so send is one step after create
+            setTimeout(function () {
+              sendFromPanel("text");
+            }, 250);
           })
           .catch(function (ex) {
             cerr.style.display = "block";

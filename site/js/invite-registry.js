@@ -146,19 +146,27 @@
     saveAll(store);
   }
 
+  /** Always ship production share links (not localhost) so buyer unfurl + OG work. */
+  function shareOrigin(origin) {
+    if (origin && /^https?:\/\//i.test(origin) && origin.indexOf("premarketagents.com") !== -1) {
+      return origin.replace(/\/$/, "");
+    }
+    return "https://premarketagents.com";
+  }
+
   function inviteUrl(rec, origin) {
-    origin = origin || (typeof location !== "undefined" ? location.origin : "");
-    // Token in query; password hash in fragment so share unfurlers (iMessage etc.)
-    // fetch a clean URL path and still get our branded OG image. Gate reads #ph=…
+    origin = shareOrigin(origin);
+    // Token in query. Password hash in # fragment so iMessage unfurlers fetch
+    // the page without the fragment and still get branded og:image. Gate reads #ph=.
     var q = "?i=" + encodeURIComponent(rec.token);
     var hash = rec.passwordHash ? "#ph=" + encodeURIComponent(rec.passwordHash) : "";
     return origin + "/r/" + rec.agentSlug + "/" + rec.listingCode + "/" + q + hash;
   }
 
   /**
-   * All copy first — password + sign-off — then the invite URL alone as the
-   * final line(s). iMessage/SMS attach the link preview at the URL position;
-   * if anything follows the URL, the preview sits mid-message.
+   * Full SMS/email body for the buyer.
+   * Order: greeting → listing → password → sign-off → blank → URL alone last
+   * so the link preview card sits under the text when iMessage unfurls.
    */
   function inviteMessage(rec, agentName, origin) {
     var url = inviteUrl(rec, origin);
@@ -167,24 +175,18 @@
     var price = rec.listingPrice ? " · " + rec.listingPrice : "";
     var pw = rec.passwordPlain || "(ask your agent)";
     var agent = agentName || "Your realtor";
-    // Keep every non-URL line above the link. URL must be the last non-empty line.
-    return (
-      "Hi " +
-      who +
-      ",\n\n" +
-      "You have a private Pre Market exclusive invite for " +
-      where +
-      price +
-      ".\n\n" +
-      "Access password: " +
-      pw +
-      "\n" +
-      "Enter that password after you open the link.\n\n" +
-      "— " +
-      agent +
-      "\n\n" +
+    return [
+      "Hi " + who + ",",
+      "",
+      "Private Pre Market exclusive invite for " + where + price + ".",
+      "",
+      "Password: " + pw,
+      "(Enter it on the page after you open the link.)",
+      "",
+      "— " + agent,
+      "",
       url
-    );
+    ].join("\n");
   }
 
   /** Digits-only for sms: links */
@@ -198,8 +200,11 @@
   function smsHref(rec, agentName, origin) {
     var body = inviteMessage(rec, agentName, origin);
     var to = phoneDigits(rec.phone);
-    // Works on iOS/macOS Messages and most Android handlers
-    return "sms:" + (to ? to : "") + "?&body=" + encodeURIComponent(body);
+    // iOS/macOS Messages: sms:number?&body= works most reliably with long bodies
+    if (to) {
+      return "sms:" + to + "?&body=" + encodeURIComponent(body);
+    }
+    return "sms:?&body=" + encodeURIComponent(body);
   }
 
   /** Open email client with invite pre-filled */
@@ -218,22 +223,53 @@
     );
   }
 
+  function openHref(href) {
+    try {
+      var a = document.createElement("a");
+      a.setAttribute("href", href);
+      a.style.display = "none";
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function () {
+        try {
+          document.body.removeChild(a);
+        } catch (e) {}
+      }, 0);
+    } catch (e2) {
+      try {
+        global.location.href = href;
+      } catch (e3) {
+        global.open(href, "_blank");
+      }
+    }
+  }
+
+  /**
+   * Send invite to buyer: copies full message, then opens Messages and/or Mail
+   * with body pre-filled. Realtor hits Send in the native app.
+   */
   function openSend(rec, mode, agentName, origin) {
-    mode = mode || "both";
+    mode = mode || "text";
+    var body = inviteMessage(rec, agentName, origin);
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(body).catch(function () {});
+      }
+    } catch (e) {}
     if (mode === "text" || mode === "both") {
-      global.location.href = smsHref(rec, agentName, origin);
+      openHref(smsHref(rec, agentName, origin));
     }
     if (mode === "email" || mode === "both") {
       var href = emailHref(rec, agentName, origin);
       if (mode === "both") {
-        // slight delay so both can open on desktop
         setTimeout(function () {
-          global.location.href = href;
-        }, 400);
+          openHref(href);
+        }, 600);
       } else {
-        global.location.href = href;
+        openHref(href);
       }
     }
+    return body;
   }
 
   /** Parse client token from current page URL (?i=) */

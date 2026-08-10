@@ -196,6 +196,19 @@
         Then text and/or email their personal link — they enter the password to open the listing.
       </p>
       <form id="create-form">
+        <p class="muted" style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Invite type</p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
+          <label style="display:flex;align-items:flex-start;gap:8px;border:1px solid var(--line-strong);padding:10px 14px;cursor:pointer;flex:1;min-width:240px;">
+            <input type="radio" name="invite-type" value="standard" checked style="margin-top:3px;" />
+            <span><strong style="color:var(--ink)">Standard</strong><br />
+            <span class="muted">Card and message show the address and price.</span></span>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:8px;border:1px solid var(--line-strong);padding:10px 14px;cursor:pointer;flex:1;min-width:240px;">
+            <input type="radio" name="invite-type" value="discreet" style="margin-top:3px;" />
+            <span><strong style="color:var(--ink)">Discreet first look</strong><br />
+            <span class="muted">Property hidden until the buyer enters their password.</span></span>
+          </label>
+        </div>
         <div class="grid-2">
           <div>
             <label class="field" for="fn">First name</label>
@@ -283,26 +296,20 @@
       var LISTINGS = [
         {
           code: "n2pfrv7",
+          discreetCode: "fl7k2qe",
           address: "4879 Yantis Dr, New Albany, OH 43054",
           price: "$2,795,000",
           facts: "5 bd · 5 full + 2 half ba · 7,891 sqft",
           path: "/r/natasha-petroff/n2pfrv7/",
           previewPath: "/r/natasha-petroff/n2pfrv7/?preview=1",
-          ogImage: "https://premarketagents.com/images/og/yantis-natasha-exclusive-v5.jpg"
-        },
-        {
-          code: "fl7k2qe",
-          keyCode: "n2pfrv7",
-          address: "4879 Yantis Dr — DISCREET first look",
-          price: "$2,795,000",
-          facts: "Discreet invite: address, price and property hidden until the buyer enters their password. Same home, same photos after unlock.",
-          path: "/r/natasha-petroff/fl7k2qe/",
-          previewPath: "/r/natasha-petroff/fl7k2qe/?preview=1",
-          ogImage: "https://premarketagents.com/images/og/firstlook-np-1-v1.jpg"
+          discreetPreviewPath: "/r/natasha-petroff/fl7k2qe/?preview=1",
+          ogImage: "https://premarketagents.com/images/og/yantis-natasha-exclusive-v5.jpg",
+          discreetOgImage: "https://premarketagents.com/images/og/firstlook-np-1-v1.jpg"
         }
       ];
       var agentName = "Natasha Petroff";
       var selectedCode = LISTINGS[0].code;
+      var inviteType = "standard"; // or "discreet" — chosen in the create form
       var lastSendRec = null;
 
       var lock = document.getElementById("lock-view");
@@ -373,17 +380,23 @@
         var host = document.getElementById("listings");
         host.innerHTML = "";
         LISTINGS.forEach(function (L) {
-          var invites = PMAInviteRegistry.listForListing(AGENT, L.code);
+          var std = PMAInviteRegistry.listForListing(AGENT, L.code).length;
+          var disc = L.discreetCode
+            ? PMAInviteRegistry.listForListing(AGENT, L.discreetCode).length
+            : 0;
+          var key = loadListingKey(L.code);
+          var frag = key ? "#lk=" + encodeURIComponent(key) : "";
           var card = document.createElement("div");
           card.className = "listing-card" + (L.code === selectedCode ? " active" : "");
           card.innerHTML =
             "<h3>" + escapeHtml(L.address) + "</h3>" +
             '<p class="meta">' + escapeHtml(L.price) + " · " + escapeHtml(L.facts || "") +
-            "<br />" + invites.length + " trackable invite" + (invites.length === 1 ? "" : "s") +
-            " · <code>/r/" + AGENT + "/" + L.code + "/</code></p>" +
+            "<br />" + std + " standard · " + disc + " discreet invite" + (disc === 1 ? "" : "s") +
+            "</p>" +
             '<div class="row-actions">' +
             '<button type="button" class="btn ' + (L.code === selectedCode ? "btn-primary" : "btn-ghost") + '" data-act="select">Work with this listing</button>' +
-            '<a class="btn btn-ghost" href="' + L.previewPath + '" target="_blank" rel="noopener">Preview listing</a>' +
+            '<a class="btn btn-ghost" href="' + L.previewPath + frag + '" target="_blank" rel="noopener">Preview listing</a>' +
+            (L.discreetCode ? '<a class="btn btn-ghost" href="' + L.discreetPreviewPath + frag + '" target="_blank" rel="noopener">Preview discreet</a>' : "") +
             "</div>";
           host.appendChild(card);
           card.querySelector('[data-act="select"]').addEventListener("click", function () {
@@ -404,6 +417,10 @@
       function renderInvites() {
         var L = currentListing();
         var list = PMAInviteRegistry.listForListing(AGENT, L.code);
+        if (L.discreetCode) {
+          list = list.concat(PMAInviteRegistry.listForListing(AGENT, L.discreetCode));
+          list.sort(function (a, b) { return (b.createdAt || 0) - (a.createdAt || 0); });
+        }
         var host = document.getElementById("invite-list");
         var empty = document.getElementById("invite-empty");
         host.innerHTML = "";
@@ -418,7 +435,8 @@
           var row = document.createElement("div");
           row.className = "invite-row";
           row.innerHTML =
-            "<h4>" + escapeHtml(rec.firstName + " " + rec.lastName) + "</h4>" +
+            "<h4>" + escapeHtml(rec.firstName + " " + rec.lastName) +
+              (rec.discreet ? ' <span style="font-size:10px;letter-spacing:0.12em;color:var(--gold);border:1px solid rgba(196,165,116,0.4);padding:2px 7px;vertical-align:middle;">DISCREET</span>' : "") + "</h4>" +
             '<p class="meta">' +
             escapeHtml(rec.phone) + " · " + escapeHtml(rec.email) + "<br />" +
             "Created " + fmtTime(rec.createdAt) +
@@ -542,7 +560,9 @@
         panel.hidden = false;
         ta.value = body;
         link.value = PMAInviteRegistry.inviteLink(rec);
-        img.src = (L && L.ogImage) || "https://premarketagents.com/images/og/yantis-natasha-exclusive-v5.jpg";
+        img.src = rec.discreet
+          ? ((L && L.discreetOgImage) || "")
+          : ((L && L.ogImage) || "");
         img.alt = "Link preview for " + (rec.listingLabel || "listing");
         meta.innerHTML =
           "To: <strong style='color:var(--ink)'>" +
@@ -688,7 +708,7 @@
         }));
       }
 
-      function listingKeyCode(L) { return L.keyCode || L.code; }
+      function listingKeyCode(L) { return L.code; }
       function currentKey() { return loadListingKey(listingKeyCode(currentListing())); }
 
       function refreshKeyUI() {
@@ -714,7 +734,7 @@
           catch (e) { st.textContent = "That does not look like a listing key."; return; }
         }
         saveListingKey(listingKeyCode(currentListing()), val).then(function () {
-          refreshKeyUI();
+          syncSelected();
           st.textContent = val ? "Key saved on this device." : "Key removed.";
         }).catch(function (e) {
           st.textContent = e.message || "Could not save the key.";
@@ -839,6 +859,10 @@
 
       document.getElementById("create-form").addEventListener("submit", function (e) {
         e.preventDefault();
+        // Read the radio at submit time: form.reset() flips the radio back to
+        // Standard, so cached state would silently mis-type the next invite.
+        var typeEl = document.querySelector('input[name="invite-type"]:checked');
+        inviteType = typeEl ? typeEl.value : "standard";
         var L = currentListing();
         var cerr = document.getElementById("create-err");
         var cok = document.getElementById("create-ok");
@@ -846,8 +870,8 @@
         cok.style.display = "none";
         PMAInviteRegistry.create({
           agentSlug: AGENT,
-          listingCode: L.code,
-          discreet: !!L.keyCode,
+          listingCode: inviteType === "discreet" && L.discreetCode ? L.discreetCode : L.code,
+          discreet: inviteType === "discreet" && !!L.discreetCode,
           listingKey: currentKey(),
           listingLabel: L.address,
           firstName: document.getElementById("fn").value,

@@ -193,14 +193,14 @@
     var price = rec.listingPrice ? " · " + rec.listingPrice : "";
     var pw = rec.passwordPlain || "(ask your agent)";
     var agent = agentName || "Your realtor";
-    // Plain-English: say WHAT this is (a private home showing, pre-market)
-    // and WHAT to do (open link, enter password) — a recipient with zero
-    // context should understand it in one read.
+    // One template for standard and discreet invites. No address, no price,
+    // no scheduling language: the preview card carries the property details
+    // (or deliberately hides them), and the realtor arranges any showing
+    // themselves — the text just needs to say what this is and what to do.
     return [
       "Hi " + who + ",",
       "",
-      "You're invited to a private showing of " + where + price +
-        " — before it goes on the market.",
+      "You're getting an exclusive first look at a home before it hits the market.",
       "",
       "When you open your private link, enter this password to view the home:",
       "Password: " + pw,

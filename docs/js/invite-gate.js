@@ -131,8 +131,13 @@
       if (hideForm && form) form.style.display = "none";
     }
 
-    /** Inject decrypted markup and hand the payload back to the page. */
-    function reveal(payload) {
+    /**
+     * Inject decrypted markup and hand the payload back to the page.
+     * rawKey rides along on a fresh decrypt (null on cached restore) so pages
+     * can decrypt page-specific extras — e.g. the discreet pages keep their
+     * map config encrypted because it names the address and coordinates.
+     */
+    function reveal(payload, rawKey) {
       if (content) {
         content.innerHTML = payload.html;
         content.hidden = false;
@@ -144,6 +149,7 @@
       if (typeof opts.onUnlock === "function") {
         opts.onUnlock({
           payload: payload,
+          rawKey: rawKey || null,
           clientToken: clientToken,
           inviteId: unlockId,
           isPreview: isPreview
@@ -154,9 +160,12 @@
     function decryptWith(rawKey) {
       return global.PMAInviteCrypto.decryptContent(cipher, rawKey).then(
         function (json) {
-          return JSON.parse(json);
+          return { payload: JSON.parse(json), rawKey: rawKey };
         }
       );
+    }
+    function revealDecrypted(out) {
+      reveal(out.payload, out.rawKey);
     }
 
     if (!cipher) {
@@ -185,7 +194,7 @@
         return { unlocked: false, inviteId: unlockId };
       }
       decryptWith(rawPreviewKey)
-        .then(reveal)
+        .then(revealDecrypted)
         .catch(function () {
           showGateMessage(
             "Preview key invalid",
@@ -240,9 +249,7 @@
 
         global.PMAInviteCrypto.unwrapKey(frag.k, pw)
           .then(decryptWith)
-          .then(function (payload) {
-            reveal(payload);
-          })
+          .then(revealDecrypted)
           .catch(function () {
             // Unwrap and decrypt failures are indistinguishable on purpose:
             // both mean "that password does not open this listing".

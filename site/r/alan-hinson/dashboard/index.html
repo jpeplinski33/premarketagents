@@ -272,7 +272,7 @@
   </div>
 
   <script src="/js/invite-crypto.js?v=1"></script>
-  <script src="/js/invite-registry.js?v=16"></script>
+  <script src="/js/invite-registry.js?v=17"></script>
   <script src="/js/invite-analytics.js"></script>
   <script>
     (function () {
@@ -301,6 +301,26 @@
           path: "/r/alan-hinson/y5q3szn/",
           previewPath: "/r/alan-hinson/y5q3szn/?preview=1",
           ogImage: "https://premarketagents.com/images/og/yantis-alan-exclusive-v5.jpg"
+        },
+        {
+          code: "fl9tw3s",
+          keyCode: "3czjbv9",
+          address: "7013 Hanbys Loop — DISCREET first look",
+          price: "$2,315,000",
+          facts: "Discreet invite: address, price and property hidden until the buyer enters their password. Same home, same photos after unlock.",
+          path: "/r/alan-hinson/fl9tw3s/",
+          previewPath: "/r/alan-hinson/fl9tw3s/?preview=1",
+          ogImage: "https://premarketagents.com/images/og/firstlook-adh-2-v1.jpg"
+        },
+        {
+          code: "fl4mv8n",
+          keyCode: "y5q3szn",
+          address: "4879 Yantis Dr — DISCREET first look",
+          price: "$2,795,000",
+          facts: "Discreet invite: address, price and property hidden until the buyer enters their password. Same home, same photos after unlock.",
+          path: "/r/alan-hinson/fl4mv8n/",
+          previewPath: "/r/alan-hinson/fl4mv8n/?preview=1",
+          ogImage: "https://premarketagents.com/images/og/firstlook-adh-1-v1.jpg"
         }
       ];
       var agentName = "Alan D. Hinson, New Albany Realty";
@@ -656,7 +676,13 @@
       function hydrateListingKeys() {
         var pw = sessionPassword();
         if (!pw) return Promise.resolve();
-        return Promise.all(LISTINGS.map(function (L) {
+        var codes = [];
+        LISTINGS.forEach(function (L) {
+          var kc = listingKeyCode(L);
+          if (codes.indexOf(kc) === -1) codes.push(kc);
+        });
+        return Promise.all(codes.map(function (kc) {
+          var L = { code: kc };
           var blob;
           try { blob = localStorage.getItem(keyStoreKey(L.code)); } catch (e) {}
           if (!blob) return Promise.resolve();
@@ -675,11 +701,12 @@
         }));
       }
 
-      function currentKey() { return loadListingKey(currentListing().code); }
+      function listingKeyCode(L) { return L.keyCode || L.code; }
+      function currentKey() { return loadListingKey(listingKeyCode(currentListing())); }
 
       function refreshKeyUI() {
         var L = currentListing();
-        var k = loadListingKey(L.code);
+        var k = loadListingKey(listingKeyCode(L));
         var f = document.getElementById("listing-key");
         var st = document.getElementById("key-status");
         if (f) f.value = k;
@@ -699,7 +726,7 @@
           try { PMAInviteCrypto.keyFromString(val); }
           catch (e) { st.textContent = "That does not look like a listing key."; return; }
         }
-        saveListingKey(currentListing().code, val).then(function () {
+        saveListingKey(listingKeyCode(currentListing()), val).then(function () {
           refreshKeyUI();
           st.textContent = val ? "Key saved on this device." : "Key removed.";
         }).catch(function (e) {
@@ -708,7 +735,7 @@
       });
 
       document.getElementById("clear-key").addEventListener("click", function () {
-        saveListingKey(currentListing().code, "").then(refreshKeyUI);
+        saveListingKey(listingKeyCode(currentListing()), "").then(refreshKeyUI);
       });
 
       // ---- Device transfer: encrypted, code delivered out of band ----
@@ -725,8 +752,9 @@
         });
         var keys = {};
         LISTINGS.forEach(function (L) {
-          var v = loadListingKey(L.code);
-          if (v) keys[L.code] = v;
+          var kc = listingKeyCode(L);
+          var v = loadListingKey(kc);
+          if (v) keys[kc] = v;
         });
         return JSON.stringify({ v: 1, agent: AGENT, invites: mine, listingKeys: keys });
       }

@@ -5,16 +5,16 @@
   <meta name="robots" content="noindex, nofollow" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title> </title>
-  <meta name="description" content="Pre-market exclusive: 4879 Yantis Dr, New Albany, OH. 5 bed · 5 full + 2 half bath · 7,891 sqft. Presented by Alan D. Hinson, New Albany Realty." />
+  <meta name="description" content="An exclusive first look at a private pre-market listing, shared by Alan D. Hinson. Password required." />
   <meta property="og:title" content=" " />
   <meta property="og:description" content="Tap to open your invite from Alan D. Hinson, then enter the password he texted you." />
-  <meta property="og:image" content="https://premarketagents.com/images/og/yantis-alan-exclusive-v5.jpg" />
-  <meta property="og:image:secure_url" content="https://premarketagents.com/images/og/yantis-alan-exclusive-v5.jpg" />
+  <meta property="og:image" content="https://premarketagents.com/images/og/firstlook-adh-1-v1.jpg" />
+  <meta property="og:image:secure_url" content="https://premarketagents.com/images/og/firstlook-adh-1-v1.jpg" />
   <meta property="og:image:type" content="image/jpeg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:url" content="https://premarketagents.com/r/alan-hinson/y5q3szn/" />
-  <meta name="twitter:image" content="https://premarketagents.com/images/og/yantis-alan-exclusive-v5.jpg" />
+  <meta property="og:url" content="https://premarketagents.com/r/alan-hinson/fl4mv8n/" />
+  <meta name="twitter:image" content="https://premarketagents.com/images/og/firstlook-adh-1-v1.jpg" />
   <meta name="twitter:title" content=" " />
   <meta name="twitter:description" content="Tap to open your invite from Alan D. Hinson, then enter the password he texted you." />
   <meta property="og:type" content="website" />
@@ -385,11 +385,7 @@
       <span class="brand-pre">Pre Market</span>
       <span class="brand-agents">Agents</span>
     </a>
-    <div class="header-meta">
-      <span class="hide-sm">Exclusive listing</span>
-      <span class="dot hide-sm">·</span>
-      <span>New Albany, OH</span>
-    </div>
+    <div class="header-meta"><span>Private preview</span></div>
   </header>
 
   <div id="invite-gate">
@@ -397,8 +393,8 @@
       <p class="eyebrow">Private invite</p>
       <h1>Enter access password</h1>
       <p>
-        This Pre Market preview for <strong style="color:var(--ink)">4879 Yantis Dr</strong> was shared by
-        <strong style="color:var(--ink)">Alan D. Hinson</strong>. Enter the password she sent you to continue.
+        <strong style="color:var(--ink)">Alan D. Hinson</strong> has shared an exclusive first look
+        at a private listing with you. Enter the password he sent you to continue.
       </p>
       <form id="invite-gate-form">
         <label for="invite-gate-password">Invite password</label>
@@ -416,12 +412,13 @@
   <script>
     window.PMA_INVITE_SEED = {
       agentSlug: "alan-hinson",
-      listingCode: "y5q3szn",
+      listingCode: "fl4mv8n",
       passwordHash: "d92492c6f8336ac13e272ae80a3fe626695ab4db673438168e325d3f7643c2c5",
       required: true,
-      label: "4879 Yantis Dr"
+      label: "A private listing"
     };
   </script>
+  <script>window.PMA_ENC_MAP = "AZfSN0VwY8uKbfKfE9i7q_rlXEi_imt4BL0pD0qQbcjVmYqJs4iKES5h1k8cPAocSIzT2HvTJOP82H9QgTo-z9Fv02oW6hQsf_LxAfroTmukf1u84WUrHlouz-vtl34Va6DpmEZGXvQBdeKTiWP9OidjhhADmBaSApiMuT_uLXjuNWpfaMU_OdKoHxZqt0lG9orgR8gGcsLgtifgbBviYQX40x9dviLEdtNkRrrDCAqRjgkjbpD_IT4dF8GrqcNJG5fWOiKgv8582PdrvBilw1sItE-Yg8C_QJOVdOYIKGnZsL6D_T5NrDLS1Sj7gH9iHQlkURUfgPiuv2tE9D4pxEdfydOSxBGzDAoW2UCH7EVGxDHmKSVGaQLfmDn2FlfR_eaRU8PEFDVVE9PwCBuVgv1-krFUhGyPOUQ9oXACSSl89TdvXwF9myz1xddmpPcEhwsA4e1JVK9BW3ycSPqgqaI78pc";</script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="/js/invite-registry.js?v=17"></script>
   <script src="/js/invite-crypto.js?v=1"></script>
@@ -431,7 +428,7 @@
   <script>
     (function () {
       var AGENT = "alan-hinson";
-      var CODE = "y5q3szn";
+      var CODE = "fl4mv8n";
       var PHOTOS = []; // filled from the encrypted payload after unlock
 
       var analytics = null;
@@ -551,22 +548,8 @@
 
         show(0);
 
-        var map = new PMAInviteMap("#invite-map", {
-          analytics: analytics,
-          showOwners: true,
-          hideSubjectOwner: true,
-          focusSubject: true,
-          subjectPad: 3.5,
-          focusMaxZoom: 17,
-          focusMinZoom: 16,
-          center: [40.07972, -82.82417],
-          zoom: 17,
-          subjectParcelId: "222-001181",
-          subjectAddress: "4879 Yantis Dr, New Albany, OH 43054",
-          subjectLabel: "4879 Yantis Dr",
-          dataUrl: "/data/yantis-parcels-invite.geojson?v=4"
-        });
-        map.init().then(function () {
+        var map = window.PMA_MAP_CFG ? new PMAInviteMap("#invite-map", Object.assign({ analytics: analytics }, window.PMA_MAP_CFG)) : null;
+        (map ? map.init() : Promise.reject(new Error("no map config"))).then(function () {
           if (map.map) {
             setTimeout(function () { map.map.invalidateSize(); map._refreshLabels(); }, 200);
             setTimeout(function () { map.map.invalidateSize(); map._refreshLabels(); }, 700);
@@ -583,7 +566,35 @@
         if (info && info.payload && info.payload.photos) {
           PHOTOS = info.payload.photos;
         }
-        startListing();
+        loadMapConfig(info && info.rawKey).then(startListing);
+      }
+
+      /**
+       * The map config is encrypted (it names the address/coords, which this
+       * discreet page hides pre-password). Decrypt with the key from the gate;
+       * on a cached restore the key is gone, so fall back to this tab's cache.
+       * No config -> the page simply renders without a map.
+       */
+      function loadMapConfig(rawKey) {
+        // Must NEVER throw: a sync error here propagates into the gate's
+        // decrypt chain and re-locks a page that already unlocked. Keyed by
+        // pathname so it needs nothing from the page's own variables.
+        try {
+          var ck = "pma_mapcfg:" + location.pathname;
+          try {
+            var c = sessionStorage.getItem(ck);
+            if (c) { window.PMA_MAP_CFG = JSON.parse(c); return Promise.resolve(); }
+          } catch (e) {}
+          if (!rawKey || !window.PMA_ENC_MAP) return Promise.resolve();
+          return PMAInviteCrypto.decryptContent(window.PMA_ENC_MAP, rawKey)
+            .then(function (json) {
+              window.PMA_MAP_CFG = JSON.parse(json);
+              try { sessionStorage.setItem(ck, json); } catch (e) {}
+            })
+            .catch(function () {});
+        } catch (e2) {
+          return Promise.resolve();
+        }
       }
 
       PMAInviteGate.mount({ agentSlug: AGENT, listingCode: CODE, agentName: "Alan D. Hinson", requireClientToken: true, onUnlock: pmaOnUnlock

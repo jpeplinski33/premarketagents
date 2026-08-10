@@ -6,16 +6,16 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title> </title>
-  <meta name="description" content="Pre-market exclusive: 7013 Hanbys Loop, New Albany, OH. 5 bed · 4.5 bath · 5,200 sqft. Listed by Alan D. Hinson, New Albany Realty." />
+  <meta name="description" content="An exclusive first look at a private pre-market listing, shared by Alan D. Hinson. Password required." />
   <meta property="og:title" content=" " />
   <meta property="og:description" content="Tap to open your invite from Alan D. Hinson, then enter the password he texted you." />
-  <meta property="og:image" content="https://premarketagents.com/images/og/hanbys-alan-exclusive-v5.jpg" />
-  <meta property="og:image:secure_url" content="https://premarketagents.com/images/og/hanbys-alan-exclusive-v5.jpg" />
+  <meta property="og:image" content="https://premarketagents.com/images/og/firstlook-adh-2-v1.jpg" />
+  <meta property="og:image:secure_url" content="https://premarketagents.com/images/og/firstlook-adh-2-v1.jpg" />
   <meta property="og:image:type" content="image/jpeg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:url" content="https://premarketagents.com/r/alan-hinson/3czjbv9/" />
-  <meta name="twitter:image" content="https://premarketagents.com/images/og/hanbys-alan-exclusive-v5.jpg" />
+  <meta property="og:url" content="https://premarketagents.com/r/alan-hinson/fl9tw3s/" />
+  <meta name="twitter:image" content="https://premarketagents.com/images/og/firstlook-adh-2-v1.jpg" />
   <meta name="twitter:title" content=" " />
   <meta name="twitter:description" content="Tap to open your invite from Alan D. Hinson, then enter the password he texted you." />
   <meta property="og:type" content="website" />
@@ -756,11 +756,7 @@
       <span class="brand-pre">Pre Market</span>
       <span class="brand-agents">Agents</span>
     </a>
-    <div class="header-meta">
-      <span class="hide-sm">Exclusive listing</span>
-      <span class="dot hide-sm">·</span>
-      <span>New Albany, OH</span>
-    </div>
+    <div class="header-meta"><span>Private preview</span></div>
   </header>
 
   <div id="invite-gate">
@@ -768,8 +764,8 @@
       <p class="eyebrow">Private invite</p>
       <h1>Enter access password</h1>
       <p>
-        This Pre Market preview for <strong style="color:var(--ink)">7013 Hanbys Loop</strong> was shared by
-        <strong style="color:var(--ink)">Alan D. Hinson</strong>. Enter the password he sent you to continue.
+        <strong style="color:var(--ink)">Alan D. Hinson</strong> has shared an exclusive first look
+        at a private listing with you. Enter the password he sent you to continue.
       </p>
       <form id="invite-gate-form">
         <label for="invite-gate-password">Invite password</label>
@@ -788,12 +784,13 @@
   <script>
     window.PMA_INVITE_SEED = {
       agentSlug: "alan-hinson",
-      listingCode: "3czjbv9",
+      listingCode: "fl9tw3s",
       passwordHash: "c87f0deba776e21dfc9fbce9a713b2ed329663bd3cb4cd84536d425e37a1ad08",
       required: true,
-      label: "7013 Hanbys Loop"
+      label: "A private listing"
     };
   </script>
+  <script>window.PMA_ENC_MAP = "AaEK0vMB3MHnBKTKaltBFtr-_rZs9inBtv83siXJkcro8iFWShpgs762bQ_J2xcxFA00Jj9pFX2e59ZH-POf-NirYa29uMpvby8pfJh9ZL5hISFFEQVBxLL1-7NIVdWU";</script>
   <script src="/js/invite-registry.js?v=17"></script>
   <script src="/js/invite-crypto.js?v=1"></script>
   <script src="/js/invite-gate.js?v=10"></script>
@@ -812,7 +809,7 @@
       var CLIENT_TOKEN = (window.PMAInviteRegistry && PMAInviteRegistry.tokenFromLocation()) || "";
       const analytics = new PMAInviteAnalytics({
         agentSlug: "alan-hinson",
-        listingCode: "3czjbv9",
+        listingCode: "fl9tw3s",
         clientToken: CLIENT_TOKEN,
         endpoint: ""
       });
@@ -930,12 +927,8 @@
       show(0);
 
       // Invite map
-      const map = new PMAInviteMap("#invite-map", {
-        analytics: analytics,
-        showOwners: true,
-        dataUrl: "/data/hanbys-parcels-invite.geojson"
-      });
-      map.init().then(function () {
+      const map = window.PMA_MAP_CFG ? new PMAInviteMap("#invite-map", Object.assign({ analytics: analytics }, window.PMA_MAP_CFG)) : null;
+      (map ? map.init() : Promise.reject(new Error("no map config"))).then(function () {
         if (map.map) {
           setTimeout(function () { map.map.invalidateSize(); }, 200);
           setTimeout(function () { map.map.invalidateSize(); }, 600);
@@ -949,10 +942,38 @@
         if (info && info.payload && info.payload.photos) {
           PHOTOS = info.payload.photos;
         }
-        startListing();
+        loadMapConfig(info && info.rawKey).then(startListing);
       }
 
-      PMAInviteGate.mount({ agentSlug: "alan-hinson", listingCode: "3czjbv9", agentName: "Alan D. Hinson", requireClientToken: true, onUnlock: pmaOnUnlock
+      /**
+       * The map config is encrypted (it names the address/coords, which this
+       * discreet page hides pre-password). Decrypt with the key from the gate;
+       * on a cached restore the key is gone, so fall back to this tab's cache.
+       * No config -> the page simply renders without a map.
+       */
+      function loadMapConfig(rawKey) {
+        // Must NEVER throw: a sync error here propagates into the gate's
+        // decrypt chain and re-locks a page that already unlocked. Keyed by
+        // pathname so it needs nothing from the page's own variables.
+        try {
+          var ck = "pma_mapcfg:" + location.pathname;
+          try {
+            var c = sessionStorage.getItem(ck);
+            if (c) { window.PMA_MAP_CFG = JSON.parse(c); return Promise.resolve(); }
+          } catch (e) {}
+          if (!rawKey || !window.PMA_ENC_MAP) return Promise.resolve();
+          return PMAInviteCrypto.decryptContent(window.PMA_ENC_MAP, rawKey)
+            .then(function (json) {
+              window.PMA_MAP_CFG = JSON.parse(json);
+              try { sessionStorage.setItem(ck, json); } catch (e) {}
+            })
+            .catch(function () {});
+        } catch (e2) {
+          return Promise.resolve();
+        }
+      }
+
+      PMAInviteGate.mount({ agentSlug: "alan-hinson", listingCode: "fl9tw3s", agentName: "Alan D. Hinson", requireClientToken: true, onUnlock: pmaOnUnlock
       });
     })();
   </script>

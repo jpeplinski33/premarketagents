@@ -193,13 +193,17 @@
     var price = rec.listingPrice ? " · " + rec.listingPrice : "";
     var pw = rec.passwordPlain || "(ask your agent)";
     var agent = agentName || "Your realtor";
+    // Plain-English: say WHAT this is (a private home showing, pre-market)
+    // and WHAT to do (open link, enter password) — a recipient with zero
+    // context should understand it in one read.
     return [
       "Hi " + who + ",",
       "",
-      "Private Pre Market exclusive invite for " + where + price + ".",
+      "You're invited to a private showing of " + where + price +
+        " — before it goes on the market.",
       "",
+      "When you open your private link, enter this password to view the home:",
       "Password: " + pw,
-      "(Enter it on the page after you open the link.)",
       "",
       "— " + agent
     ];
@@ -211,7 +215,7 @@
    */
   function inviteIntro(rec, agentName) {
     return introLines(rec, agentName)
-      .concat(["", "Your private link is in the next message."])
+      .concat(["", "Your private link is in the next text."])
       .join("\n");
   }
 

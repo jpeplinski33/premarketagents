@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>For Realtors | Pre Market Agents</title>
+  <title>For Agents | Pre Market Agents</title>
   <meta name="description" content="Licensed real estate professionals: private pre-market invite pages, trackable homeowner links, and a clean presentation for coming-soon homes—before public MLS marketing." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://premarketagents.com/realtors/" />
@@ -28,7 +28,7 @@
   <main class="section" style="padding-top:40px;">
     <div id="gate-view">
       <div class="section-head" style="margin:0 auto 28px; text-align:center;">
-        <p class="eyebrow">Licensed realtors only</p>
+        <p class="eyebrow">Licensed agents only</p>
         <h1>Sign in with your license</h1>
         <p style="max-width:36rem;margin:0 auto;">
           Name and state license number only. No email or phone at the door—this page is for agents,
@@ -37,7 +37,7 @@
       </div>
 
       <div class="gate-box">
-        <form id="realtor-gate" novalidate>
+        <form id="agent-gate" novalidate>
           <label for="fullName">Name on your license</label>
           <input id="fullName" name="fullName" autocomplete="name" required placeholder="First Last" />
 
@@ -140,7 +140,7 @@
             Send a short note with your market and what you’re working on. No pitch deck required.
           </p>
           <p style="margin:0 0 12px;">
-            <a class="btn btn-primary" href="mailto:hello@premarketagents.com?subject=Realtor%20access%20%E2%80%94%20Pre%20Market%20Agents">Email us</a>
+            <a class="btn btn-primary" href="mailto:hello@premarketagents.com?subject=Agent%20access%20%E2%80%94%20Pre%20Market%20Agents">Email us</a>
           </p>
           <p class="form-note" style="margin:0 0 8px;">
             Public site for clients: <a href="/learn/">guides</a> · <a href="/explore/">neighborhood map</a> (orientation only—not private listings).
@@ -162,11 +162,11 @@
 
   <script>
     (function () {
-      var KEY = "pma_realtor_gate_v1";
+      var KEY = "pma_agent_gate_v1";
       var VERIFY_ENDPOINT = ""; // future: Cloudflare Worker / API → Ohio eLicense match
       var gateView = document.getElementById("gate-view");
       var agentView = document.getElementById("agent-view");
-      var form = document.getElementById("realtor-gate");
+      var form = document.getElementById("agent-gate");
       var err = document.getElementById("err");
       var submitBtn = form.querySelector('button[type="submit"]');
 
@@ -212,9 +212,9 @@
 
       // Pilot preview: skip gate with ?preview=1 (no password; for quick internal review)
       var params = new URLSearchParams(location.search);
-      if (params.get("preview") === "1" || params.get("key") === "realtor-preview-2026") {
+      if (params.get("preview") === "1" || params.get("key") === "agent-preview-2026") {
         var preview = {
-          fullName: "Preview Realtor",
+          fullName: "Preview Agent",
           state: "OH",
           license: "PREVIEW",
           licenseType: "salesperson",

@@ -9,7 +9,7 @@
  * Scheme
  *   Each listing has one random 256-bit content key K.
  *   The private content is AES-GCM encrypted under K at build time.
- *   Per invite, the realtor's dashboard wraps K with that buyer's password:
+ *   Per invite, the agent's dashboard wraps K with that buyer's password:
  *       KEK  = PBKDF2-SHA256(password, salt, ITERATIONS)
  *       blob = version | salt | iv | AES-GCM(KEK, K)
  *   The blob rides in the URL fragment as #k=<base64url>. Fragments are never
@@ -20,7 +20,7 @@
  *     client-side comparison an attacker can skip.
  *   - A wrong password fails as a GCM auth-tag mismatch, so there is no
  *     separate hash to compare and no `#ph=` needed.
- *   - K never appears in the repo. The realtor holds it (entered once into
+ *   - K never appears in the repo. The agent holds it (entered once into
  *     their dashboard), so leaking the static site does not leak listings.
  *
  * Same file is loaded by the browser and required by scripts/build-encrypt.js,
@@ -252,7 +252,7 @@
     return b64uEncode(randomBytes(SALT_LEN));
   }
 
-  /** Content key <-> printable form the realtor pastes into their dashboard */
+  /** Content key <-> printable form the agent pastes into their dashboard */
   function keyToString(rawKey) {
     return b64uEncode(rawKey);
   }

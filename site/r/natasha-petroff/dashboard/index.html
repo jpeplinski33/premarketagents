@@ -39,7 +39,7 @@
       display: grid; grid-template-columns: minmax(160px, 220px) 1fr;
       gap: 16px; align-items: start;
     }
-    /* Realtors send from their phone — never squeeze the message column. */
+    /* Agents send from their phone — never squeeze the message column. */
     @media (max-width: 720px) { .send-grid { grid-template-columns: 1fr; } }
     .send-grid img { max-width: 320px; }
     .listing-card {
@@ -584,7 +584,7 @@
         } catch (e2) {}
       }
 
-      /** Details message — realtor edits are honored, but the link never joins it. */
+      /** Details message — agent edits are honored, but the link never joins it. */
       function detailsFromPanel(rec) {
         var ta = document.getElementById("send-body");
         var custom = ta && ta.value ? ta.value.trim() : "";
@@ -720,7 +720,7 @@
         if (st) st.textContent = k
           ? "Key saved on this device."
           : "No key for this listing — invites and preview are blocked.";
-        // Preview carries the raw key so the realtor can open the listing itself.
+        // Preview carries the raw key so the agent can open the listing itself.
         var prev = document.getElementById("open-listing-preview");
         if (prev) prev.href = L.previewPath + (k ? "#lk=" + encodeURIComponent(k) : "");
       }
@@ -892,7 +892,7 @@
             renderInvites();
             renderListings();
             showSendPanel(rec);
-            // Auto-open Messages with step 1; realtor taps "2 · Text link" after sending
+            // Auto-open Messages with step 1; agent taps "2 · Text link" after sending
             setTimeout(function () {
               sendFromPanel("details");
             }, 250);

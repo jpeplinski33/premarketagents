@@ -4,13 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Pre Market Agents | Your private look, before the market</title>
-  <meta name="description" content="Your private look, before the market. Pre Market Agents — exclusive pre-market home showings shared by invitation from your realtor." />
+  <meta name="description" content="Your private look, before the market. Pre Market Agents — exclusive pre-market home showings shared by invitation from your agent." />
   <meta name="robots" content="index, follow, max-image-preview:large" />
   <link rel="canonical" href="https://premarketagents.com/" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://premarketagents.com/" />
   <meta property="og:title" content="Pre Market Agents | Your private look, before the market" />
-  <meta property="og:description" content="Exclusive pre-market home showings — shared by invitation from your realtor." />
+  <meta property="og:description" content="Exclusive pre-market home showings — shared by invitation from your agent." />
   <meta property="og:image" content="https://premarketagents.com/images/og/home-private-look.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -178,6 +178,11 @@
       line-height: 1.6;
       text-shadow: 0 1px 12px rgba(0,0,0,0.75);
     }
+    /* Phones: tighter tracking and size so the line sits in proportion */
+    @media (max-width: 640px) {
+      .landing-foot { padding: 14px 18px 20px; }
+      .landing-foot p { font-size: 11px; letter-spacing: 0.11em; max-width: 100%; }
+    }
   </style>
   <script type="application/ld+json">
   {
@@ -188,7 +193,7 @@
         "@id": "https://premarketagents.com/#organization",
         "name": "Pre Market Agents",
         "url": "https://premarketagents.com/",
-        "description": "Private pre-market home previews shared by realtor invitation."
+        "description": "Private pre-market home previews shared by agent invitation."
       },
       {
         "@type": "WebSite",
@@ -233,7 +238,7 @@
         <h1>Your private look, before the market.</h1>
       </div>
       <div class="landing-foot">
-        <p>Private pre-market showings — by invitation only from your realtor.</p>
+        <p>Private pre-market showings — by invitation only from your agent.</p>
       </div>
     </section>
 
@@ -289,7 +294,7 @@
           <div class="step-body">
             <span class="step-num">02</span>
             <h3>Get a personal invite</h3>
-            <p>Your realtor sends a private link when an opportunity fits—not a portal anyone can scroll.</p>
+            <p>Your agent sends a private link when an opportunity fits—not a portal anyone can scroll.</p>
           </div>
         </article>
         <article class="step-card">
@@ -312,7 +317,7 @@
           <h2>Get a feel for the neighborhood</h2>
           <p>
             School districts, tax areas, and how the streets sit together—so a pre-market opportunity
-            already feels familiar when your realtor sends one.
+            already feels familiar when your agent sends one.
           </p>
         </div>
         <div class="map-teaser map-teaser-on-photo">
@@ -332,7 +337,7 @@
     <section class="section">
       <div class="section-head">
         <h2>Guides for homeowners</h2>
-        <p>Clear education—written to help you ask better questions of any realtor you trust.</p>
+        <p>Clear education—written to help you ask better questions of any agent you trust.</p>
       </div>
       <div class="article-grid">
         <a class="article-card" href="/learn/what-is-a-pre-market-listing/">
@@ -386,7 +391,7 @@
         </div>
         <div class="split-body">
           <h3>If you’re a homeowner or buyer</h3>
-          <p>Use the guides, learn the process, and work with a licensed realtor you trust. pre-market opportunities arrive when they invite you.</p>
+          <p>Use the guides, learn the process, and work with a licensed agent you trust. pre-market opportunities arrive when they invite you.</p>
           <a class="btn btn-primary" href="/learn/">Start learning</a>
         </div>
       </div>
@@ -395,7 +400,7 @@
           <img src="/images/marketing/interior-great-room.jpg" alt="" width="800" height="600" loading="lazy" />
         </div>
         <div class="split-body">
-          <h3>If you’re a licensed realtor</h3>
+          <h3>If you’re a licensed agent</h3>
           <p>Agent materials are behind a professional verification gate—license details only. No phone or email required at the door.</p>
           <a class="btn btn-ghost" href="/login/">Agent login →</a>
         </div>
@@ -408,14 +413,14 @@
       <span class="pm">Pre Market</span>
       <span class="ag">Agents</span>
     </div>
-    <p>pre-market opportunities by realtor invitation. Public pages help you learn and get oriented.</p>
+    <p>pre-market opportunities by agent invitation. Public pages help you learn and get oriented.</p>
     <p>© <span id="y"></span> Pre Market Agents</p>
     <nav class="footer-links">
       <a href="/">Home</a>
       <a href="/learn/">Learn</a>
       <a href="/explore/">Explore</a>
-      <a href="/login/">Realtor login</a>
-      <a href="/realtors/">Realtor access</a>
+      <a href="/login/">Agent login</a>
+      <a href="/realtors/">Agent access</a>
       <a href="/privacy/">Privacy</a>
     </nav>
   </footer>

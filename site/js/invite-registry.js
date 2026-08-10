@@ -5,7 +5,7 @@
  * URL shape: /r/{agent}/{listing}/?i={token}
  * Analytics inviteId: {agent}/{listing}/{token}
  *
- * Storage: localStorage pma_client_invites_v1 (realtor browser for create;
+ * Storage: localStorage pma_client_invites_v1 (agent browser for create;
  * homeowner browser only needs the token in the URL + password gate).
  */
 (function (global) {
@@ -46,7 +46,7 @@
     return out;
   }
 
-  /** Human-friendly password (no ambiguous 0/O/1/l) — auto for realtor */
+  /** Human-friendly password (no ambiguous 0/O/1/l) — auto for agent */
   function genPassword() {
     // e.g. k7m2-n4pq
     return genToken(4) + "-" + genToken(4);
@@ -109,7 +109,7 @@
     if (!firstName || !lastName) return Promise.reject(new Error("name required"));
     if (!phone) return Promise.reject(new Error("phone required"));
     if (!email || email.indexOf("@") < 1) return Promise.reject(new Error("email required"));
-    // Auto-generate password if realtor leaves it blank
+    // Auto-generate password if agent leaves it blank
     if (!password || password.length < 4) password = genPassword();
 
     var token = genToken(8);
@@ -152,7 +152,7 @@
         phone: phone,
         email: email,
         passwordHash: hash,
-        // pilot: keep plain in realtor browser so they can re-copy / re-send
+        // pilot: keep plain in agent browser so they can re-copy / re-send
         passwordPlain: password,
         createdAt: Date.now(),
         id: fullId(agentSlug, listingCode, token)
@@ -193,7 +193,7 @@
     var where = rec.listingLabel || "a private listing";
     var price = rec.listingPrice ? " · " + rec.listingPrice : "";
     var pw = rec.passwordPlain || "(ask your agent)";
-    var agent = agentName || "Your realtor";
+    var agent = agentName || "Your agent";
     // Jordan's exact template (2026-08-09). Standard invites name the short
     // address; discreet invites say "a home" because hiding the property is
     // their entire point. No price, no scheduling language, no pointer line —
@@ -314,7 +314,7 @@
 
   /**
    * Send invite to buyer: copies full message, then opens Messages and/or Mail
-   * with body pre-filled. Realtor hits Send in the native app.
+   * with body pre-filled. Agent hits Send in the native app.
    */
   function openSend(rec, mode, agentName, origin, opts) {
     mode = mode || "text";

@@ -9,7 +9,7 @@
  *
  * URL shapes
  *   /r/{agent}/{listing}/?i={token}#k={password-wrapped listing key}   buyer
- *   /r/{agent}/{listing}/?preview=1#lk={raw listing key}               realtor
+ *   /r/{agent}/{listing}/?preview=1#lk={raw listing key}               agent
  *
  * Fragments never reach the server, so neither key material nor its wrapper
  * appears in GitHub Pages logs. Unfurlers fetch without the fragment and still
@@ -171,7 +171,7 @@
     if (!cipher) {
       showGateMessage(
         "Listing unavailable",
-        "This page is missing its listing content. Please contact your realtor.",
+        "This page is missing its listing content. Please contact your agent.",
         true
       );
       return { unlocked: false, inviteId: unlockId };
@@ -184,7 +184,7 @@
       return { unlocked: true, inviteId: unlockId, clientToken: clientToken };
     }
 
-    // Realtor preview: raw listing key straight in the fragment, no password.
+    // Agent preview: raw listing key straight in the fragment, no password.
     if (isPreview && frag.lk) {
       var rawPreviewKey;
       try {
@@ -205,7 +205,7 @@
       return { unlocked: false, inviteId: unlockId, isPreview: true };
     }
 
-    // A realtor landing on ?preview=1 without a key came from a stale bookmark
+    // An agent landing on ?preview=1 without a key came from a stale bookmark
     // or a nav link. Tell them where the key comes from instead of implying
     // their link is broken.
     if (isPreview && !frag.lk && !frag.k) {
@@ -223,7 +223,7 @@
       showGateMessage(
         "This invite link is out of date",
         "Ask " +
-          (opts.agentName || "your realtor") +
+          (opts.agentName || "your agent") +
           " to resend your private link — this one was issued before a security " +
           "update and no longer opens.",
         true
@@ -253,7 +253,7 @@
           .catch(function () {
             // Unwrap and decrypt failures are indistinguishable on purpose:
             // both mean "that password does not open this listing".
-            showError("Incorrect password. Check with your realtor.");
+            showError("Incorrect password. Check with your agent.");
           })
           .then(function () {
             if (submit) submit.disabled = false;

@@ -269,7 +269,7 @@
   </div>
 
   <script src="/js/invite-crypto.js?v=1"></script>
-  <script src="/js/invite-registry.js?v=17"></script>
+  <script src="/js/invite-registry.js?v=18"></script>
   <script src="/js/invite-analytics.js"></script>
   <script>
     (function () {
@@ -847,6 +847,7 @@
         PMAInviteRegistry.create({
           agentSlug: AGENT,
           listingCode: L.code,
+          discreet: !!L.keyCode,
           listingKey: currentKey(),
           listingLabel: L.address,
           firstName: document.getElementById("fn").value,

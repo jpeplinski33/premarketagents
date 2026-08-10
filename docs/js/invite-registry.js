@@ -140,6 +140,7 @@
       var hash = out[0];
       var wrappedKey = out[1];
       var rec = {
+        discreet: !!opts.discreet,
         wrappedKey: wrappedKey,
         token: token,
         agentSlug: agentSlug,
@@ -193,16 +194,21 @@
     var price = rec.listingPrice ? " · " + rec.listingPrice : "";
     var pw = rec.passwordPlain || "(ask your agent)";
     var agent = agentName || "Your realtor";
-    // One template for standard and discreet invites. No address, no price,
-    // no scheduling language: the preview card carries the property details
-    // (or deliberately hides them), and the realtor arranges any showing
-    // themselves — the text just needs to say what this is and what to do.
+    // Jordan's exact template (2026-08-09). Standard invites name the short
+    // address; discreet invites say "a home" because hiding the property is
+    // their entire point. No price, no scheduling language, no pointer line —
+    // the link text follows immediately after this message.
+    var spot = rec.discreet
+      ? "a home"
+      : String(where).replace(/,\s*OH.*$/, "");
     return [
       "Hi " + who + ",",
       "",
-      "You're getting an exclusive first look at a home before it hits the market.",
+      "You're invited to an exclusive first look at " + spot +
+        " — before it goes on the market.",
       "",
       "When you open your private link, enter this password to view the home:",
+      "",
       "Password: " + pw,
       "",
       "— " + agent
@@ -214,9 +220,7 @@
    * The link follows in its own message (see inviteLink).
    */
   function inviteIntro(rec, agentName) {
-    return introLines(rec, agentName)
-      .concat(["", "Your private link is in the next text."])
-      .join("\n");
+    return introLines(rec, agentName).join("\n");
   }
 
   /**
